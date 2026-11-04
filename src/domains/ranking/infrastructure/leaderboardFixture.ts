@@ -1,0 +1,120 @@
+import type { RankedUser, RankingPeriod } from '../domain/leaderboard';
+
+// Publishing fixtures; replace with the ranking API repository when available.
+const weekly: RankedUser[] = [
+  {
+    id: 'park',
+    name: '박지훈',
+    position: 1,
+    xp: 8942,
+    solved: 681,
+    streak: 42,
+    tier: 'black',
+  },
+  {
+    id: 'choi',
+    name: '최유진',
+    position: 2,
+    xp: 8317,
+    solved: 630,
+    streak: 51,
+    tier: 'black',
+  },
+  {
+    id: 'han',
+    name: '한준호',
+    position: 3,
+    xp: 5724,
+    solved: 492,
+    streak: 37,
+    tier: 'gold',
+  },
+  {
+    id: 'lee',
+    name: '이서연',
+    position: 4,
+    xp: 4271,
+    solved: 401,
+    streak: 32,
+    tier: 'gold',
+  },
+  {
+    id: 'jung',
+    name: '정우진',
+    position: 5,
+    xp: 4102,
+    solved: 388,
+    streak: 29,
+    tier: 'gold',
+  },
+  {
+    id: 'yoon',
+    name: '윤도현',
+    position: 6,
+    xp: 2988,
+    solved: 371,
+    streak: 34,
+    tier: '10',
+  },
+  {
+    id: 'bae',
+    name: '배지민',
+    position: 7,
+    xp: 2794,
+    solved: 352,
+    streak: 26,
+    tier: '10',
+  },
+  {
+    id: 'kang',
+    name: '강하늘',
+    position: 8,
+    xp: 2140,
+    solved: 301,
+    streak: 28,
+    tier: '10',
+  },
+  {
+    id: 'song',
+    name: '송지아',
+    position: 9,
+    xp: 1902,
+    solved: 288,
+    streak: 23,
+    tier: '10',
+  },
+  {
+    id: 'oh',
+    name: '오세훈',
+    position: 10,
+    xp: 1688,
+    solved: 260,
+    streak: 21,
+    tier: '10',
+  },
+];
+
+export const currentRankedUser: RankedUser = {
+  id: 'me',
+  name: '김민서',
+  position: 184,
+  xp: 1240,
+  solved: 61,
+  streak: 10,
+  tier: '5',
+  isMe: true,
+};
+
+export const leaderboardFixtures: Record<RankingPeriod, RankedUser[]> = {
+  weekly,
+  monthly: weekly.map((user, index) => ({
+    ...user,
+    xp: user.xp + (10 - index) * 850,
+    solved: user.solved + (10 - index) * 30,
+  })),
+  all: weekly.map((user, index) => ({
+    ...user,
+    xp: user.xp + (10 - index) * 3200,
+    solved: user.solved + (10 - index) * 120,
+  })),
+};

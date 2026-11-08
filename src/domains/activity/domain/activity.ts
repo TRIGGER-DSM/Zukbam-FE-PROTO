@@ -1,3 +1,5 @@
+import type { ActivityDay } from './growth';
+
 export interface ActivitySummary {
   streak: number;
   nextStreak: number;
@@ -6,4 +8,7 @@ export interface ActivitySummary {
   completedWeekdays: number;
   year: number;
   monthlySolved: number;
+  week?: boolean[];
+  todayIndex?: number;
+  activityDays?: ActivityDay[];
 }

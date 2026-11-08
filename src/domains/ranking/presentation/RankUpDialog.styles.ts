@@ -5,61 +5,55 @@ import { css } from '@emotion/react';
 export const Content = styled('div', {
   label: 'Content',
   target: 'e-f-0',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  & h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 2.625rem;
+    letter-spacing: -0.05rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+  @media (max-width: 700px) {
     & {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.875rem;
+      gap: 0.75rem;
     }
     & h2 {
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 2.625rem;
-      letter-spacing: -0.05rem;
-      text-align: center;
-      white-space: nowrap;
+      font-size: 1.5rem;
+      line-height: 2.125rem;
+      white-space: normal;
+      text-wrap: balance;
     }
-    @media (max-width: 700px) {
-      & {
-        gap: 0.75rem;
-      }
+  }
+  @media (min-width: 701px) {
+    & h2 {
+      font-size: 26px;
+      line-height: 36px;
     }
-    @media (max-width: 700px) {
-      & h2 {
-        font-size: 1.5rem;
-        line-height: 2.125rem;
-        white-space: normal;
-        text-wrap: balance;
-      }
-    }
-    @media (min-width: 701px) {
-      & h2 {
-        font-size: 26px;
-        line-height: 36px;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Art = styled('img', {
   label: 'Art',
   target: 'e-f-1',
-})(
-  () => css`
+})`
+  & {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 400 / 230;
+  }
+  @media (max-width: 700px) {
     & {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 400 / 230;
+      max-width: 20rem;
     }
-    @media (max-width: 700px) {
-      & {
-        max-width: 20rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Label = styled('span', {
   label: 'Label',
@@ -102,25 +96,23 @@ export const Description = styled('p', {
 export const Transition = styled('div', {
   label: 'Transition',
   target: 'e-f-4',
-})(
-  () => css`
-    & {
-      padding: 0.5rem 0;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-    & > div {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.25rem;
-      font-size: 0.875rem;
-      font-weight: 700;
-      line-height: 1.25rem;
-    }
-  `,
-);
+})`
+  & {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  & > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+  }
+`;
 
 export const Previous = styled('div', {
   label: 'Previous',
@@ -188,15 +180,13 @@ export const Next = styled('section', {
 export const Progress = styled('img', {
   label: 'Progress',
   target: 'e-f-8',
-})(
-  () => css`
-    & {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 366 / 27;
-    }
-  `,
-);
+})`
+  & {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 366 / 27;
+  }
+`;
 
 export const Actions = styled('div', {
   label: 'Actions',

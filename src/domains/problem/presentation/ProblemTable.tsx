@@ -1,14 +1,16 @@
 import * as S from './ProblemTable.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
+import type { ReactNode } from 'react';
 import { difficulties, type Problem } from '../domain/problem';
 import { ProblemAsset } from './ProblemAsset';
 
 interface ProblemTableProps {
   problems: Problem[];
+  emptyContent: ReactNode;
   onSelect: (problem: Problem) => void;
 }
 
-export function ProblemTable({ problems, onSelect }: ProblemTableProps) {
+export function ProblemTable({ problems, emptyContent, onSelect }: ProblemTableProps) {
   return (
     <S.Scroll>
       <S.Table>
@@ -44,7 +46,7 @@ export function ProblemTable({ problems, onSelect }: ProblemTableProps) {
                 ) : problem.status === 'attempted' ? (
                   <S.Attempted role="img" aria-label="시도했으나 미해결" />
                 ) : (
-                  <UI.HiddenText>미해결</UI.HiddenText>
+                  <UI.HiddenText>{problem.status ? '미해결' : '해결 상태 정보 없음'}</UI.HiddenText>
                 )}
               </S.StatusCell>
               <td>
@@ -63,31 +65,34 @@ export function ProblemTable({ problems, onSelect }: ProblemTableProps) {
                 </S.Title>
               </td>
               <S.TagCell>
-                <button
-                  aria-label={`${problem.title} 분류: ${problem.categories.join(', ')}`}
-                  title={problem.categories.join(', ')}
-                  onClick={() => onSelect(problem)}
-                >
-                  <ProblemAsset name="tag" />
-                </button>
+                {problem.categories.length > 0 ? (
+                  <button
+                    aria-label={`${problem.title} 분류: ${problem.categories.join(', ')}`}
+                    title={problem.categories.join(', ')}
+                    onClick={() => onSelect(problem)}
+                  >
+                    <ProblemAsset name="tag" />
+                  </button>
+                ) : (
+                  '—'
+                )}
               </S.TagCell>
               <S.XpCell>
-                <span>
-                  <ProblemAsset name="xp" />+{problem.xp}
-                </span>
+                {problem.xp === undefined ? (
+                  '—'
+                ) : (
+                  <span>
+                    <ProblemAsset name="xp" />+{problem.xp}
+                  </span>
+                )}
               </S.XpCell>
-              <S.SolversCell>{problem.solvers.toLocaleString()}</S.SolversCell>
-              <S.AttemptsCell>{problem.attempts.toFixed(2)}</S.AttemptsCell>
+              <S.SolversCell>{problem.solvers?.toLocaleString() ?? '—'}</S.SolversCell>
+              <S.AttemptsCell>{problem.attempts?.toFixed(2) ?? '—'}</S.AttemptsCell>
             </tr>
           ))}
         </tbody>
       </S.Table>
-      {!problems.length && (
-        <S.Empty>
-          <strong>표시할 문제가 없어요</strong>
-          <p>검색어나 필터 조건을 바꿔보세요.</p>
-        </S.Empty>
-      )}
+      {problems.length === 0 && <S.Empty>{emptyContent}</S.Empty>}
     </S.Scroll>
   );
 }

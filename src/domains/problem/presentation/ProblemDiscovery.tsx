@@ -16,7 +16,9 @@ export function ProblemDiscovery({ recommended, friends, onSelect }: ProblemDisc
       <S.Recommendations aria-labelledby="recommended-title">
         <S.Heading>
           <h2 id="recommended-title">추천 문제</h2>
-          <p>대나무 5m인 민서님께 맞춰 골랐어요</p>
+          <p>
+            {recommended.length ? '나에게 맞는 문제를 골라봐요' : '추천 문제 데이터가 아직 없어요.'}
+          </p>
         </S.Heading>
         {recommended.map(({ problem, reason, acceptance }) => (
           <S.Recommendation key={problem.id} onClick={() => onSelect(problem)}>
@@ -38,7 +40,7 @@ export function ProblemDiscovery({ recommended, friends, onSelect }: ProblemDisc
       <S.Friends aria-labelledby="friends-title">
         <S.Heading>
           <h2 id="friends-title">친구가 최근에 푼 문제</h2>
-          <p>같이 풀면 더 오래 가요</p>
+          <p>{friends.length ? '같이 풀면 더 오래 가요' : '친구 풀이 데이터가 아직 없어요.'}</p>
         </S.Heading>
         <S.FriendGrid>
           {friends.map(({ problem, friend, time, tone, tier }) => (

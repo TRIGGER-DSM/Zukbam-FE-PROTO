@@ -9,7 +9,7 @@ export const Page = styled('main', {
 })(
   ({ theme }) => css`
     & {
-      padding: 3rem 5rem 4.5rem;
+      padding: clamp(1.5rem, 4vw, 2rem) var(--page-gutter) 3rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,36 +17,11 @@ export const Page = styled('main', {
     }
     & h1 {
       color: ${theme.colors.primary.strong};
-      font-size: 3rem;
+      font-size: clamp(1.875rem, 3vw, 2.625rem);
       font-weight: 900;
-      line-height: 3.75rem;
+      line-height: 1.25;
       letter-spacing: -0.09375rem;
       text-align: center;
-    }
-    @media (max-width: 700px) {
-      & {
-        padding: 2rem 1rem 3rem;
-        gap: 1.25rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & h1 {
-        font-size: 2rem;
-        line-height: 2.625rem;
-        letter-spacing: -0.05rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        padding-block: 2rem 3rem;
-        gap: 1rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & h1 {
-        font-size: 36px;
-        line-height: 46px;
-      }
     }
   `,
 );
@@ -54,29 +29,27 @@ export const Page = styled('main', {
 export const Mascot = styled('img', {
   label: 'Mascot',
   target: 'e-n-1',
-})(
-  () => css`
+})`
+  & {
+    display: block;
+    width: 22.5rem;
+    height: 20rem;
+    object-fit: contain;
+    max-width: 100%;
+  }
+  @media (max-width: 700px) {
     & {
-      display: block;
-      width: 22.5rem;
-      height: 20rem;
-      object-fit: contain;
-      max-width: 100%;
+      width: 15.75rem;
+      height: 14rem;
     }
-    @media (max-width: 700px) {
-      & {
-        width: 15.75rem;
-        height: 14rem;
-      }
+  }
+  @media (min-width: 701px) {
+    & {
+      width: 18rem;
+      height: 16rem;
     }
-    @media (min-width: 701px) {
-      & {
-        width: 18rem;
-        height: 16rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Description = styled('p', {
   label: 'Description',
@@ -145,8 +118,6 @@ export const Stats = styled('dl', {
         width: 100%;
         gap: 0.5rem;
       }
-    }
-    @media (max-width: 700px) {
       & > div {
         flex: 1;
         min-width: 0;
@@ -154,16 +125,12 @@ export const Stats = styled('dl', {
         padding: 0.75rem 0.125rem;
         border-radius: 1rem;
       }
-    }
-    @media (max-width: 700px) {
       & dd {
         padding: 0.5rem 0;
         gap: 0.125rem;
         font-size: 1.375rem;
         line-height: 2rem;
       }
-    }
-    @media (max-width: 700px) {
       & dt {
         font-size: 0.75rem;
         line-height: 1.25rem;
@@ -174,8 +141,6 @@ export const Stats = styled('dl', {
         width: 11rem;
         padding-block: 0.75rem;
       }
-    }
-    @media (min-width: 701px) {
       & dd {
         padding-block: 0.75rem;
         font-size: 26px;
@@ -198,13 +163,11 @@ export const Xp = styled('div', {
 export const Time = styled('div', {
   label: 'Time',
   target: 'e-n-5',
-})(
-  () => css`
-    & dd {
-      color: ${colors.accent.water};
-    }
-  `,
-);
+})`
+  & dd {
+    color: ${colors.accent.water};
+  }
+`;
 
 export const Streak = styled('div', {
   label: 'Streak',
@@ -246,13 +209,11 @@ export const Growth = styled('section', {
 export const Medal = styled('img', {
   label: 'Medal',
   target: 'e-n-8',
-})(
-  () => css`
-    & {
-      flex-shrink: 0;
-    }
-  `,
-);
+})`
+  & {
+    flex-shrink: 0;
+  }
+`;
 
 export const GrowthDetails = styled('div', {
   label: 'GrowthDetails',
@@ -285,13 +246,9 @@ export const GrowthDetails = styled('div', {
       & {
         flex-basis: calc(100% - 4.5rem);
       }
-    }
-    @media (max-width: 700px) {
       & strong {
         font-size: 0.875rem;
       }
-    }
-    @media (max-width: 700px) {
       & span {
         font-size: 0.75rem;
         line-height: 1.25rem;
@@ -303,19 +260,17 @@ export const GrowthDetails = styled('div', {
 export const Progress = styled('div', {
   label: 'Progress',
   target: 'e-n-a',
-})(
-  () => css`
-    & {
-      width: 100%;
-      overflow: hidden;
-    }
-    & img {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 421 / 27;
-    }
-  `,
-);
+})`
+  & {
+    width: 100%;
+    overflow: hidden;
+  }
+  & img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 421 / 27;
+  }
+`;
 
 export const GrowthCaption = styled('p', {
   label: 'GrowthCaption',
@@ -410,15 +365,11 @@ export const Actions = styled('div', {
         width: 100%;
         gap: 0.5rem;
       }
-    }
-    @media (max-width: 700px) {
       & > button {
         flex: 1;
         padding: 0.875rem 0.5rem;
         font-size: 0.875rem;
       }
-    }
-    @media (max-width: 700px) {
       & > a {
         flex: 1;
         padding: 0.875rem 0.5rem;
@@ -432,17 +383,15 @@ export const Next = styled(Link, {
   label: 'Next',
   target: 'e-n-e',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
-    &:hover {
-      filter: brightness(1.08);
-    }
-    &:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px ${colors.primary.heavy};
-    }
-  `,
-);
+})`
+  &:hover {
+    filter: brightness(1.08);
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px ${colors.primary.heavy};
+  }
+`;
 
 export const Unavailable = styled('main', {
   label: 'Unavailable',

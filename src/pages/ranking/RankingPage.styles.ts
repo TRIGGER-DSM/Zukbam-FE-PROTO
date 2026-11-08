@@ -1,121 +1,32 @@
 import styled from '@emotion/styled';
 import { colors } from '../../shared/styles/colors';
-import {
-  rankingSize as size,
-  rankingScale as scale,
-} from '../../domains/ranking/presentation/rankingSize';
-import * as Site from '../../shared/ui/SiteLayout.styles';
-
-export const Layout = styled.div`
-  --ranking-scale: clamp(0.875px, calc(0.5px + 0.026041667vw), 1px);
-
-  @media (min-width: 701px) {
-    > ${Site.Footer} {
-      --page-max-width: ${scale(1920)};
-      --page-gutter: clamp(24px, 4.166667vw, 80px);
-      padding-block: ${scale(48)};
-      gap: ${scale(40)};
-    }
-    ${Site.Brand} {
-      gap: ${scale(12)};
-      > p {
-        font-size: ${scale(14)};
-        line-height: ${scale(22)};
-      }
-      > small {
-        font-size: ${scale(12)};
-        line-height: ${scale(18)};
-      }
-    }
-    ${Site.Team} {
-      h2 {
-        margin-bottom: ${scale(16)};
-        font-size: ${scale(14)};
-        line-height: ${scale(20)};
-      }
-      ul {
-        gap: ${scale(12)};
-      }
-      li {
-        padding: ${scale(14)} ${scale(18)} ${scale(14)} ${scale(14)};
-        gap: ${scale(12)};
-        border-radius: ${scale(16)};
-      }
-    }
-    ${Site.MemberName} {
-      font-size: ${scale(16)};
-      line-height: ${scale(24)};
-      > span {
-        font-size: ${scale(12)};
-        line-height: ${scale(16)};
-      }
-    }
-    ${Site.Github} {
-      font-size: ${scale(12)};
-      line-height: ${scale(18)};
-    }
-  }
-
-  @media (min-width: 701px) and (max-width: 1250px) {
-    --ranking-scale: 1px;
-  }
-
-  @media (max-width: 700px) {
-    --ranking-scale: 1px;
-  }
-`;
 
 export const Page = styled.main`
-  --page-gutter: clamp(24px, 4.166667vw, 80px);
-  padding: ${scale(48)} var(--page-gutter);
+  padding: clamp(1.5rem, 4vw, 3rem) var(--page-gutter);
   background: ${colors.background.elevated};
-  @media (max-width: 700px) {
-    padding: 1.5rem 1rem;
-  }
 `;
 
 export const Shell = styled.div`
+  --ranking-aside-width: clamp(16rem, 24%, 20rem);
   position: relative;
-  max-width: ${scale(1760)};
+  max-width: var(--page-content-width);
   margin-inline: auto;
   container-type: inline-size;
-  > * {
-    --ranking-unit: 0.05681818cqw;
-  }
-  @media (max-width: 1250px) {
-    > * {
-      --ranking-unit: 0.875px;
-    }
-  }
 `;
 
 export const Toolbar = styled.div`
-  position: absolute;
-  inset: 0 0 auto;
+  position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: ${size(494)} ${size(567)} minmax(0, 1fr);
-  align-items: flex-end;
-  padding: ${size(44)} 0 0 ${size(48)};
-  @media (max-width: 1600px) {
-    display: flex;
-    justify-content: space-between;
-    gap: ${scale(12)};
-    padding-left: 0;
-  }
-  @media (max-width: 1250px) {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-    gap: ${scale(24)};
-    padding: 0;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: end;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: 1rem;
+
   @media (max-width: 700px) {
-    display: flex;
-    flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    flex-direction: column;
   }
 `;
 
@@ -123,79 +34,61 @@ export const Intro = styled.div`
   flex-shrink: 0;
   > span {
     display: inline-block;
-    padding: ${size(6)} ${size(12)} ${size(6)} ${size(8)};
-    margin-bottom: ${size(12)};
-    border-radius: ${scale(999)};
+    padding: 0.375rem 0.75rem 0.375rem 0.5rem;
+    margin-bottom: 0.75rem;
+    border-radius: 62.4375rem;
     background: ${colors.fill.strong};
-    font-size: ${scale(12)};
+    font-size: 0.75rem;
     font-weight: 700;
-    line-height: ${scale(16)};
+    line-height: 1rem;
   }
   h1 {
-    font-size: ${scale(32)};
-    line-height: ${scale(42)};
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    line-height: 1.3125;
     font-weight: 900;
     letter-spacing: -0.025em;
-    white-space: nowrap;
-  }
-  @media (max-width: 1250px) {
-    position: static;
-    h1 {
-      font-size: 1.5rem;
-      line-height: 2rem;
-      white-space: normal;
-    }
   }
 `;
 
 export const Countdown = styled.div`
-  justify-self: start;
-  flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: ${size(14)};
-  padding: ${size(10)} ${size(24)} ${size(10)} ${size(22)};
+  gap: 0.25rem 0.875rem;
+  max-width: 100%;
+  padding: 0.625rem clamp(0.875rem, 2vw, 1.5rem);
   border: 1px solid ${colors.line.alternative};
-  border-radius: ${scale(999)};
+  border-radius: 62.4375rem;
   background: ${colors.fill.strong};
   white-space: nowrap;
   > span {
     color: ${colors.label.alternative};
-    font-size: ${scale(14)};
+    font-size: 0.875rem;
   }
   > div {
     display: flex;
     align-items: baseline;
-    gap: ${size(2)};
+    gap: 0.125rem;
   }
   strong {
-    font-size: ${scale(24)};
-    line-height: ${scale(32)};
+    font-size: 1.5rem;
+    line-height: 2rem;
   }
   small {
-    margin-right: ${size(4)};
+    margin-right: 0.25rem;
     color: ${colors.label.assistive};
-    font-size: ${scale(14)};
+    font-size: 0.875rem;
   }
   small:last-child {
     margin-right: 0;
-  }
-  @media (max-width: 1250px) {
-    position: static;
   }
 `;
 
 export const Filters = styled.div`
   display: flex;
-  flex-shrink: 0;
+  flex-wrap: wrap;
   align-items: center;
-  gap: ${size(24)};
-  @media (max-width: 1250px) {
-    position: static;
-    grid-column: 1 / -1;
-    justify-content: flex-end;
-    gap: ${scale(24)};
-  }
+  gap: 0.75rem;
   @media (max-width: 700px) {
     width: 100%;
     flex-direction: column;
@@ -206,26 +99,26 @@ export const Filters = styled.div`
 
 export const Segment = styled.div`
   display: flex;
-  gap: ${size(4)};
-  padding: ${size(4)};
-  border-radius: ${scale(999)};
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 62.4375rem;
   background: ${colors.fill.normal};
   button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: ${size(8)};
-    padding: ${size(10)} ${size(20)} ${size(10)} ${size(16)};
-    border-radius: ${scale(999)};
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem 0.625rem 1rem;
+    border-radius: 62.4375rem;
     color: ${colors.label.alternative};
-    font-size: ${scale(16)};
+    font-size: 1rem;
     font-weight: 700;
-    line-height: ${scale(24)};
+    line-height: 1.5rem;
     white-space: nowrap;
   }
   button > img {
-    width: ${size(24)};
-    height: ${size(24)};
+    width: 1.5rem;
+    height: 1.5rem;
     object-fit: contain;
     opacity: 0.55;
   }
@@ -245,14 +138,13 @@ export const Segment = styled.div`
 `;
 
 export const PeriodSegment = styled(Segment)`
-  width: ${scale(226)};
-  height: ${scale(52)};
-  padding: ${scale(4)};
-  gap: ${scale(4)};
+  width: fit-content;
+  padding: 0.25rem;
+  gap: 0.25rem;
   button {
     flex: 1 1 0;
     min-width: 0;
-    padding: ${scale(8)} ${scale(20)};
+    padding: 0.5rem 1.25rem;
   }
   @media (max-width: 700px) {
     width: 100%;
@@ -260,7 +152,7 @@ export const PeriodSegment = styled(Segment)`
 `;
 
 export const Results = styled.div`
-  padding-bottom: ${size(32)};
+  padding-bottom: 2rem;
   @media (max-width: 1250px) {
     margin-top: 1rem;
     padding-bottom: 0;

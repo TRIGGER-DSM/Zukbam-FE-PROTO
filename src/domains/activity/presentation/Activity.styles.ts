@@ -49,8 +49,6 @@ export const StreakCard = styled('section', {
       & {
         border-radius: 1rem;
       }
-    }
-    @media (max-width: 700px) {
       & {
         padding: 1.25rem 1rem;
         flex-wrap: wrap;
@@ -62,8 +60,6 @@ export const StreakCard = styled('section', {
         padding: 1rem 1.25rem;
         min-height: 11rem;
       }
-    }
-    @media (min-width: 701px) {
       & {
         gap: 1rem;
       }
@@ -99,8 +95,6 @@ export const Week = styled('div', {
       & {
         flex-basis: 100%;
       }
-    }
-    @media (max-width: 700px) {
       & > :is(${PrimitivesStyles.Muted}, ${PrimitivesStyles.MutedInline}) {
         font-size: 0.75rem;
         line-height: 1.25rem;
@@ -142,8 +136,6 @@ export const Weekdays = styled('ol', {
       & {
         gap: 0.375rem;
       }
-    }
-    @media (max-width: 700px) {
       & li {
         padding: 0.625rem 0;
         font-size: 0.75rem;
@@ -249,8 +241,6 @@ export const Count = styled('div', {
         width: 6.25rem;
         height: 6.25rem;
       }
-    }
-    @media (max-width: 1700px) {
       & strong {
         font-size: 3.25rem;
       }
@@ -266,24 +256,16 @@ export const Count = styled('div', {
         width: 100%;
         justify-content: flex-end;
       }
-    }
-    @media (max-width: 700px) {
       & > img {
         width: 4.375rem;
         height: 4.375rem;
       }
-    }
-    @media (max-width: 700px) {
       & strong {
         font-size: 2.5rem;
       }
-    }
-    @media (max-width: 700px) {
       & small {
         font-size: 1.25rem;
       }
-    }
-    @media (max-width: 700px) {
       & :is(${PrimitivesStyles.Muted}, ${PrimitivesStyles.MutedInline}) {
         font-size: 0.75rem;
       }
@@ -292,13 +274,9 @@ export const Count = styled('div', {
       & strong {
         font-size: 44px;
       }
-    }
-    @media (min-width: 701px) {
       & small {
         font-size: 20px;
       }
-    }
-    @media (min-width: 701px) {
       & > img {
         width: 76px;
         height: 76px;
@@ -335,8 +313,6 @@ export const Card = styled('section', {
       & {
         border-radius: 1rem;
       }
-    }
-    @media (max-width: 700px) {
       & {
         min-height: 16.875rem;
         padding: 1.25rem 1rem;
@@ -377,36 +353,30 @@ export const Year = styled('span', {
 export const HeatmapScroll = styled('div', {
   label: 'HeatmapScroll',
   target: 'e-0-8',
-})(
-  () => css`
-    & {
-      overflow-x: auto;
-    }
-  `,
-);
+})`
+  & {
+    overflow-x: auto;
+  }
+`;
 
 export const Heatmap = styled(Asset, {
   label: 'Heatmap',
   target: 'e-0-9',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
+})`
+  & {
+    width: 100%;
+    height: auto;
+  }
+  @media (max-width: 700px) {
     & {
-      width: 100%;
-      height: auto;
+      min-width: 38.75rem;
     }
-    @media (max-width: 700px) {
-      & {
-        min-width: 38.75rem;
-      }
+    & {
+      height: 5rem;
     }
-    @media (max-width: 700px) {
-      & {
-        height: 5rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Months = styled('div', {
   label: 'Months',
@@ -457,8 +427,6 @@ export const Legend = styled('div', {
         gap: 0.5rem;
         flex-wrap: wrap;
       }
-    }
-    @media (max-width: 700px) {
       & > div {
         font-size: 0.625rem;
       }

@@ -5,7 +5,7 @@ import { RankingAsset } from './RankingAsset';
 
 interface LeaderboardTableProps {
   rows: RankedUser[];
-  me: RankedUser;
+  me?: RankedUser;
   metric: RankingMetric;
 }
 
@@ -43,7 +43,9 @@ export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
   return (
     <S.Panel aria-label="전체 랭킹">
       <S.Table>
-        <UI.HiddenCaption>{scoreLabel} 기준 전체 랭킹과 내 순위</UI.HiddenCaption>
+        <UI.HiddenCaption>
+          {scoreLabel} 기준 전체 랭킹{me && '과 내 순위'}
+        </UI.HiddenCaption>
         <thead>
           <tr>
             <th scope="col">순위</th>
@@ -55,10 +57,14 @@ export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
         </thead>
         <tbody>
           {rows.map(renderRow)}
-          <S.Ellipsis aria-hidden="true">
-            <td colSpan={5}>···</td>
-          </S.Ellipsis>
-          {renderRow(me)}
+          {me && (
+            <>
+              <S.Ellipsis aria-hidden="true">
+                <td colSpan={5}>···</td>
+              </S.Ellipsis>
+              {renderRow(me)}
+            </>
+          )}
         </tbody>
       </S.Table>
     </S.Panel>

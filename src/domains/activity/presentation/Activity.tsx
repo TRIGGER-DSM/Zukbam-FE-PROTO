@@ -2,6 +2,7 @@ import * as S from './Activity.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import type { ActivitySummary } from '../domain/activity';
 import { Asset } from '../../../shared/ui/Asset';
+import { ActivityHeatmap } from './ActivityHeatmap';
 
 interface StreakCardProps {
   activity: ActivitySummary;
@@ -11,24 +12,28 @@ export function StreakCard({ activity }: StreakCardProps) {
   return (
     <S.StreakCard aria-labelledby="streak-title">
       <S.Week>
-        <h2 id="streak-title">오늘도 불꽃을 지켰어요!</h2>
+        <h2 id="streak-title">이번 주 풀이 기록</h2>
         <UI.Muted>
           내일도 풀면 {activity.nextStreak}일째 · 최장 기록 {activity.longestStreak}일까지{' '}
           {activity.daysToRecord}일 남았어요
         </UI.Muted>
         <S.Weekdays>
-          {['월', '화', '수', '목', '금', '토', '일'].map((day, i) => (
-            <S.Weekday key={day} $today={i === activity.completedWeekdays - 1}>
-              <span>{day}</span>
-              <S.DayCheck
-                $complete={i < activity.completedWeekdays}
-                $today={i === activity.completedWeekdays - 1}
-                aria-label={i < activity.completedWeekdays ? '풀이 완료' : '미완료'}
-              >
-                {i < activity.completedWeekdays && <Asset name="check.svg" />}
-              </S.DayCheck>
-            </S.Weekday>
-          ))}
+          {['월', '화', '수', '목', '금', '토', '일'].map((day, index) => {
+            const complete = activity.week?.[index] ?? index < activity.completedWeekdays;
+            const today = index === (activity.todayIndex ?? activity.completedWeekdays - 1);
+            return (
+              <S.Weekday key={day} $today={today}>
+                <span>{day}</span>
+                <S.DayCheck
+                  $complete={complete}
+                  $today={today}
+                  aria-label={complete ? '풀이 완료' : '미완료'}
+                >
+                  {complete && <Asset name="check.svg" />}
+                </S.DayCheck>
+              </S.Weekday>
+            );
+          })}
         </S.Weekdays>
       </S.Week>
       <S.Count>
@@ -50,23 +55,30 @@ interface ActivityCardProps {
 }
 
 export function ActivityCard({ activity }: ActivityCardProps) {
+  const months = [...new Set(activity.activityDays?.map((day) => day.date.slice(0, 7)))];
   return (
     <S.Card aria-labelledby="activity-title">
       <UI.Heading>
-        <h2 id="activity-title">{activity.year}년 풀이 활동</h2>
+        <h2 id="activity-title">
+          {activity.activityDays ? '최근 365일 풀이 활동' : `${activity.year}년 풀이 활동`}
+        </h2>
         <S.Year>{activity.year}년 ▾</S.Year>
       </UI.Heading>
       <S.HeatmapScroll>
-        <S.Heatmap name="heatmap.svg" alt={`${activity.year}년 날짜별 풀이 활동`} />
+        {activity.activityDays ? (
+          <ActivityHeatmap days={activity.activityDays} />
+        ) : (
+          <S.Heatmap name="heatmap.svg" alt={`${activity.year}년 날짜별 풀이 활동`} />
+        )}
         <S.Months>
-          {Array.from(
-            {
-              length: 12,
-            },
-            (_, i) => (
-              <span key={i}>{i + 1}월</span>
-            ),
-          )}
+          {activity.activityDays
+            ? months.map((month) => <span key={month}>{Number(month.slice(-2))}월</span>)
+            : Array.from(
+                {
+                  length: 12,
+                },
+                (_, i) => <span key={i}>{i + 1}월</span>,
+              )}
         </S.Months>
       </S.HeatmapScroll>
       <S.Legend>

@@ -1,4 +1,3 @@
-import { detailSize as size } from './problemDetailSize';
 import { colors } from '../../../shared/styles/colors';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
@@ -10,27 +9,17 @@ export const Hero = styled('section', {
 })(
   ({ theme }) => css`
     & {
-      padding: ${size(36)} max(var(--detail-gutter), calc((100% - 1760px) / 2));
+      padding: clamp(1.5rem, 3vw, 2.25rem)
+        max(var(--detail-gutter), calc((100% - var(--page-max-width)) / 2 + var(--detail-gutter)));
       background: ${theme.colors.background.elevated};
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: ${size(24)};
-    }
-    @media (max-width: 1600px) {
-      & {
-        padding-inline: var(--detail-gutter);
-      }
-    }
-    @media (max-width: 1100px) {
-      & {
-        padding: ${size(28)} var(--detail-gutter);
-      }
+      gap: 1.5rem;
     }
     @media (max-width: 700px) {
       & {
-        padding: ${size(24)} ${size(20)};
-        gap: ${size(20)};
+        gap: 1.25rem;
       }
     }
   `,
@@ -45,22 +34,22 @@ export const Back = styled(Link, {
     & {
       display: inline-flex;
       align-items: center;
-      gap: ${size(4)};
-      padding: ${size(6)} ${size(14)} ${size(6)} ${size(10)};
-      border-radius: ${size(999)};
+      gap: 0.25rem;
+      padding: 0.375rem 0.875rem 0.375rem 0.625rem;
+      border-radius: 62.4375rem;
       background: ${theme.colors.fill.normal};
       color: ${theme.colors.label.neutral};
-      font-size: ${size(16)};
-      line-height: ${size(26)};
+      font-size: 1rem;
+      line-height: 1.625rem;
       font-weight: 700;
     }
     & > span {
-      font-size: ${size(18)};
+      font-size: 1.125rem;
     }
     @media (max-width: 700px) {
       & {
-        font-size: ${size(14)};
-        line-height: ${size(22)};
+        font-size: 0.875rem;
+        line-height: 1.375rem;
       }
     }
   `,
@@ -69,66 +58,60 @@ export const Back = styled(Link, {
 export const Content = styled('div', {
   label: 'Content',
   target: 'e-3-2',
-})(
-  () => css`
+})`
+  & {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 65.909091%;
+    @media (max-width: 1100px) {
+      width: 100%;
+    }
+  }
+  @media (max-width: 700px) {
     & {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: ${size(20)};
-      width: 65.909091%;
-      @media (max-width: 1100px) {
-        width: 100%;
-      }
+      gap: 1.25rem;
     }
-    @media (max-width: 700px) {
-      & {
-        gap: ${size(20)};
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Title = styled('div', {
   label: 'Title',
   target: 'e-3-3',
-})(
-  () => css`
-    & {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: ${size(12)};
-    }
+})`
+  & {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  & > span {
+    padding: 0.375rem 0.75rem;
+    border-radius: 62.4375rem;
+    background: ${colors.fill.strong};
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+  }
+  & h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 2.625rem;
+    letter-spacing: -0.8px;
+  }
+  @media (max-width: 700px) {
     & > span {
-      padding: ${size(6)} ${size(12)};
-      border-radius: ${size(999)};
-      background: ${colors.fill.strong};
-      font-size: ${size(16)};
-      font-weight: 700;
-      line-height: ${size(24)};
+      font-size: 0.8125rem;
+      line-height: 1.25rem;
+      padding: 0.3125rem 0.625rem;
     }
     & h1 {
-      font-size: ${size(32)};
-      font-weight: 900;
-      line-height: ${size(42)};
-      letter-spacing: -0.8px;
+      font-size: 1.75rem;
+      line-height: 2.375rem;
     }
-    @media (max-width: 700px) {
-      & > span {
-        font-size: ${size(13)};
-        line-height: ${size(20)};
-        padding: ${size(5)} ${size(10)};
-      }
-    }
-    @media (max-width: 700px) {
-      & h1 {
-        font-size: ${size(28)};
-        line-height: ${size(38)};
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Statistics = styled('dl', {
   label: 'Statistics',
@@ -144,8 +127,8 @@ export const Statistics = styled('dl', {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: ${size(4)};
-      padding: 0 ${size(28)};
+      gap: 0.25rem;
+      padding: 0 1.75rem;
     }
     & > div + div {
       border-left: 1px solid ${theme.colors.line.alternative};
@@ -155,13 +138,13 @@ export const Statistics = styled('dl', {
     }
     & dt {
       color: ${theme.colors.label.assistive};
-      font-size: ${size(16)};
-      line-height: ${size(26)};
+      font-size: 1rem;
+      line-height: 1.625rem;
     }
     & dd {
       margin: 0;
-      font-size: ${size(24)};
-      line-height: ${size(32)};
+      font-size: 1.5rem;
+      line-height: 2rem;
       font-weight: 700;
       letter-spacing: -0.4px;
     }
@@ -169,34 +152,24 @@ export const Statistics = styled('dl', {
       & {
         width: 100%;
       }
-    }
-    @media (max-width: 700px) {
       & > div {
         flex: 1;
-        padding: 0 ${size(16)};
+        padding: 0 1rem;
         align-items: center;
       }
-    }
-    @media (max-width: 700px) {
       & > div:first-of-type {
         padding-left: 0;
       }
-    }
-    @media (max-width: 700px) {
       & > div:last-child {
         padding-right: 0;
       }
-    }
-    @media (max-width: 700px) {
       & dt {
-        font-size: ${size(13)};
-        line-height: ${size(22)};
+        font-size: 0.8125rem;
+        line-height: 1.375rem;
       }
-    }
-    @media (max-width: 700px) {
       & dd {
-        font-size: ${size(21)};
-        line-height: ${size(30)};
+        font-size: 1.3125rem;
+        line-height: 1.875rem;
       }
     }
   `,
@@ -210,40 +183,36 @@ export const Friends = styled('div', {
     & {
       position: absolute;
       top: 0;
-      left: ${size(163)};
+      left: 10.1875rem;
       display: flex;
       align-items: center;
-      gap: ${size(12)};
-      padding: ${size(10)} ${size(16)};
-      border-radius: ${size(14)} ${size(14)} ${size(14)} 0;
+      gap: 0.75rem;
+      padding: 0.625rem 1rem;
+      border-radius: 0.875rem 0.875rem 0.875rem 0;
       background: ${colors.fill.strong};
     }
     & p {
-      font-size: ${size(18)};
-      line-height: ${size(30)};
+      font-size: 1.125rem;
+      line-height: 1.875rem;
       color: ${theme.colors.label.neutral};
       white-space: nowrap;
     }
     & strong {
-      font-size: ${size(16)};
-      line-height: ${size(24)};
+      font-size: 1rem;
+      line-height: 1.5rem;
       color: ${colors.static.white};
     }
     @media (max-width: 1100px) {
       & {
-        left: ${size(155)};
-        gap: ${size(8)};
-        padding: ${size(10)} ${size(12)};
+        left: 9.6875rem;
+        gap: 0.5rem;
+        padding: 0.625rem 0.75rem;
       }
-    }
-    @media (max-width: 1100px) {
       & p {
-        font-size: ${size(14)};
+        font-size: 0.875rem;
       }
-    }
-    @media (max-width: 1100px) {
       & strong {
-        font-size: ${size(14)};
+        font-size: 0.875rem;
       }
     }
     @media (max-width: 700px) {
@@ -251,17 +220,13 @@ export const Friends = styled('div', {
         position: static;
         align-self: flex-start;
         width: 100%;
-        padding: ${size(12)};
+        padding: 0.75rem;
       }
-    }
-    @media (max-width: 700px) {
       & p {
         font-size: 14px;
         line-height: 22px;
         white-space: normal;
       }
-    }
-    @media (max-width: 700px) {
       & strong {
         font-size: 14px;
       }
@@ -284,20 +249,20 @@ export const Avatars = styled('div', {
       border-radius: 50%;
     }
     & > span + span {
-      margin-left: ${size(-10)};
+      margin-left: -0.625rem;
     }
     & img {
-      width: ${size(36)};
-      height: ${size(36)};
+      width: 2.25rem;
+      height: 2.25rem;
     }
     & ${MoreFriends} {
-      width: ${size(40)};
-      height: ${size(40)};
+      width: 2.5rem;
+      height: 2.5rem;
       display: grid;
       place-items: center;
       border: 2px solid ${theme.colors.background.normal};
       background: ${colors.fill.strong};
-      font-size: ${size(16)};
+      font-size: 1rem;
       font-weight: 700;
       color: ${theme.colors.label.neutral};
     }
@@ -305,18 +270,14 @@ export const Avatars = styled('div', {
       & > span {
         padding: 2px;
       }
-    }
-    @media (max-width: 700px) {
       & img {
-        width: ${size(26)};
-        height: ${size(26)};
+        width: 1.625rem;
+        height: 1.625rem;
       }
-    }
-    @media (max-width: 700px) {
       & ${MoreFriends} {
-        width: ${size(30)};
-        height: ${size(30)};
-        font-size: ${size(12)};
+        width: 1.875rem;
+        height: 1.875rem;
+        font-size: 0.75rem;
       }
     }
   `,

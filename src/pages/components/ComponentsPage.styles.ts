@@ -6,7 +6,7 @@ export const Root = styled.div`
 `;
 
 export const Main = styled.main`
-  max-width: 1280px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
   padding: 3rem 2rem 4rem;
   h1 {
@@ -97,13 +97,11 @@ export const Headers = styled.div`
 
 export const Banner = styled.div`
   position: relative;
-  height: min(21rem, calc((100vw - 64px) * 0.38889));
+  width: min(100%, 58rem);
+  aspect-ratio: 1008 / 392;
   margin-bottom: 1.5rem;
   overflow: hidden;
   border-radius: 1.5rem;
-  @media (max-width: 700px) {
-    height: calc((100vw - 2rem) * 0.38889);
-  }
 `;
 
 export const Range = styled.div`

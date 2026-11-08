@@ -43,8 +43,6 @@ export const Sample = styled('div', {
         padding: 0.625rem;
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & pre {
         padding: 0.625rem;
         font-size: 0.75rem;
@@ -73,8 +71,6 @@ export const Panel = styled('section', {
       & {
         width: 100%;
       }
-    }
-    @media (max-width: 1100px) {
       & {
         height: 37.5rem;
       }
@@ -137,13 +133,9 @@ export const Tabs = styled('div', {
       & {
         padding-inline: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       &::before {
         left: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & > button {
         padding-inline: 1rem;
       }
@@ -232,37 +224,25 @@ export const Body = styled('div', {
         padding: 1.25rem 1rem 1.5rem;
         gap: 1.5rem;
       }
-    }
-    @media (max-width: 650px) {
       & h1 {
         font-size: 1.3125rem;
         line-height: 1.875rem;
         padding-bottom: 1.25rem;
       }
-    }
-    @media (max-width: 650px) {
       & h1 > span {
         font-size: 0.9375rem;
       }
-    }
-    @media (max-width: 650px) {
       & h2 {
         font-size: 1.0625rem;
       }
-    }
-    @media (max-width: 650px) {
       & p {
         font-size: 0.875rem;
         line-height: 1.5rem;
       }
-    }
-    @media (max-width: 650px) {
       & li {
         font-size: 0.75rem;
         line-height: 1.25rem;
       }
-    }
-    @media (max-width: 650px) {
       & ul {
         padding: 0.75rem;
       }
@@ -272,8 +252,6 @@ export const Body = styled('div', {
         padding: 1.25rem 1.5rem;
         gap: 1.5rem;
       }
-    }
-    @media (min-width: 1101px) {
       & h1 {
         padding-bottom: 1.25rem;
       }
@@ -284,20 +262,18 @@ export const Body = styled('div', {
 export const Samples = styled('div', {
   label: 'Samples',
   target: 'e-h-4',
-})(
-  () => css`
+})`
+  & {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+  @media (max-width: 650px) {
     & {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 0.75rem;
+      gap: 0.625rem;
     }
-    @media (max-width: 650px) {
-      & {
-        gap: 0.625rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Limits = styled('div', {
   label: 'Limits',
@@ -329,8 +305,6 @@ export const Limits = styled('div', {
       & > span {
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & strong {
         font-size: 0.75rem;
       }

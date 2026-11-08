@@ -58,14 +58,10 @@ export const Code = styled('div', {
         line-height: 1.5rem;
         height: 13.125rem;
       }
-    }
-    @media (max-width: 700px) {
       & h3 {
         font-size: 0.8125rem;
         line-height: 1.375rem;
       }
-    }
-    @media (max-width: 700px) {
       & button {
         font-size: 0.8125rem;
         line-height: 1.375rem;
@@ -77,48 +73,42 @@ export const Code = styled('div', {
 export const Section = styled('section', {
   label: 'Section',
   target: 'e-6-1',
-})(
-  () => css`
-    & {
-      display: flex;
-      flex-direction: column;
-      gap: 0.875rem;
+})`
+  & {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+  & > p {
+    color: ${colors.label.normal};
+    font-size: 1.125rem;
+    line-height: 1.875rem;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 700px) {
+    & h2 {
+      font-size: 1.3125rem;
+      line-height: 1.875rem;
     }
     & > p {
-      color: ${colors.label.normal};
-      font-size: 1.125rem;
-      line-height: 1.875rem;
-      overflow-wrap: anywhere;
+      font-size: 0.9375rem;
+      line-height: 1.6875rem;
     }
-    @media (max-width: 700px) {
-      & h2 {
-        font-size: 1.3125rem;
-        line-height: 1.875rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & > p {
-        font-size: 0.9375rem;
-        line-height: 1.6875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Grid = styled('div', {
   label: 'Grid',
   target: 'e-6-2',
-})(
-  () => css`
+})`
+  & {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 700px) {
     & {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 1.5rem;
+      gap: 1rem;
     }
-    @media (max-width: 700px) {
-      & {
-        gap: 1rem;
-      }
-    }
-  `,
-);
+  }
+`;

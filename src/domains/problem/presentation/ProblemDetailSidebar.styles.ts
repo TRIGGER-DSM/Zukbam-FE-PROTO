@@ -1,4 +1,3 @@
-import { detailSize as size } from './problemDetailSize';
 import { colors } from '../../../shared/styles/colors';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
@@ -13,23 +12,23 @@ export const Panel = styled('aside', {
 })(
   ({ theme }) => css`
     & {
-      padding: ${size(32)};
+      padding: 2rem;
       display: flex;
       flex-direction: column;
-      gap: ${size(24)};
-      border-radius: ${size(20)};
+      gap: 1.5rem;
+      border-radius: 1.25rem;
       background: ${theme.colors.background.elevated};
     }
     @media (max-width: 1600px) {
       & {
-        padding: ${size(28)};
+        padding: 1.75rem;
       }
     }
     @media (max-width: 700px) {
       & {
-        padding: ${size(24)};
-        border-radius: ${size(16)};
-        gap: ${size(20)};
+        padding: 1.5rem;
+        border-radius: 1rem;
+        gap: 1.25rem;
       }
     }
   `,
@@ -44,33 +43,33 @@ export const Difficulty = styled('div', {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: ${size(10)};
+      gap: 0.625rem;
       text-align: center;
     }
     & h2 {
-      font-size: ${size(16)};
+      font-size: 1rem;
       font-weight: 700;
-      line-height: ${size(24)};
+      line-height: 1.5rem;
       color: ${theme.colors.label.alternative};
     }
     & > img {
-      width: ${size(96)};
-      height: ${size(96)};
+      width: 6rem;
+      height: 6rem;
     }
     & > strong {
-      font-size: ${size(24)};
+      font-size: 1.5rem;
       font-weight: 700;
-      line-height: ${size(32)};
+      line-height: 2rem;
     }
     & > p {
-      font-size: ${size(18)};
-      line-height: ${size(30)};
+      font-size: 1.125rem;
+      line-height: 1.875rem;
       color: ${theme.colors.label.alternative};
     }
     @media (max-width: 1600px) {
       & > p {
-        font-size: ${size(16)};
-        line-height: ${size(26)};
+        font-size: 1rem;
+        line-height: 1.625rem;
       }
     }
   `,
@@ -83,12 +82,12 @@ export const Levels = styled('div', {
   ({ theme }) => css`
     & {
       display: flex;
-      gap: ${size(6)};
+      gap: 0.375rem;
     }
     & i {
-      width: ${size(28)};
-      height: ${size(8)};
-      border-radius: ${size(4)};
+      width: 1.75rem;
+      height: 0.5rem;
+      border-radius: 0.25rem;
       background: ${theme.colors.fill.normal};
     }
   `,
@@ -118,18 +117,18 @@ export const Xp = styled('span', {
     & {
       display: flex;
       align-items: center;
-      gap: ${size(6)};
-      padding: ${size(6)} ${size(14)} ${size(6)} ${size(10)};
-      border-radius: ${size(999)};
+      gap: 0.375rem;
+      padding: 0.375rem 0.875rem 0.375rem 0.625rem;
+      border-radius: 62.4375rem;
       background: ${theme.colors.fill.normal};
-      font-size: ${size(16)};
+      font-size: 1rem;
       font-weight: 700;
-      line-height: ${size(24)};
+      line-height: 1.5rem;
       color: ${theme.colors.status.cautionary};
     }
     & img {
-      width: ${size(18)};
-      height: ${size(18)};
+      width: 1.125rem;
+      height: 1.125rem;
       object-fit: contain;
     }
   `,
@@ -143,8 +142,8 @@ export const Limits = styled('dl', {
     & {
       display: flex;
       flex-direction: column;
-      gap: ${size(12)};
-      padding-top: ${size(24)};
+      gap: 0.75rem;
+      padding-top: 1.5rem;
       border-top: 1px solid ${theme.colors.line.alternative};
       margin: 0;
     }
@@ -152,29 +151,27 @@ export const Limits = styled('dl', {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      gap: ${size(16)};
+      gap: 1rem;
     }
     & dt {
-      font-size: ${size(18)};
-      line-height: ${size(30)};
+      font-size: 1.125rem;
+      line-height: 1.875rem;
       color: ${theme.colors.label.alternative};
     }
     & dd {
       margin: 0;
-      font-size: ${size(18)};
+      font-size: 1.125rem;
       font-weight: 700;
-      line-height: ${size(26)};
+      line-height: 1.625rem;
       text-align: right;
       color: ${colors.label.normal};
     }
     @media (max-width: 700px) {
       & dt {
-        font-size: ${size(16)};
+        font-size: 1rem;
       }
-    }
-    @media (max-width: 700px) {
       & dd {
-        font-size: ${size(16)};
+        font-size: 1rem;
       }
     }
   `,
@@ -186,14 +183,14 @@ export const Write = styled('button', {
 })(
   ({ theme }) => css`
     & {
-      padding: ${size(14)} ${size(28)};
-      border-radius: ${size(14)};
+      padding: 0.875rem 1.75rem;
+      border-radius: 0.875rem;
       background: ${theme.colors.primary.normal};
       color: ${colors.static.white};
-      font-size: ${size(18)};
+      font-size: 1.125rem;
       font-weight: 700;
-      line-height: ${size(26)};
-      box-shadow: 0 ${size(4)} ${colors.primary.heavy};
+      line-height: 1.625rem;
+      box-shadow: 0 0.25rem ${colors.primary.heavy};
     }
     &:active {
       transform: translateY(2px);
@@ -201,7 +198,7 @@ export const Write = styled('button', {
     }
     @media (max-width: 700px) {
       & {
-        font-size: ${size(16)};
+        font-size: 1rem;
       }
     }
   `,
@@ -215,10 +212,10 @@ export const Locked = styled('div', {
     & {
       display: flex;
       align-items: center;
-      gap: ${size(12)};
-      padding: ${size(16)} ${size(20)};
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
       background: ${colors.fill.strong};
-      border-radius: ${size(20)};
+      border-radius: 1.25rem;
     }
     & > div {
       display: flex;
@@ -226,40 +223,36 @@ export const Locked = styled('div', {
       gap: 2px;
     }
     & > img {
-      width: ${size(20)};
-      height: ${size(20)};
+      width: 1.25rem;
+      height: 1.25rem;
     }
     & strong {
       color: ${theme.colors.label.neutral};
-      font-size: ${size(16)};
+      font-size: 1rem;
       font-weight: 700;
-      line-height: ${size(24)};
+      line-height: 1.5rem;
     }
     & p {
       color: ${theme.colors.label.alternative};
-      font-size: ${size(18)};
-      line-height: ${size(30)};
+      font-size: 1.125rem;
+      line-height: 1.875rem;
     }
     @media (max-width: 1600px) {
       & p {
-        font-size: ${size(16)};
-        line-height: ${size(26)};
+        font-size: 1rem;
+        line-height: 1.625rem;
       }
     }
     @media (max-width: 700px) {
       & {
-        padding: ${size(14)};
-        border-radius: ${size(14)};
+        padding: 0.875rem;
+        border-radius: 0.875rem;
       }
-    }
-    @media (max-width: 700px) {
       & p {
-        font-size: ${size(14)};
+        font-size: 0.875rem;
       }
-    }
-    @media (max-width: 700px) {
       & strong {
-        font-size: ${size(14)};
+        font-size: 0.875rem;
       }
     }
   `,

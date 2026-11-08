@@ -9,47 +9,41 @@ interface DayStyleProps {
 export const Content = styled('div', {
   label: 'Content',
   target: 'e-1-0',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  & h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 2.625rem;
+    letter-spacing: -0.05rem;
+    text-align: center;
+  }
+  @media (max-width: 700px) {
     & {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.875rem;
+      gap: 0.75rem;
     }
     & h2 {
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 2.625rem;
-      letter-spacing: -0.05rem;
-      text-align: center;
+      font-size: 1.5rem;
+      line-height: 2.125rem;
     }
-    @media (max-width: 700px) {
-      & {
-        gap: 0.75rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & h2 {
-        font-size: 1.5rem;
-        line-height: 2.125rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Art = styled('img', {
   label: 'Art',
   target: 'e-1-1',
-})(
-  () => css`
-    & {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 400 / 200;
-    }
-  `,
-);
+})`
+  & {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 400 / 200;
+  }
+`;
 
 export const Count = styled('strong', {
   label: 'Count',
@@ -121,8 +115,6 @@ export const Week = styled('ul', {
       & {
         gap: 0.25rem;
       }
-    }
-    @media (max-width: 700px) {
       & li {
         font-size: 0.75rem;
       }
@@ -168,25 +160,23 @@ export const Day = styled('li', {
 export const DayMark = styled('span', {
   label: 'DayMark',
   target: 'e-1-6',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    border: 2px dashed ${colors.line.normal};
+  }
+  @media (max-width: 700px) {
     & {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: 999px;
-      border: 2px dashed ${colors.line.normal};
+      width: 1.875rem;
+      height: 1.875rem;
     }
-    @media (max-width: 700px) {
-      & {
-        width: 1.875rem;
-        height: 1.875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Best = styled('p', {
   label: 'Best',
@@ -214,18 +204,16 @@ export const Best = styled('p', {
 export const Actions = styled('div', {
   label: 'Actions',
   target: 'e-1-8',
-})(
-  () => css`
-    & {
-      align-self: stretch;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      padding-top: 0.625rem;
-    }
-  `,
-);
+})`
+  & {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.625rem;
+  }
+`;
 
 export const Continue = styled('button', {
   label: 'Continue',

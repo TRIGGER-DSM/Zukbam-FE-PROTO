@@ -117,7 +117,7 @@ export default function ComponentsPage() {
           <h2>App Header</h2>
           <S.Headers>
             {['홈', '문제', '랭킹', '소셜'].map((active) => (
-              <AppHeader key={active} active={active} onNavigate={(label) => notify(label)} />
+              <AppHeader key={active} active={active} />
             ))}
           </S.Headers>
         </S.Section>

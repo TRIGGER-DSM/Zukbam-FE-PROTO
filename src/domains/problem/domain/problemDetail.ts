@@ -3,9 +3,9 @@ import type { Difficulty } from './problem';
 export interface ProblemDetail {
   id: number;
   title: string;
-  acceptance: number;
-  submissions: number;
-  solvedCount: number;
+  acceptance?: number;
+  submissions?: number;
+  solvedCount?: number;
   description: string;
   rules: string[];
   objective: string;
@@ -17,7 +17,7 @@ export interface ProblemDetail {
   }[];
   difficulty: Difficulty;
   difficultyDescription: string;
-  xp: number;
+  xp?: number;
   timeLimit: string;
   memoryLimit: string;
   category: string;

@@ -23,12 +23,15 @@ export function ProblemDetailSidebar({ problem, onWrite }: ProblemDetailSidebarP
           ))}
         </S.Levels>
         <p>
-          5단계 중 {level + 1}단계 · {problem.difficultyDescription}
+          5단계 중 {level + 1}단계
+          {problem.difficultyDescription && ` · ${problem.difficultyDescription}`}
         </p>
-        <S.Xp>
-          <ProblemAsset name="xp" />
-          해결하면 +{problem.xp} XP
-        </S.Xp>
+        {problem.xp !== undefined && (
+          <S.Xp>
+            <ProblemAsset name="xp" />
+            해결하면 +{problem.xp} XP
+          </S.Xp>
+        )}
       </S.Difficulty>
       <S.Limits>
         <div>

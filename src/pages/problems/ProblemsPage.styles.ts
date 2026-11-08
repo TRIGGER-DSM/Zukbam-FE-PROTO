@@ -7,16 +7,19 @@ interface SortArrowStyleProps {
   $descending?: boolean;
 }
 
-export const sPage = styled('main', {
-  label: 'sPage',
+export const Page = styled('main', {
+  label: 'Page',
   target: 'e-l-0',
 })(
   ({ theme }) => css`
     & {
-      padding: 3rem 5rem 5rem;
+      width: 100%;
+      max-width: var(--page-max-width);
+      margin-inline: auto;
+      padding: clamp(1.5rem, 3vw, 2.5rem) var(--page-gutter) 3rem;
       display: flex;
       flex-direction: column;
-      gap: 4rem;
+      gap: var(--section-gap);
     }
     & input {
       font-family: inherit;
@@ -44,93 +47,42 @@ export const sPage = styled('main', {
       outline: 2px solid ${theme.colors.primary.strong};
       outline-offset: 0.1875rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        padding-inline: 2.5rem;
-      }
-    }
-    @media (max-width: 1200px) {
-      & {
-        padding: 2rem;
-        gap: 2.5rem;
-      }
-    }
-    @media (max-width: 550px) {
-      & {
-        padding: 1.5rem 1rem 2.5rem;
-        gap: 2rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        max-width: var(--page-max-width);
-        margin-inline: auto;
-        padding-inline: var(--page-gutter);
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        padding-block: 1.75rem 3rem;
-        gap: 2.5rem;
-      }
-    }
   `,
 );
 
 export const Browse = styled('div', {
   label: 'Browse',
   target: 'e-l-1',
-})(
-  () => css`
+})`
+  & {
+    display: grid;
+    grid-template-columns: clamp(16rem, 25%, 21rem) minmax(0, 1fr);
+    gap: var(--section-gap);
+  }
+  @media (max-width: 850px) {
     & {
-      display: grid;
-      grid-template-columns: 25rem minmax(0, 1fr);
-      gap: 2.5rem;
+      grid-template-columns: 1fr;
     }
-    @media (max-width: 1600px) {
-      & {
-        grid-template-columns: 21.25rem minmax(0, 1fr);
-        gap: 1.5rem;
-      }
-    }
-    @media (max-width: 1200px) {
-      & {
-        grid-template-columns: 17.5rem minmax(0, 1fr);
-        gap: 1.25rem;
-      }
-    }
-    @media (max-width: 850px) {
-      & {
-        grid-template-columns: 1fr;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        gap: 1.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Results = styled('section', {
   label: 'Results',
   target: 'e-l-2',
-})(
-  () => css`
+})`
+  & {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-self: start;
+  }
+  @media (max-width: 550px) {
     & {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      align-self: start;
+      gap: 1.25rem;
     }
-    @media (max-width: 550px) {
-      & {
-        gap: 1.25rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Search = styled.form`
   margin: 0;
@@ -220,46 +172,14 @@ export const Sort = styled('div', {
       font-size: 1rem;
       line-height: 1.625rem;
     }
-    & button {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      position: relative;
-      padding-bottom: 0.5rem;
-      font-size: 0.875rem;
-      font-weight: 700;
-      line-height: 1.25rem;
-      color: ${theme.colors.label.alternative};
-      white-space: nowrap;
-    }
-    & button[aria-pressed='true'] {
-      color: ${colors.static.white};
-    }
-    & button[aria-pressed='true']::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      border-radius: 1px;
-      background: ${theme.colors.primary.normal};
-    }
     @media (max-width: 1200px) {
       & {
         gap: 0.875rem;
         overflow-x: auto;
         padding-bottom: 2px;
       }
-    }
-    @media (max-width: 1200px) {
       & > strong {
         flex-shrink: 0;
-      }
-    }
-    @media (max-width: 1200px) {
-      & button {
-        font-size: 0.75rem;
       }
     }
     @media (max-width: 550px) {
@@ -267,8 +187,6 @@ export const Sort = styled('div', {
         gap: 0.875rem;
         padding-top: 1.25rem;
       }
-    }
-    @media (max-width: 550px) {
       & > strong {
         font-size: 0.875rem;
       }
@@ -276,22 +194,41 @@ export const Sort = styled('div', {
   `,
 );
 
+export const SortButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  color: ${({ theme }) => theme.colors.label.alternative};
+  white-space: nowrap;
+
+  &[aria-pressed='true'] {
+    color: ${colors.static.white};
+  }
+
+  &[aria-pressed='true']::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    border-radius: 1px;
+    background: ${({ theme }) => theme.colors.primary.normal};
+  }
+
+  @media (max-width: 1200px) {
+    font-size: 0.75rem;
+  }
+`;
+
 export const SortArrow = styled(ProblemAsset, {
-  label: 'SortArrow',
-  target: 'e-l-6',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})<SortArrowStyleProps>(
-  ({ $descending }) => css`
-    ${
-      $descending === true &&
-      css`
-        & {
-          rotate: 180deg;
-        }
-      `
-    }
-  `,
-);
+})<SortArrowStyleProps>`
+  rotate: ${({ $descending }) => ($descending ? '180deg' : 'none')};
+`;
 
 export const Pagination = styled('nav', {
   label: 'Pagination',
@@ -305,26 +242,6 @@ export const Pagination = styled('nav', {
       gap: 0.375rem;
       padding-top: 0.5rem;
     }
-    & button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 0.75rem;
-      background: ${theme.colors.fill.normal};
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: ${theme.colors.label.neutral};
-    }
-    & button[aria-current='page'] {
-      color: ${colors.label.onPrimary};
-      background: ${theme.colors.primary.normal};
-    }
-    & button:disabled {
-      cursor: default;
-      opacity: 0.6;
-    }
     & > span {
       color: ${theme.colors.label.alternative};
       font-size: 0.875rem;
@@ -334,19 +251,39 @@ export const Pagination = styled('nav', {
       & {
         gap: 0.3125rem;
       }
-    }
-    @media (max-width: 550px) {
-      & button {
-        width: 2rem;
-        height: 2.125rem;
-        border-radius: 0.625rem;
-        font-size: 0.75rem;
-      }
-    }
-    @media (max-width: 550px) {
       & > span {
         font-size: 0.75rem;
       }
     }
   `,
 );
+
+export const PageButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: ${({ theme }) => theme.colors.fill.normal};
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.label.neutral};
+
+  &[aria-current='page'] {
+    color: ${colors.label.onPrimary};
+    background: ${({ theme }) => theme.colors.primary.normal};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 550px) {
+    width: 2rem;
+    height: 2.125rem;
+    border-radius: 0.625rem;
+    font-size: 0.75rem;
+  }
+`;

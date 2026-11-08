@@ -53,13 +53,9 @@ export const Page = styled('main', {
       & ~ ${SiteLayoutStyles.Footer} ${SiteLayoutStyles.Brand} > small {
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & ~ ${SiteLayoutStyles.Footer} ${SiteLayoutStyles.Github} {
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & ~ ${SiteLayoutStyles.Footer} ${SiteLayoutStyles.MemberName} > span {
         font-size: 0.75rem;
       }
@@ -77,7 +73,9 @@ export const ProblemBar = styled('div', {
       align-items: center;
       justify-content: space-between;
       gap: 1.25rem;
-      padding: 1.25rem 5rem;
+      width: min(calc(100% - 2 * var(--page-gutter)), 110rem);
+      margin-inline: auto;
+      padding-block: 0.875rem;
     }
     & nav {
       display: flex;
@@ -93,38 +91,22 @@ export const ProblemBar = styled('div', {
     & nav > span:nth-of-type(2) {
       color: ${theme.colors.label.alternative};
     }
-    @media (max-width: 1600px) {
-      & {
-        padding-inline: 2.5rem;
-      }
-    }
     @media (max-width: 1100px) {
       & {
-        padding: 1.5rem 2rem 0.75rem;
         flex-wrap: wrap;
       }
     }
     @media (max-width: 650px) {
       & {
-        padding: 1.25rem 1rem 0.5rem;
+        padding-block: 1.25rem 0.5rem;
         gap: 0.875rem;
       }
-    }
-    @media (max-width: 650px) {
       & nav {
         flex-wrap: wrap;
         gap: 0.375rem;
       }
-    }
-    @media (max-width: 650px) {
       & nav > span {
         font-size: 0.75rem;
-      }
-    }
-    @media (min-width: 1101px) {
-      & {
-        padding-block: 0.875rem;
-        padding-inline: 2rem;
       }
     }
   `,
@@ -159,21 +141,19 @@ export const ProblemTitle = styled(Link, {
   label: 'ProblemTitle',
   target: 'e-p-4',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
+})`
+  & {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    white-space: nowrap;
+  }
+  @media (max-width: 650px) {
     & {
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.5rem;
-      white-space: nowrap;
+      font-size: 0.875rem;
     }
-    @media (max-width: 650px) {
-      & {
-        font-size: 0.875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Navigation = styled('div', {
   label: 'Navigation',
@@ -208,8 +188,6 @@ export const Navigation = styled('div', {
         width: 100%;
         justify-content: space-between;
       }
-    }
-    @media (max-width: 650px) {
       & > button {
         padding: 0.375rem 0.625rem;
       }
@@ -245,31 +223,21 @@ export const Workspace = styled('div', {
     & {
       display: grid;
       grid-template-columns: minmax(0, var(--problem-width)) 1rem minmax(0, 1fr);
-      padding: 0.75rem 5rem 3rem;
+      width: min(calc(100% - 2 * var(--page-gutter)), 110rem);
+      margin-inline: auto;
+      padding-block: 0.75rem 2rem;
       align-items: start;
-    }
-    @media (max-width: 1600px) {
-      & {
-        padding-inline: 2.5rem;
-      }
     }
     @media (max-width: 1100px) {
       & {
         display: flex;
         flex-direction: column;
         gap: 1.5rem;
-        padding: 0.75rem 2rem 2rem;
       }
     }
     @media (max-width: 650px) {
       & {
-        padding: 0.75rem 1rem 2rem;
         gap: 1.25rem;
-      }
-    }
-    @media (min-width: 1101px) {
-      & {
-        padding: 0.5rem 2rem 2rem;
       }
     }
   `,
@@ -333,8 +301,6 @@ export const Editor = styled('section', {
       & {
         width: 100%;
       }
-    }
-    @media (max-width: 1100px) {
       & {
         height: 48.75rem;
       }
@@ -424,8 +390,6 @@ export const Language = styled('div', {
         width: 100%;
         justify-content: space-between;
       }
-    }
-    @media (max-width: 650px) {
       & select {
         font-size: 0.75rem;
       }
@@ -485,8 +449,6 @@ export const Tools = styled('div', {
       & > span {
         display: none;
       }
-    }
-    @media (max-width: 1600px) {
       & > i {
         margin-inline: 0.25rem;
       }
@@ -501,19 +463,13 @@ export const Tools = styled('div', {
         width: 100%;
         justify-content: flex-end;
       }
-    }
-    @media (max-width: 650px) {
       & > span {
         margin-right: auto;
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & > strong {
         font-size: 0.875rem;
       }
-    }
-    @media (max-width: 650px) {
       & > ${Reset} {
         font-size: 0.75rem;
       }
@@ -663,14 +619,10 @@ export const RunBar = styled('div', {
         padding: 0.75rem;
         flex-wrap: wrap;
       }
-    }
-    @media (max-width: 650px) {
       & > p {
         flex-basis: 100%;
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 650px) {
       & > button {
         margin-left: auto;
         padding: 0.625rem 1.25rem;

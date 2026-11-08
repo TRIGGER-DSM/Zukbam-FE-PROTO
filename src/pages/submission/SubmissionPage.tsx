@@ -1,17 +1,24 @@
 import * as S from './SubmissionPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
-import { getProblemDetail } from '../../domains/problem/application/getProblemDetail';
-import { problemDetailFixtureRepository } from '../../domains/problem/infrastructure/problemDetailFixture';
+import { problemDetailOptions } from '../../domains/problem/infrastructure/problemApi';
+import {
+  submitSolution,
+  solutionIdFromLocation,
+} from '../../domains/submission/infrastructure/solutionApi';
+import { ApiFeedback } from '../../shared/ui/ApiFeedback';
+import type { ProblemDetail } from '../../domains/problem/domain/problemDetail';
 import {
   codeLanguages,
   clampFontSize,
   formatElapsedTime,
   type CodeLanguage,
   type ConsoleTab,
+  type SubmissionTab,
 } from '../../domains/submission/domain/submission';
 import { codeTemplates } from '../../domains/submission/infrastructure/codeTemplates';
 import { CodeEditor } from '../../domains/submission/presentation/CodeEditor';
@@ -31,22 +38,63 @@ function clampPanelWidth(width: number) {
 
 export function SubmissionPage() {
   const { problemId } = useParams();
-  const problem = getProblemDetail(problemDetailFixtureRepository, problemId);
+  const problemQuery = useQuery(problemDetailOptions(Number(problemId)));
+  const problem = problemQuery.data;
+  if (!problem) {
+    return (
+      <SiteLayout>
+        <S.Unavailable id="main">
+          <h1>풀이 제출</h1>
+          <ApiFeedback pending={problemQuery.isLoading} error={problemQuery.error} />
+          <Link to="/problems">문제 목록으로</Link>
+        </S.Unavailable>
+      </SiteLayout>
+    );
+  }
+  return <SubmissionWorkspace key={problem.id} problem={problem} />;
+}
+
+interface SubmissionWorkspaceProps {
+  problem: ProblemDetail;
+}
+
+function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [language, setLanguage] = useState<CodeLanguage>('python');
-  const [drafts, setDrafts] = useState({
-    ...codeTemplates,
-  });
+  const [drafts, setDrafts] = useState({ ...codeTemplates });
   const [fontSize, setFontSize] = useState(14);
-  const [split, setSplit] = useState(panelWidth.initial);
-  const [elapsed, setElapsed] = useState(754);
+  const [problemPanelWidth, setProblemPanelWidth] = useState(panelWidth.initial);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [consoleTab, setConsoleTab] = useState<ConsoleTab>('result');
-  const [testInput, setTestInput] = useState(problem?.examples[0]?.input ?? '');
+  const firstExample = problem.examples[0];
+  const [testInput, setTestInput] = useState(firstExample?.input ?? '');
   const [runMessage, setRunMessage] = useState('');
-  const [pending, setPending] = useState<string | null>(null);
-  const workspace = useRef<HTMLDivElement>(null);
+  const [previewTitle, setPreviewTitle] = useState<string | null>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
+  const [problemTab, setProblemTab] = useState<SubmissionTab>('problem');
+  const source = drafts[language];
+  const hasSource = source.trim().length > 0;
+  const matchesExample = firstExample && testInput.trim() === firstExample.input.trim();
+  const submission = useMutation({
+    mutationFn: () => submitSolution(problem.id, language, source),
+    onSuccess: (response) => {
+      void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
+      void queryClient.invalidateQueries({ queryKey: ['growth'] });
+      void queryClient.invalidateQueries({ queryKey: ['streak'] });
+      const solutionId = solutionIdFromLocation(response);
+      if (solutionId) {
+        navigate(`/problems/${problem.id}/result?solutionId=${solutionId}`);
+        return;
+      }
+      setRunMessage('풀이를 제출했어요. 제출 기록에서 채점 결과를 확인할 수 있어요.');
+      setProblemTab('history');
+    },
+    onError: (error) => setRunMessage(error.message),
+  });
 
   useEffect(() => {
-    const timer = setInterval(() => setElapsed((current) => current + 1), 1000);
+    const timer = setInterval(() => setElapsedSeconds((seconds) => seconds + 1), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -61,17 +109,22 @@ export function SubmissionPage() {
 
   function runCode() {
     setConsoleTab('result');
-    setRunMessage(
-      drafts[language].trim() ? '코드 실행 기능은 준비 중이에요.' : '실행할 코드를 입력해 주세요.',
-    );
+    setRunMessage(hasSource ? '코드 실행 기능은 준비 중이에요.' : '실행할 코드를 입력해 주세요.');
+  }
+
+  function handleSubmit() {
+    setConsoleTab('result');
+    setRunMessage('');
+    submission.mutate();
   }
 
   function resizePanel(event: PointerEvent<HTMLDivElement>) {
-    if (!event.currentTarget.hasPointerCapture(event.pointerId) || !workspace.current) return;
+    const workspace = workspaceRef.current;
+    if (!event.currentTarget.hasPointerCapture(event.pointerId) || !workspace) return;
 
-    const bounds = workspace.current.getBoundingClientRect();
-    const width = ((event.clientX - bounds.left) / bounds.width) * 100;
-    setSplit(clampPanelWidth(width));
+    const bounds = workspace.getBoundingClientRect();
+    const widthPercent = ((event.clientX - bounds.left) / bounds.width) * 100;
+    setProblemPanelWidth(clampPanelWidth(widthPercent));
   }
 
   function stopResizing(event: PointerEvent<HTMLDivElement>) {
@@ -85,23 +138,12 @@ export function SubmissionPage() {
 
     event.preventDefault();
     const step = event.key === 'ArrowLeft' ? -panelWidth.step : panelWidth.step;
-    setSplit((current) => clampPanelWidth(current + step));
+    setProblemPanelWidth((currentWidth) => clampPanelWidth(currentWidth + step));
   }
 
   const selectedLanguage = codeLanguages.find((item) => item.id === language)!;
-  if (!problem) {
-    return (
-      <SiteLayout onNavigate={setPending}>
-        <S.Unavailable id="main">
-          <h1>풀이를 준비 중이에요</h1>
-          <Link to="/problems">문제 목록으로</Link>
-        </S.Unavailable>
-      </SiteLayout>
-    );
-  }
-
   return (
-    <SiteLayout onNavigate={setPending}>
+    <SiteLayout>
       <S.Page id="main">
         <S.ProblemBar>
           <nav aria-label="현재 문제">
@@ -114,20 +156,20 @@ export function SubmissionPage() {
             </S.ProblemTitle>
           </nav>
           <S.Navigation>
-            <S.Elapsed>풀이 시간 {formatElapsedTime(elapsed)}</S.Elapsed>
-            <button onClick={() => setPending('이전 문제')}>‹ 이전 문제</button>
-            <button onClick={() => setPending('다음 문제')}>다음 문제 ›</button>
+            <S.Elapsed>풀이 시간 {formatElapsedTime(elapsedSeconds)}</S.Elapsed>
+            <button onClick={() => setPreviewTitle('이전 문제')}>‹ 이전 문제</button>
+            <button onClick={() => setPreviewTitle('다음 문제')}>다음 문제 ›</button>
           </S.Navigation>
         </S.ProblemBar>
-        <S.Workspace ref={workspace} $problemWidth={`${split}%`}>
-          <SubmissionProblemPanel problem={problem} />
+        <S.Workspace ref={workspaceRef} $problemWidth={`${problemPanelWidth}%`}>
+          <SubmissionProblemPanel problem={problem} tab={problemTab} onTabChange={setProblemTab} />
           <S.Resizer
             role="separator"
             aria-label="문제 패널 너비"
             aria-orientation="vertical"
             aria-valuemin={panelWidth.min}
             aria-valuemax={panelWidth.max}
-            aria-valuenow={Math.round(split)}
+            aria-valuenow={Math.round(problemPanelWidth)}
             tabIndex={0}
             onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
             onPointerMove={resizePanel}
@@ -177,7 +219,7 @@ export function SubmissionPage() {
               </S.Tools>
             </S.Toolbar>
             <CodeEditor
-              source={drafts[language]}
+              source={source}
               language={language}
               fontSize={fontSize}
               onChange={updateSource}
@@ -212,9 +254,7 @@ export function SubmissionPage() {
                       onChange={(event) => setTestInput(event.target.value)}
                       spellCheck={false}
                     />
-                    {testInput.trim() === problem.examples[0]?.input.trim() && (
-                      <p>예제 예상 출력: {problem.examples[0]?.output}</p>
-                    )}
+                    {matchesExample && <p>예제 예상 출력: {firstExample.output}</p>}
                   </>
                 ) : (
                   <p role="status">{runMessage}</p>
@@ -224,16 +264,21 @@ export function SubmissionPage() {
             <S.RunBar>
               <p>
                 <SubmissionAsset name="streak" />
-                오늘 제출하면 13일 연속 풀이가 돼요
+                {submission.isPending
+                  ? '풀이를 제출하고 있어요.'
+                  : '풀이가 준비되면 제출해 주세요.'}
               </p>
               <button onClick={runCode}>코드 실행</button>
+              <button disabled={submission.isPending || !hasSource} onClick={handleSubmit}>
+                제출하기
+              </button>
             </S.RunBar>
           </S.Editor>
         </S.Workspace>
       </S.Page>
-      {pending && (
-        <PreviewDialog title={pending} onClose={() => setPending(null)}>
-          <UI.Description>{pending}는 준비 중이에요.</UI.Description>
+      {previewTitle && (
+        <PreviewDialog title={previewTitle} onClose={() => setPreviewTitle(null)}>
+          <UI.Description>{previewTitle}는 준비 중이에요.</UI.Description>
         </PreviewDialog>
       )}
     </SiteLayout>

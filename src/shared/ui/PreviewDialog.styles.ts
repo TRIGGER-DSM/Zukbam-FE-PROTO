@@ -28,28 +28,9 @@ export const Dialog = styled('dialog', {
       & {
         padding: 1.375rem;
       }
-    }
-    @media (max-width: 700px) {
       & h2 {
         font-size: 1.1875rem;
       }
-    }
-  `,
-);
-
-export const Close = styled('button', {
-  label: 'Close',
-  target: 'e-r-1',
-})(
-  ({ theme }) => css`
-    & {
-      display: block;
-      margin: 1.5rem 0 0 auto;
-      padding: 0.625rem 1.5rem;
-      border-radius: 0.625rem;
-      background: ${theme.colors.primary.normal};
-      color: ${colors.label.onPrimary};
-      font-weight: 700;
     }
   `,
 );

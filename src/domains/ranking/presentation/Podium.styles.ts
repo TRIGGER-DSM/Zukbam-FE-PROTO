@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { RankingAsset } from './RankingAsset';
-import { rankingScale as scale } from './rankingSize';
 
 interface PlaceStyleProps {
   $place?: number;
@@ -19,37 +18,33 @@ interface LayerStyleProps {
 export const Scene = styled('section', {
   label: 'Scene',
   target: 'e-c-0',
-})(
-  () => css`
+})`
+  & {
+    height: 47.7273cqw;
+    position: relative;
+    pointer-events: none;
+  }
+  @media (max-width: 1250px) {
     & {
-      height: 47.7273cqw;
-      position: relative;
-      pointer-events: none;
+      height: 65.5909cqw;
+      overflow: hidden;
     }
-    @media (max-width: 1250px) {
-      & {
-        height: 65.5909cqw;
-        overflow: hidden;
-      }
+  }
+  @media (max-width: 900px) {
+    & {
+      height: 75.9091cqw;
     }
-    @media (max-width: 900px) {
-      & {
-        height: 75.9091cqw;
-      }
+  }
+  @media (max-width: 700px) {
+    & {
+      height: 62cqw;
+      overflow: hidden;
     }
-    @media (max-width: 700px) {
-      & {
-        height: 62cqw;
-        overflow: hidden;
-      }
+    & {
+      height: 87.84cqw;
     }
-    @media (max-width: 700px) {
-      & {
-        height: 87.84cqw;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Canvas = styled.div`
   position: absolute;
@@ -71,29 +66,25 @@ export const StageArt = styled(RankingAsset, {
   label: 'StageArt',
   target: 'e-c-1',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
+})`
+  & {
+    position: absolute;
+    width: 100%;
+    height: auto;
+    inset: 0;
+  }
+  @media (max-width: 700px) {
     & {
-      position: absolute;
-      width: 100%;
-      height: auto;
-      inset: 0;
+      width: 135%;
+      left: -10%;
     }
-    @media (max-width: 700px) {
-      & {
-        width: 135%;
-        left: -10%;
-      }
+    & {
+      width: 205%;
+      left: -33.3%;
+      top: -10cqw;
     }
-    @media (max-width: 700px) {
-      & {
-        width: 205%;
-        left: -33.3%;
-        top: -10cqw;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Place = styled('div', {
   label: 'Place',
@@ -373,7 +364,7 @@ export const Badge = styled('article', {
       $place === 1 &&
       css`
         & ${User} > strong {
-          font-size: ${scale(20)};
+          font-size: 1.25rem;
           text-shadow: 0 1.5px 2px #9a530099;
         }
       `
@@ -647,89 +638,79 @@ export const Layer = styled(RankingAsset, {
 export const CrownNumber = styled('strong', {
   label: 'CrownNumber',
   target: 'e-c-5',
-})(
-  () => css`
-    & {
-      position: absolute;
-      left: 48.7028%;
-      top: 12.62%;
-      font-size: 1.0227cqw;
-      font-weight: 900;
-      text-shadow: 0 1.5px #8e9caa;
-      line-height: 1.5;
-    }
-  `,
-);
+})`
+  & {
+    position: absolute;
+    left: 48.7028%;
+    top: 12.62%;
+    font-size: 1.0227cqw;
+    font-weight: 900;
+    text-shadow: 0 1.5px #8e9caa;
+    line-height: 1.5;
+  }
+`;
 
 export const User = styled('div', {
   label: 'User',
   target: 'e-c-6',
-})(
-  () => css`
+})`
+  & {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 58.225%;
+    display: flex;
+    align-items: center;
+    gap: 0.4545cqw;
+    white-space: nowrap;
+  }
+  & > img {
+    width: 1.8182cqw;
+    height: 1.8182cqw;
+  }
+  & > strong {
+    font-size: 1.0625rem;
+    text-shadow: 0 1.5px 2px #4a5b6e99;
+  }
+  @media (max-width: 700px) {
     & {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 58.225%;
-      display: flex;
-      align-items: center;
-      gap: 0.4545cqw;
-      white-space: nowrap;
+      justify-content: center;
     }
     & > img {
-      width: 1.8182cqw;
-      height: 1.8182cqw;
+      display: none;
     }
     & > strong {
-      font-size: ${scale(17)};
-      text-shadow: 0 1.5px 2px #4a5b6e99;
+      font-size: 1.6cqw;
     }
-    @media (max-width: 700px) {
-      & {
-        justify-content: center;
-      }
-    }
-    @media (max-width: 700px) {
-      & > img {
-        display: none;
-      }
-    }
-    @media (max-width: 700px) {
-      & > strong {
-        font-size: 1.6cqw;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Score = styled('div', {
   label: 'Score',
   target: 'e-c-7',
-})(
-  () => css`
+})`
+  & {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 69.0775%;
+    display: flex;
+    align-items: center;
+    gap: 0.2841cqw;
+    padding: 0.1705cqw 0.6818cqw 0.1705cqw 0.5682cqw;
+    border-radius: 62.4375rem;
+    font-size: 0.8125rem;
+    background: #4a5b6e73;
+    white-space: nowrap;
+  }
+  & > img {
+    width: 0.7955cqw;
+    height: 0.7955cqw;
+    object-fit: contain;
+  }
+  @media (max-width: 700px) {
     & {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 69.0775%;
-      display: flex;
-      align-items: center;
-      gap: 0.2841cqw;
-      padding: 0.1705cqw 0.6818cqw 0.1705cqw 0.5682cqw;
-      border-radius: 62.4375rem;
-      font-size: ${scale(13)};
-      background: #4a5b6e73;
-      white-space: nowrap;
+      font-size: 1.15cqw;
     }
-    & > img {
-      width: 0.7955cqw;
-      height: 0.7955cqw;
-      object-fit: contain;
-    }
-    @media (max-width: 700px) {
-      & {
-        font-size: 1.15cqw;
-      }
-    }
-  `,
-);
+  }
+`;

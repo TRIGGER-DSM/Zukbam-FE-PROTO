@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { colors, alpha } from '../../../shared/styles/colors';
-import { rankingSize as size, rankingScale as scale } from './rankingSize';
 
 interface RowStyleProps {
   $mine: boolean;
@@ -8,10 +7,10 @@ interface RowStyleProps {
 
 export const Panel = styled.section`
   position: relative;
-  width: 77.954545%;
-  padding: ${size(24)} ${size(24)} ${size(32)};
+  width: calc(100% - var(--ranking-aside-width, 0px) - 1.5rem);
+  padding: 1.5rem 1.5rem 2rem;
   border: 1px solid ${colors.line.alternative};
-  border-radius: ${size(24)};
+  border-radius: 1.5rem;
   background: ${colors.background.elevated};
   @media (max-width: 1250px) {
     width: 100%;
@@ -30,26 +29,26 @@ export const Table = styled.table`
   tbody {
     display: flex;
     flex-direction: column;
-    gap: ${size(8)};
+    gap: 0.5rem;
   }
   thead {
-    margin-bottom: ${size(8)};
+    margin-bottom: 0.5rem;
   }
   tr {
     display: grid;
-    grid-template-columns: ${size(72)} ${size(96)} ${size(130)} minmax(0, 1fr) ${size(120)};
+    grid-template-columns: 4.5rem 6rem 8.125rem minmax(0, 1fr) 7.5rem;
     grid-template-rows: minmax(0, 1fr);
     align-items: center;
-    gap: ${size(16)};
-    padding-inline: ${size(24)};
+    gap: 1rem;
+    padding-inline: 1.5rem;
   }
   thead tr {
-    height: ${size(36)};
+    height: 2.25rem;
   }
   th {
     color: ${colors.label.assistive};
-    font-size: ${scale(13)};
-    line-height: ${scale(18)};
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
     font-weight: 400;
     text-align: left;
   }
@@ -78,8 +77,8 @@ export const Table = styled.table`
 
 export const Position = styled.td`
   color: ${colors.label.alternative};
-  font-size: ${scale(24)};
-  line-height: ${scale(26)};
+  font-size: 1.5rem;
+  line-height: 1.625rem;
   font-weight: 900;
   text-align: center;
   @media (max-width: 700px) {
@@ -95,8 +94,8 @@ export const CardCell = styled.td`
   height: 100%;
   min-height: 0;
   > img {
-    width: ${size(94)};
-    height: ${size(126)};
+    width: 5.875rem;
+    height: 7.875rem;
     max-width: none;
   }
   @media (max-width: 700px) {
@@ -111,15 +110,15 @@ export const Score = styled.td`
   > span {
     display: flex;
     align-items: center;
-    gap: ${size(6)};
+    gap: 0.375rem;
     color: ${colors.label.alternative};
-    font-size: ${scale(14)};
+    font-size: 0.875rem;
     font-weight: 500;
-    line-height: ${scale(20)};
+    line-height: 1.25rem;
   }
   img {
-    width: ${size(14)};
-    height: ${size(14)};
+    width: 0.875rem;
+    height: 0.875rem;
     object-fit: contain;
   }
   @media (max-width: 700px) {
@@ -138,24 +137,24 @@ export const User = styled.td`
   > span {
     display: flex;
     align-items: center;
-    gap: ${size(14)};
+    gap: 0.875rem;
   }
   img {
-    width: ${size(40)};
-    height: ${size(40)};
+    width: 2.5rem;
+    height: 2.5rem;
   }
   strong {
-    font-size: ${scale(16)};
-    line-height: ${scale(24)};
+    font-size: 1rem;
+    line-height: 1.5rem;
     white-space: nowrap;
   }
   small {
-    padding: 1px ${size(8)};
-    margin-left: ${size(-8)};
+    padding: 1px 0.5rem;
+    margin-left: -0.5rem;
     border-radius: 999px;
     background: ${colors.label.assistive};
-    font-size: ${scale(12)};
-    line-height: ${scale(16)};
+    font-size: 0.75rem;
+    line-height: 1rem;
     font-weight: 700;
   }
   @media (max-width: 700px) {
@@ -186,10 +185,10 @@ export const Solved = styled.td`
   gap: 2px;
   color: ${colors.label.alternative};
   strong {
-    font-size: ${scale(15)};
+    font-size: 0.9375rem;
   }
   small {
-    font-size: ${scale(12)};
+    font-size: 0.75rem;
     white-space: nowrap;
   }
   @media (max-width: 700px) {
@@ -206,8 +205,8 @@ export const Solved = styled.td`
 `;
 
 export const Row = styled.tr<RowStyleProps>`
-  height: ${({ $mine }) => size($mine ? 124 : 112)};
-  border-radius: ${size(16)};
+  height: ${({ $mine }) => ($mine ? '7.75rem' : '7rem')};
+  border-radius: 1rem;
   background: ${({ $mine }) =>
     $mine
       ? `linear-gradient(90deg, ${alpha(colors.static.white, 0.070588)}, transparent), ${colors.fill.raised}`
@@ -216,9 +215,9 @@ export const Row = styled.tr<RowStyleProps>`
     $mine &&
     `
     td:nth-of-type(1) { color: ${colors.static.white}; }
-    td:nth-of-type(2) > img { width: ${size(120)}; height: ${size(178)}; }
-    td:nth-of-type(3) > span { color: ${colors.label.normal}; font-size: ${scale(15)}; }
-    td:nth-of-type(4) strong { font-size: ${scale(20)}; font-weight: 900; }
+    td:nth-of-type(2) > img { width: 7.5rem; height: 11.125rem; }
+    td:nth-of-type(3) > span { color: ${colors.label.normal}; font-size: 0.9375rem; }
+    td:nth-of-type(4) strong { font-size: 1.25rem; font-weight: 900; }
   `}
   @media (max-width: 700px) {
     height: ${({ $mine }) => ($mine ? '5.625rem' : '4.875rem')};
@@ -234,9 +233,9 @@ export const Row = styled.tr<RowStyleProps>`
 `;
 
 export const Ellipsis = styled.tr`
-  height: ${size(34)};
+  height: 2.125rem;
   color: ${colors.label.assistive};
-  font-size: ${scale(18)};
+  font-size: 1.125rem;
   font-weight: 700;
   text-align: center;
   td {

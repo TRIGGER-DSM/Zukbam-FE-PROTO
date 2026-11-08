@@ -1,6 +1,7 @@
 import { colors } from '../../../shared/styles/colors';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { problemPageSize } from '../domain/problem';
 
 export const Scroll = styled('div', {
   label: 'Scroll',
@@ -8,6 +9,10 @@ export const Scroll = styled('div', {
 })(
   ({ theme }) => css`
     & {
+      --header-height: 3.25rem;
+      --row-height: 3.75rem;
+      --body-height: calc(${problemPageSize} * var(--row-height));
+      min-height: calc(var(--header-height) + var(--body-height) + 2px);
       overflow-x: auto;
       border: 1px solid ${theme.colors.line.alternative};
       border-radius: 1.25rem;
@@ -15,6 +20,8 @@ export const Scroll = styled('div', {
     }
     @media (max-width: 550px) {
       & {
+        --header-height: 2.875rem;
+        --row-height: 3.5rem;
         border-radius: 1rem;
       }
     }
@@ -35,7 +42,7 @@ export const Table = styled('table', {
       background: ${colors.background.alternative};
     }
     & th {
-      height: 3.25rem;
+      height: var(--header-height);
       color: ${theme.colors.label.alternative};
       font-size: 0.75rem;
       line-height: 1rem;
@@ -49,7 +56,7 @@ export const Table = styled('table', {
       text-align: right;
     }
     & td {
-      height: 3.75rem;
+      height: var(--row-height);
       padding: 0;
       border-top: 1px solid ${theme.colors.line.alternative};
       font-size: 1rem;
@@ -65,8 +72,6 @@ export const Table = styled('table', {
       & th:last-child {
         padding-right: 1rem;
       }
-    }
-    @media (max-width: 1600px) {
       & td:last-child {
         padding-right: 1rem;
       }
@@ -80,16 +85,10 @@ export const Table = styled('table', {
       & {
         min-width: 43.75rem;
       }
-    }
-    @media (max-width: 550px) {
       & td {
         font-size: 0.875rem;
-        height: 3.5rem;
       }
-    }
-    @media (max-width: 550px) {
       & th {
-        height: 2.875rem;
         font-size: 0.6875rem;
       }
     }
@@ -99,116 +98,102 @@ export const Table = styled('table', {
 export const ColStatus = styled('col', {
   label: 'ColStatus',
   target: 'e-8-2',
-})(
-  () => css`
+})`
+  & {
+    width: 3.75rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 3.75rem;
+      width: 2.75rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 2.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const ColId = styled('col', {
   label: 'ColId',
   target: 'e-8-3',
-})(
-  () => css`
+})`
+  & {
+    width: 6.875rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 6.875rem;
+      width: 6.125rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 6.125rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const ColTag = styled('col', {
   label: 'ColTag',
   target: 'e-8-4',
-})(
-  () => css`
+})`
+  & {
+    width: 4.5rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 4.5rem;
+      width: 3.25rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 3.25rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const ColXp = styled('col', {
   label: 'ColXp',
   target: 'e-8-5',
-})(
-  () => css`
+})`
+  & {
+    width: 6.25rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 6.25rem;
+      width: 4.75rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 4.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const ColSolvers = styled('col', {
   label: 'ColSolvers',
   target: 'e-8-6',
-})(
-  () => css`
+})`
+  & {
+    width: 9.375rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 9.375rem;
+      width: 6.875rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 6.875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const ColAttempts = styled('col', {
   label: 'ColAttempts',
   target: 'e-8-7',
-})(
-  () => css`
+})`
+  & {
+    width: 9.25rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      width: 9.25rem;
+      width: 6.25rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        width: 6.25rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const StatusCell = styled('td', {
   label: 'StatusCell',
   target: 'e-8-8',
-})(
-  () => css`
+})`
+  & > img {
+    margin-left: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  @media (max-width: 1600px) {
     & > img {
-      margin-left: 1.5rem;
-      width: 1.25rem;
-      height: 1.25rem;
+      margin-left: 0.75rem;
     }
-    @media (max-width: 1600px) {
-      & > img {
-        margin-left: 0.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Attempted = styled('span', {
   label: 'Attempted',
@@ -234,20 +219,18 @@ export const Attempted = styled('span', {
 export const Number = styled('span', {
   label: 'Number',
   target: 'e-8-a',
-})(
-  () => css`
-    & {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    & > img {
-      width: 1.375rem;
-      height: 1.375rem;
-      object-fit: contain;
-    }
-  `,
-);
+})`
+  & {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  & > img {
+    width: 1.375rem;
+    height: 1.375rem;
+    object-fit: contain;
+  }
+`;
 
 export const Title = styled('button', {
   label: 'Title',
@@ -283,14 +266,12 @@ export const Title = styled('button', {
 export const TagCell = styled('td', {
   label: 'TagCell',
   target: 'e-8-c',
-})(
-  () => css`
-    & > button {
-      display: block;
-      margin: auto;
-    }
-  `,
-);
+})`
+  & > button {
+    display: block;
+    margin: auto;
+  }
+`;
 
 export const XpCell = styled('td', {
   label: 'XpCell',
@@ -316,15 +297,13 @@ export const XpCell = styled('td', {
 export const SolversCell = styled('td', {
   label: 'SolversCell',
   target: 'e-8-e',
-})(
-  () => css`
-    & {
-      text-align: right;
-      font-weight: 700;
-      color: ${colors.label.normal};
-    }
-  `,
-);
+})`
+  & {
+    text-align: right;
+    font-weight: 700;
+    color: ${colors.label.normal};
+  }
+`;
 
 export const AttemptsCell = styled('td', {
   label: 'AttemptsCell',
@@ -344,11 +323,13 @@ export const Empty = styled('div', {
 })(
   ({ theme }) => css`
     & {
-      padding: 4rem 1.5rem;
+      position: sticky;
+      inset-inline-start: 0;
+      display: grid;
+      place-items: center;
+      min-height: var(--body-height);
+      padding: 1rem;
       text-align: center;
-    }
-    & > p {
-      margin-top: 0.75rem;
       color: ${theme.colors.label.alternative};
       font-size: 0.875rem;
     }

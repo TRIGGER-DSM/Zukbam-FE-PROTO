@@ -1,10 +1,10 @@
 export interface RankSummary {
   title: string;
   xp: number;
-  nextXp: number;
-  nextTitle: string;
-  position: number;
-  percentile: number;
+  nextXp?: number;
+  nextTitle?: string;
+  position?: number;
+  percentile?: number;
 }
 
 export const rankTiers = [

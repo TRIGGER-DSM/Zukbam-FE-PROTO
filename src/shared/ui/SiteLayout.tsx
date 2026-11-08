@@ -1,7 +1,10 @@
 import * as S from './SiteLayout.styles';
 import type { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { Asset } from './Asset';
+import { useQuery } from '@tanstack/react-query';
+import { getAccessToken } from '../api/client';
+import { myProfileOptions, studentNumber } from '../../domains/member/infrastructure/profileApi';
 
 const teamMembers = [
   {
@@ -26,30 +29,34 @@ const navigationItems = [
   {
     label: '홈',
     to: '/',
+    section: '/',
   },
   {
     label: '문제',
     to: '/problems',
+    section: '/problems',
   },
   {
     label: '랭킹',
     to: '/ranking',
+    section: '/ranking',
   },
   {
     label: '소셜',
+    to: '/mypage/friends',
+    section: '/mypage',
   },
 ];
 
 interface SiteLayoutProps {
   children: ReactNode;
-  onNavigate: (name: string) => void;
 }
 
-export function SiteLayout({ children, onNavigate }: SiteLayoutProps) {
+export function SiteLayout({ children }: SiteLayoutProps) {
   return (
     <>
       <S.SkipLink href="#main">본문 바로가기</S.SkipLink>
-      <AppHeader onNavigate={onNavigate} />
+      <AppHeader />
       {children}
       <AppFooter />
     </>
@@ -57,21 +64,26 @@ export function SiteLayout({ children, onNavigate }: SiteLayoutProps) {
 }
 
 interface AppHeaderProps {
-  onNavigate: (name: string) => void;
   active?: string;
 }
 
-export function AppHeader({ onNavigate, active }: AppHeaderProps) {
+export function AppHeader({ active }: AppHeaderProps) {
   const { pathname } = useLocation();
-  const activeNavigationLabel =
-    active ??
-    (pathname.startsWith('/problems')
-      ? '문제'
-      : pathname.startsWith('/ranking')
-        ? '랭킹'
-        : pathname === '/'
-          ? '홈'
-          : undefined);
+  const navigate = useNavigate();
+  const signedIn = Boolean(getAccessToken());
+  const profilePath = signedIn || active !== undefined ? '/mypage/friends' : '/login';
+  const profile = useQuery({
+    ...myProfileOptions(),
+    enabled: signedIn && active === undefined,
+  }).data;
+  const currentSection = navigationItems.find(({ section }) =>
+    section === '/' ? pathname === section : pathname.startsWith(section),
+  );
+  const activeLabel = active ?? currentSection?.label;
+  const defaultProfileLabel = active ? '2312 정일웅' : signedIn ? '마이페이지' : '로그인';
+  const profileLabel = profile
+    ? [studentNumber(profile), profile.name].filter(Boolean).join(' ')
+    : defaultProfileLabel;
   return (
     <S.Header>
       <S.HeaderContent>
@@ -79,29 +91,15 @@ export function AppHeader({ onNavigate, active }: AppHeaderProps) {
           <Asset name="wordmark.svg" />
         </Link>
         <nav aria-label="주 메뉴">
-          {navigationItems.map((item) =>
-            item.to ? (
-              <S.NavLink
-                key={item.label}
-                to={item.to}
-                aria-current={activeNavigationLabel === item.label ? 'page' : undefined}
-              >
-                {item.label}
-              </S.NavLink>
-            ) : (
-              <button
-                key={item.label}
-                aria-current={active === item.label ? 'page' : undefined}
-                onClick={() => onNavigate(item.label)}
-              >
-                {item.label}
-              </button>
-            ),
-          )}
+          {navigationItems.map(({ label, to }) => (
+            <S.NavLink key={to} to={to} aria-current={activeLabel === label ? 'page' : undefined}>
+              {label}
+            </S.NavLink>
+          ))}
         </nav>
       </S.HeaderContent>
-      <S.Profile onClick={() => onNavigate('내 프로필')}>
-        <span>2312 정일웅</span>
+      <S.Profile onClick={() => navigate(profilePath)}>
+        <span>{profileLabel}</span>
         <Asset name="profile.svg" />
       </S.Profile>
     </S.Header>

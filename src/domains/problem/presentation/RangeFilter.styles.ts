@@ -10,15 +10,13 @@ interface RangeStyleProps {
 export const Field = styled('div', {
   label: 'Field',
   target: 'e-9-0',
-})(
-  () => css`
-    & {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-  `,
-);
+})`
+  & {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+`;
 
 export const Range = styled('div', {
   label: 'Range',

@@ -1,15 +1,14 @@
 import styled from '@emotion/styled';
 import { colors } from '../../../shared/styles/colors';
-import { rankingSize as size, rankingScale as scale } from './rankingSize';
 
 export const Root = styled.aside`
   position: absolute;
-  top: ${size(234)};
+  top: clamp(9rem, 15cqw, 13rem);
   right: 0;
-  width: 20%;
+  width: var(--ranking-aside-width);
   display: flex;
   flex-direction: column;
-  gap: ${size(24)};
+  gap: 1.5rem;
   @media (max-width: 1250px) {
     position: static;
     width: 100%;
@@ -24,14 +23,14 @@ export const Root = styled.aside`
 `;
 
 const Panel = styled.section`
-  padding: ${size(24)};
+  padding: 1.5rem;
   border: 1px solid ${colors.line.alternative};
-  border-radius: ${size(20)};
+  border-radius: 1.25rem;
   background: ${colors.fill.normal};
   p {
     color: ${colors.label.alternative};
-    font-size: ${scale(14)};
-    line-height: ${scale(22)};
+    font-size: 0.875rem;
+    line-height: 1.375rem;
   }
 `;
 
@@ -39,10 +38,10 @@ export const MyRank = styled(Panel)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${size(16)};
+  gap: 1rem;
   > [role='progressbar'] {
-    font-size: ${scale(16)};
-    height: ${size(27)};
+    font-size: 1rem;
+    height: 1.6875rem;
   }
 `;
 
@@ -50,20 +49,20 @@ export const Summary = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: ${size(4)};
-  padding-bottom: ${size(8)};
+  gap: 0.25rem;
+  padding-bottom: 0.5rem;
   > img {
-    width: ${size(72)};
-    height: ${size(84)};
+    width: 4.5rem;
+    height: 5.25rem;
   }
   h2 {
     color: ${colors.label.neutral};
-    font-size: ${scale(14)};
-    line-height: ${scale(20)};
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
   > strong {
-    font-size: ${scale(32)};
-    line-height: ${scale(42)};
+    font-size: 2rem;
+    line-height: 2.625rem;
     font-weight: 900;
     letter-spacing: -0.025em;
   }
@@ -73,9 +72,9 @@ export const NextRank = styled.div`
   display: flex;
   align-items: baseline;
   width: 100%;
-  gap: ${size(6)};
-  font-size: ${scale(18)};
-  line-height: ${scale(26)};
+  gap: 0.375rem;
+  font-size: 1.125rem;
+  line-height: 1.625rem;
   > strong:last-child {
     color: ${colors.status.cautionary};
   }
@@ -83,37 +82,37 @@ export const NextRank = styled.div`
 
 export const TierGuide = styled(Panel)`
   h2 {
-    margin-bottom: ${size(4)};
-    font-size: ${scale(18)};
-    line-height: ${scale(26)};
+    margin-bottom: 0.25rem;
+    font-size: 1.125rem;
+    line-height: 1.625rem;
   }
   ol {
     display: flex;
     flex-direction: column;
-    gap: ${size(4)};
-    margin-top: ${size(4)};
+    gap: 0.25rem;
+    margin-top: 0.25rem;
   }
   li {
     display: flex;
     align-items: center;
-    gap: ${size(12)};
-    padding: ${size(8)} ${size(12)} ${size(8)} ${size(10)};
-    border-radius: ${size(12)};
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem 0.5rem 0.625rem;
+    border-radius: 0.75rem;
   }
   li > img {
-    width: ${size(36)};
-    height: ${size(42)};
+    width: 2.25rem;
+    height: 2.625rem;
   }
   li > strong {
     flex: 1;
-    font-size: ${scale(16)};
-    line-height: ${scale(24)};
+    font-size: 1rem;
+    line-height: 1.5rem;
     white-space: nowrap;
   }
   li > span {
     color: ${colors.label.alternative};
-    font-size: ${scale(14)};
-    line-height: ${scale(22)};
+    font-size: 0.875rem;
+    line-height: 1.375rem;
     white-space: nowrap;
   }
   li[aria-current='step'] > strong {

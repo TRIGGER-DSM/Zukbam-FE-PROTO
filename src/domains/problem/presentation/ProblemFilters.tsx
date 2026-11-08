@@ -1,15 +1,41 @@
 import * as S from './ProblemFilters.styles';
-import { difficulties, type ProblemFilters as Filters } from '../domain/problem';
+import { difficulties, type ProblemFilters as ProblemFilterValues } from '../domain/problem';
 import { ProblemAsset } from './ProblemAsset';
 import { RangeFilter } from './RangeFilter';
 
 interface ProblemFiltersProps {
-  filters: Filters;
-  onChange: (patch: Partial<Filters>) => void;
+  filters: ProblemFilterValues;
+  onChange: (patch: Partial<ProblemFilterValues>) => void;
   onReset: () => void;
 }
 
+interface StatusOption {
+  id: ProblemFilterValues['status'];
+  label: string;
+}
+
+const statusOptions: StatusOption[] = [
+  { id: 'all', label: '전체' },
+  { id: 'solved', label: '해결' },
+  { id: 'attempted', label: '시도했으나 미해결' },
+  { id: 'unattempted', label: '미해결' },
+];
+
+const difficultyBounds = ['min', 'max'] as const;
+const highestDifficultyIndex = difficulties.length - 1;
+
 export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersProps) {
+  const { difficultyMin, difficultyMax } = filters;
+
+  function selectDifficulty(bound: (typeof difficultyBounds)[number], index: number) {
+    if (bound === 'max') {
+      onChange({ difficultyMax: index, difficultyMin: Math.min(difficultyMin, index) });
+      return;
+    }
+
+    onChange({ difficultyMin: index, difficultyMax: Math.max(difficultyMax, index) });
+  }
+
   return (
     <S.Panel aria-label="문제 필터">
       <S.Header>
@@ -21,31 +47,34 @@ export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersPro
       </S.Header>
       <S.Section>
         <h3>난이도</h3>
-        <S.Range $low={`${filters.difficultyMin * 25}%`} $high={`${filters.difficultyMax * 25}%`}>
+        <S.Range
+          $low={`${(difficultyMin / highestDifficultyIndex) * 100}%`}
+          $high={`${(difficultyMax / highestDifficultyIndex) * 100}%`}
+        >
           <S.Track />
           <input
             type="range"
             min={0}
-            max={4}
-            value={filters.difficultyMin}
+            max={highestDifficultyIndex}
+            value={difficultyMin}
             aria-label="최소 난이도 슬라이더"
-            aria-valuetext={difficulties[filters.difficultyMin].label}
+            aria-valuetext={difficulties[difficultyMin].label}
             onChange={(event) =>
               onChange({
-                difficultyMin: Math.min(Number(event.target.value), filters.difficultyMax),
+                difficultyMin: Math.min(Number(event.target.value), difficultyMax),
               })
             }
           />
           <input
             type="range"
             min={0}
-            max={4}
-            value={filters.difficultyMax}
+            max={highestDifficultyIndex}
+            value={difficultyMax}
             aria-label="최대 난이도 슬라이더"
-            aria-valuetext={difficulties[filters.difficultyMax].label}
+            aria-valuetext={difficulties[difficultyMax].label}
             onChange={(event) =>
               onChange({
-                difficultyMax: Math.max(Number(event.target.value), filters.difficultyMin),
+                difficultyMax: Math.max(Number(event.target.value), difficultyMin),
               })
             }
           />
@@ -56,28 +85,16 @@ export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersPro
           </S.Labels>
         </S.Range>
         <S.DifficultyFields>
-          {[false, true].map((isMaximum) => {
-            const value = isMaximum ? filters.difficultyMax : filters.difficultyMin;
+          {difficultyBounds.map((bound) => {
+            const isMaximum = bound === 'max';
+            const selectedIndex = isMaximum ? difficultyMax : difficultyMin;
             return (
-              <label key={String(isMaximum)}>
-                <ProblemAsset name={difficulties[value].id} />
+              <label key={bound}>
+                <ProblemAsset name={difficulties[selectedIndex].id} />
                 <select
                   aria-label={isMaximum ? '최대 난이도' : '최소 난이도'}
-                  value={value}
-                  onChange={(event) => {
-                    const next = Number(event.target.value);
-                    onChange(
-                      isMaximum
-                        ? {
-                            difficultyMax: next,
-                            difficultyMin: Math.min(filters.difficultyMin, next),
-                          }
-                        : {
-                            difficultyMin: next,
-                            difficultyMax: Math.max(filters.difficultyMax, next),
-                          },
-                    );
-                  }}
+                  value={selectedIndex}
+                  onChange={(event) => selectDifficulty(bound, Number(event.target.value))}
                 >
                   {difficulties.map((item, index) => (
                     <option key={item.id} value={index}>
@@ -128,32 +145,11 @@ export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersPro
       <S.Section>
         <h3>해결 상태</h3>
         <S.StatusOptions role="group" aria-label="해결 상태">
-          {[
-            {
-              id: 'all',
-              label: '전체',
-            },
-            {
-              id: 'solved',
-              label: '해결',
-            },
-            {
-              id: 'attempted',
-              label: '시도했으나 미해결',
-            },
-            {
-              id: 'unattempted',
-              label: '미해결',
-            },
-          ].map((status) => (
+          {statusOptions.map((status) => (
             <button
               key={status.id}
               aria-pressed={filters.status === status.id}
-              onClick={() =>
-                onChange({
-                  status: status.id as Filters['status'],
-                })
-              }
+              onClick={() => onChange({ status: status.id })}
             >
               {status.label}
             </button>

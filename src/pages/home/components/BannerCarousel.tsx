@@ -1,5 +1,5 @@
 import * as S from './BannerCarousel.styles';
-import { useState } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
 import { Asset } from '../../../shared/ui/Asset';
 
 const banners = [
@@ -26,21 +26,114 @@ const banners = [
   },
 ] as const;
 
+const dragStartThreshold = 6;
+const slideChangeThreshold = 50;
+
 interface BannerCarouselProps {
   onProblem: (title: string) => void;
 }
 
+interface DragStart {
+  pointerId: number;
+  clientX: number;
+  clientY: number;
+}
+
 export function BannerCarousel({ onProblem }: BannerCarouselProps) {
-  const [active, setActive] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const dragStart = useRef<DragStart | null>(null);
+  const didDrag = useRef(false);
+
+  function moveSlide(direction: number) {
+    setActiveIndex((index) => (index + direction + banners.length) % banners.length);
+  }
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0) return;
+    didDrag.current = false;
+    const { pointerId, clientX, clientY } = event;
+    dragStart.current = { pointerId, clientX, clientY };
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    const start = dragStart.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    const distanceX = event.clientX - start.clientX;
+    const distanceY = event.clientY - start.clientY;
+    const stage = event.currentTarget;
+
+    if (!didDrag.current) {
+      const horizontalDistance = Math.abs(distanceX);
+      const verticalDistance = Math.abs(distanceY);
+      if (verticalDistance > dragStartThreshold && verticalDistance >= horizontalDistance) {
+        dragStart.current = null;
+        return;
+      }
+      if (horizontalDistance <= dragStartThreshold) return;
+      didDrag.current = true;
+      stage.setPointerCapture(event.pointerId);
+      stage.dataset.dragging = '';
+    }
+
+    stage.style.setProperty('--drag-offset', `${distanceX}px`);
+  }
+
+  function finishDrag(event: PointerEvent<HTMLDivElement>) {
+    const start = dragStart.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+
+    dragStart.current = null;
+    const stage = event.currentTarget;
+    delete stage.dataset.dragging;
+    stage.style.removeProperty('--drag-offset');
+
+    const distanceX = event.clientX - start.clientX;
+    if (
+      event.type === 'pointerup' &&
+      didDrag.current &&
+      Math.abs(distanceX) >= slideChangeThreshold
+    ) {
+      moveSlide(distanceX < 0 ? 1 : -1);
+    }
+  }
+
   return (
-    <S.Hero aria-label="추천 소식" aria-roledescription="캐러셀">
-      <S.Stage>
+    <S.Hero
+      aria-label="추천 소식"
+      aria-roledescription="캐러셀"
+      onKeyDown={(event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        moveSlide(event.key === 'ArrowRight' ? 1 : -1);
+      }}
+    >
+      <S.Stage
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishDrag}
+        onPointerCancel={finishDrag}
+        onLostPointerCapture={(event) => {
+          if (event.target === event.currentTarget) finishDrag(event);
+        }}
+        onPointerLeave={(event) => {
+          if (!event.currentTarget.hasPointerCapture(event.pointerId)) finishDrag(event);
+        }}
+        onDragStart={(event) => event.preventDefault()}
+        onClickCapture={(event) => {
+          if (!didDrag.current || event.detail === 0) return;
+          event.preventDefault();
+          event.stopPropagation();
+          didDrag.current = false;
+        }}
+      >
         {banners.map((banner, index) => {
-          const position =
-            index === active ? 'active' : index === (active + 1) % 3 ? 'next' : 'previous';
+          const isActive = index === activeIndex;
+          const isNext = index === (activeIndex + 1) % banners.length;
+          const sidePosition = isNext ? 'next' : 'previous';
+          const position = isActive ? 'active' : sidePosition;
           const handleClick = () => {
-            if (position !== 'active') {
-              setActive(index);
+            if (!isActive) {
+              setActiveIndex(index);
               return;
             }
             onProblem(banner.id === 'recommend' ? '1912. 연속합' : banner.title);
@@ -59,10 +152,10 @@ export function BannerCarousel({ onProblem }: BannerCarouselProps) {
         {banners.map((banner, index) => (
           <S.Dot
             key={banner.id}
-            onClick={() => setActive(index)}
+            onClick={() => setActiveIndex(index)}
             aria-label={`${index + 1}번 배너: ${banner.highlight}`}
-            aria-pressed={active === index}
-            $selected={active === index}
+            aria-pressed={activeIndex === index}
+            $selected={activeIndex === index}
           />
         ))}
       </S.Dots>

@@ -6,77 +6,49 @@ import { Link } from 'react-router';
 export const Page = styled('main', {
   label: 'Page',
   target: 'e-o-0',
-})(
-  () => css`
-    & {
-      --wrong-accent: ${colors.status.negative};
-      padding: 3rem 5rem 4.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.25rem;
-    }
-    & h1 {
-      font-size: 3rem;
-      line-height: 3.75rem;
-      font-weight: 900;
-      letter-spacing: -0.09375rem;
-      text-align: center;
-      color: var(--wrong-accent);
-    }
-    @media (max-width: 700px) {
-      & {
-        padding: 2rem 1rem 3rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & h1 {
-        font-size: 1.875rem;
-        line-height: 2.625rem;
-        letter-spacing: -0.05rem;
-        text-wrap: balance;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        padding-block: 2rem 3rem;
-        gap: 1rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & h1 {
-        font-size: 36px;
-        line-height: 46px;
-      }
-    }
-  `,
-);
+})`
+  & {
+    --wrong-accent: ${colors.status.negative};
+    padding: clamp(1.5rem, 4vw, 2rem) var(--page-gutter) 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  & h1 {
+    font-size: clamp(1.875rem, 3vw, 2.625rem);
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: -0.09375rem;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--wrong-accent);
+  }
+`;
 
 export const Mascot = styled('img', {
   label: 'Mascot',
   target: 'e-o-1',
-})(
-  () => css`
+})`
+  & {
+    width: 22.5rem;
+    height: 20rem;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  @media (max-width: 700px) {
     & {
-      width: 22.5rem;
-      height: 20rem;
-      max-width: 100%;
-      object-fit: contain;
+      width: 15.75rem;
+      height: 14rem;
     }
-    @media (max-width: 700px) {
-      & {
-        width: 15.75rem;
-        height: 14rem;
-      }
+  }
+  @media (min-width: 701px) {
+    & {
+      width: 18rem;
+      height: 16rem;
     }
-    @media (min-width: 701px) {
-      & {
-        width: 18rem;
-        height: 16rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Description = styled('p', {
   label: 'Description',
@@ -158,8 +130,6 @@ export const SummaryHeading = styled('div', {
         flex-wrap: wrap;
         gap: 0.5rem;
       }
-    }
-    @media (max-width: 700px) {
       & > p {
         font-size: 0.75rem;
       }
@@ -170,20 +140,18 @@ export const SummaryHeading = styled('div', {
 export const Status = styled('span', {
   label: 'Status',
   target: 'e-o-5',
-})(
-  () => css`
-    & {
-      padding: 0.25rem 0.625rem;
-      border-radius: 999px;
-      font-size: 0.875rem;
-      font-weight: 700;
-      line-height: 1.25rem;
-      color: ${colors.static.black};
-      background: var(--wrong-accent);
-      white-space: nowrap;
-    }
-  `,
-);
+})`
+  & {
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    color: ${colors.static.black};
+    background: var(--wrong-accent);
+    white-space: nowrap;
+  }
+`;
 
 export const ProgressSection = styled('div', {
   label: 'ProgressSection',
@@ -213,15 +181,13 @@ export const ProgressSection = styled('div', {
 export const Progress = styled('div', {
   label: 'Progress',
   target: 'e-o-7',
-})(
-  () => css`
-    & img {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 744 / 27;
-    }
-  `,
-);
+})`
+  & img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 744 / 27;
+  }
+`;
 
 export const Statistics = styled('dl', {
   label: 'Statistics',
@@ -259,8 +225,6 @@ export const Statistics = styled('dl', {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.5rem;
       }
-    }
-    @media (max-width: 700px) {
       & dt {
         font-size: 0.75rem;
         line-height: 1.25rem;
@@ -287,13 +251,9 @@ export const Notice = styled('p', {
         font-size: 0.75rem;
         line-height: 1.25rem;
       }
-    }
-    @media (max-width: 700px) {
       & {
         align-items: flex-start;
       }
-    }
-    @media (max-width: 700px) {
       & img {
         margin-top: 0.125rem;
       }
@@ -336,8 +296,6 @@ export const Hint = styled('aside', {
         font-size: 0.75rem;
         line-height: 1.25rem;
       }
-    }
-    @media (max-width: 700px) {
       & {
         padding: 1.125rem 1rem;
         gap: 0.75rem;
@@ -365,8 +323,6 @@ export const Reward = styled('p', {
         font-size: 0.75rem;
         line-height: 1.25rem;
       }
-    }
-    @media (max-width: 700px) {
       & {
         max-width: 100%;
         text-wrap: pretty;
@@ -378,43 +334,39 @@ export const Reward = styled('p', {
 export const Actions = styled('div', {
   label: 'Actions',
   target: 'e-o-c',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+  & a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.875rem;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5rem;
+    color: ${colors.label.normal};
+    text-align: center;
+  }
+  & a:hover {
+    filter: brightness(1.08);
+  }
+  @media (max-width: 700px) {
     & {
-      display: flex;
-      gap: 0.75rem;
-      padding-top: 0.5rem;
+      width: 100%;
+      gap: 0.5rem;
     }
     & a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.875rem 1.75rem;
-      border-radius: 0.875rem;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1.5rem;
-      color: ${colors.label.normal};
-      text-align: center;
+      flex: 1;
+      padding: 0.875rem 0.5rem;
+      font-size: 0.875rem;
     }
-    & a:hover {
-      filter: brightness(1.08);
-    }
-    @media (max-width: 700px) {
-      & {
-        width: 100%;
-        gap: 0.5rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & a {
-        flex: 1;
-        padding: 0.875rem 0.5rem;
-        font-size: 0.875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Review = styled(Link, {
   label: 'Review',
@@ -433,18 +385,16 @@ export const Retry = styled(Link, {
   label: 'Retry',
   target: 'e-o-e',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
-    & {
-      background: var(--wrong-accent);
-      box-shadow: 0 0.25rem ${colors.status.negativeHeavy};
-    }
-    &:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px ${colors.status.negativeHeavy};
-    }
-  `,
-);
+})`
+  & {
+    background: var(--wrong-accent);
+    box-shadow: 0 0.25rem ${colors.status.negativeHeavy};
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px ${colors.status.negativeHeavy};
+  }
+`;
 
 export const Unavailable = styled('main', {
   label: 'Unavailable',

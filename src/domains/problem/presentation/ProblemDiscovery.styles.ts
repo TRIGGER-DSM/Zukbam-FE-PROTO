@@ -11,31 +11,29 @@ interface FriendArtStyleProps {
 export const Root = styled('div', {
   label: 'Root',
   target: 'e-5-0',
-})(
-  () => css`
+})`
+  & {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+  @media (max-width: 1600px) {
     & {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 2.5rem;
+      gap: 1.5rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        gap: 1.5rem;
-      }
+  }
+  @media (max-width: 1200px) {
+    & {
+      grid-template-columns: 1fr;
+      gap: 2rem;
     }
-    @media (max-width: 1200px) {
-      & {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-      }
+  }
+  @media (min-width: 701px) {
+    & {
+      gap: 1.75rem;
     }
-    @media (min-width: 701px) {
-      & {
-        gap: 1.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Recommendations = styled('section', {
   label: 'Recommendations',
@@ -56,8 +54,6 @@ export const Recommendations = styled('section', {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-    }
-    @media (max-width: 1200px) {
       & > ${Heading} {
         grid-column: 1 / -1;
       }
@@ -100,8 +96,6 @@ export const Heading = styled('div', {
         font-size: 1.25rem;
         line-height: 1.75rem;
       }
-    }
-    @media (max-width: 550px) {
       & p {
         font-size: 0.75rem;
         line-height: 1.25rem;
@@ -141,8 +135,6 @@ export const Recommendation = styled('button', {
         padding: 1.125rem 1rem;
         gap: 0.75rem;
       }
-    }
-    @media (max-width: 1600px) {
       & > img {
         width: 4rem;
         height: 4rem;
@@ -158,8 +150,6 @@ export const Recommendation = styled('button', {
         padding: 1rem 0.75rem;
         border-radius: 1rem;
       }
-    }
-    @media (max-width: 550px) {
       & > img {
         width: 3rem;
         height: 3rem;
@@ -170,8 +160,6 @@ export const Recommendation = styled('button', {
         padding: 0.875rem 1rem;
         gap: 1rem;
       }
-    }
-    @media (min-width: 701px) {
       & > img {
         width: 4rem;
         height: 4rem;
@@ -201,8 +189,6 @@ export const Copy = styled('span', {
       & {
         gap: 0.25rem;
       }
-    }
-    @media (max-width: 550px) {
       & > small {
         font-size: 0.625rem;
       }
@@ -246,8 +232,6 @@ export const Title = styled('span', {
       & > span {
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 550px) {
       & > strong {
         font-size: 0.875rem;
         line-height: 1.375rem;
@@ -312,8 +296,6 @@ export const Xp = styled('span', {
         gap: 2px;
         padding: 0.25rem 0.375rem;
       }
-    }
-    @media (max-width: 550px) {
       & > img {
         width: 0.75rem;
         height: 0.75rem;
@@ -325,42 +307,38 @@ export const Xp = styled('span', {
 export const Friends = styled('section', {
   label: 'Friends',
   target: 'e-5-8',
-})(
-  () => css`
-    & {
-      min-width: 0;
-    }
-  `,
-);
+})`
+  & {
+    min-width: 0;
+  }
+`;
 
 export const FriendGrid = styled('div', {
   label: 'FriendGrid',
   target: 'e-5-9',
-})(
-  () => css`
+})`
+  & {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 1200px) {
     & {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 1rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
-    @media (max-width: 1200px) {
-      & {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
+  }
+  @media (max-width: 850px) {
+    & {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    @media (max-width: 850px) {
-      & {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+  }
+  @media (max-width: 550px) {
+    & {
+      gap: 0.75rem;
     }
-    @media (max-width: 550px) {
-      & {
-        gap: 0.75rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const FriendCard = styled('button', {
   label: 'FriendCard',
@@ -469,13 +447,9 @@ export const FriendBody = styled('span', {
         padding: 0.75rem 0.625rem 0.875rem;
         gap: 0.375rem;
       }
-    }
-    @media (max-width: 550px) {
       & ${Title} > strong {
         font-size: 0.8125rem;
       }
-    }
-    @media (max-width: 550px) {
       & ${Title} {
         gap: 0.1875rem 0.375rem;
       }
@@ -512,8 +486,6 @@ export const FriendAuthor = styled('span', {
       & > strong {
         font-size: 0.625rem;
       }
-    }
-    @media (max-width: 550px) {
       & > span {
         font-size: 0.625rem;
       }
@@ -549,8 +521,6 @@ export const Difficulty = styled('span', {
         padding: 0.1875rem 0.5rem 0.1875rem 0.25rem;
         gap: 0.25rem;
       }
-    }
-    @media (max-width: 550px) {
       & > img {
         width: 1.125rem;
         height: 1.125rem;

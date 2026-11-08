@@ -6,6 +6,8 @@ export type ProblemStatus = 'solved' | 'attempted' | 'unattempted';
 
 export type ProblemSort = 'id' | 'difficulty' | 'title' | 'solvers' | 'attempts' | 'random';
 
+export const problemPageSize = 10;
+
 export const difficulties: {
   id: Difficulty;
   label: string;
@@ -36,10 +38,10 @@ export interface Problem {
   id: number;
   title: string;
   difficulty: Difficulty;
-  status: ProblemStatus;
-  xp: number;
-  solvers: number;
-  attempts: number;
+  status?: ProblemStatus;
+  xp?: number;
+  solvers?: number;
+  attempts?: number;
   categories: string[];
   beginner?: boolean;
 }
@@ -107,22 +109,24 @@ export function filterProblems(problems: Problem[], filters: ProblemFilters) {
     .map((tag) => tag.trim().toLocaleLowerCase())
     .filter(Boolean);
   const filtered = problems.filter((problem) => {
-    const level = difficulties.findIndex((item) => item.id === problem.difficulty);
+    const difficultyIndex = difficulties.findIndex((item) => item.id === problem.difficulty);
+    const solverCount = problem.solvers ?? 0;
+    const averageAttempts = problem.attempts ?? 0;
     const matchesCategory = (tag: string) =>
       problem.categories.some((category) => category.toLocaleLowerCase().includes(tag));
     const matchesQuery =
       !query || `${problem.id} ${problem.title}`.toLocaleLowerCase().includes(query);
-    const matchesDifficulty = level >= filters.difficultyMin && level <= filters.difficultyMax;
+    const matchesDifficulty =
+      difficultyIndex >= filters.difficultyMin && difficultyIndex <= filters.difficultyMax;
     const matchesCategories =
       !categories.length ||
       (filters.categoryLogic === 'AND'
         ? categories.every(matchesCategory)
         : categories.some(matchesCategory));
     const matchesStatus = filters.status === 'all' || filters.status === problem.status;
-    const matchesSolvers =
-      problem.solvers >= filters.minSolvers && problem.solvers <= filters.maxSolvers;
+    const matchesSolvers = solverCount >= filters.minSolvers && solverCount <= filters.maxSolvers;
     const matchesAttempts =
-      problem.attempts >= filters.minAttempts && problem.attempts <= filters.maxAttempts;
+      averageAttempts >= filters.minAttempts && averageAttempts <= filters.maxAttempts;
 
     return (
       matchesQuery &&
@@ -150,7 +154,7 @@ export function filterProblems(problems: Problem[], filters: ProblemFilters) {
           difficulties.findIndex((item) => item.id === b.difficulty);
         break;
       default:
-        result = a[filters.sort] - b[filters.sort];
+        result = (a[filters.sort] ?? 0) - (b[filters.sort] ?? 0);
     }
 
     return result * direction || a.id - b.id;

@@ -65,23 +65,11 @@ export const Header = styled('header', {
       color: ${theme.colors.primary.strong};
       background: ${colors.fill.heavy};
     }
-    @media (min-width: 2080px) {
-      & {
-        padding-inline: max(5rem, calc((100vw - 120rem) / 2));
-      }
-    }
-    @media (max-width: 1700px) {
-      & {
-        padding-inline: 2.5rem;
-      }
-    }
     @media (max-width: 1250px) {
       & nav button {
         font-size: 1.125rem;
         padding: 0.5rem 0.75rem;
       }
-    }
-    @media (max-width: 1250px) {
       & nav ${NavLink} {
         font-size: 1.125rem;
         padding: 0.5rem 0.75rem;
@@ -89,32 +77,27 @@ export const Header = styled('header', {
     }
     @media (max-width: 700px) {
       & {
-        padding: 0.625rem 1.25rem 0;
+        padding: 0.625rem var(--page-gutter) 0;
         height: 7.25rem;
         align-items: flex-start;
         position: relative;
       }
-    }
-    @media (max-width: 700px) {
       & nav {
         position: absolute;
         bottom: 0.625rem;
-        left: 1.25rem;
-        gap: 0.75rem;
+        left: var(--page-gutter);
+        right: var(--page-gutter);
+        gap: clamp(0.25rem, 1.5vw, 0.75rem);
       }
-    }
-    @media (max-width: 700px) {
       & nav button {
         font-size: 1rem;
         line-height: 1.5rem;
-        padding: 0.375rem 0.875rem;
+        padding: 0.375rem clamp(0.5rem, 2vw, 0.875rem);
       }
-    }
-    @media (max-width: 700px) {
       & nav ${NavLink} {
         font-size: 1rem;
         line-height: 1.5rem;
-        padding: 0.375rem 0.875rem;
+        padding: 0.375rem clamp(0.5rem, 2vw, 0.875rem);
       }
     }
     @media (min-width: 701px) {
@@ -125,15 +108,11 @@ export const Header = styled('header', {
           calc((100% - var(--page-max-width)) / 2 + var(--page-gutter))
         );
       }
-    }
-    @media (min-width: 701px) {
       & nav button {
         font-size: 16px;
         line-height: 24px;
         padding: 5px 12px;
       }
-    }
-    @media (min-width: 701px) {
       & nav ${NavLink} {
         font-size: 16px;
         line-height: 24px;
@@ -146,47 +125,41 @@ export const Header = styled('header', {
 export const HeaderContent = styled('div', {
   label: 'HeaderContent',
   target: 'e-t-2',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    gap: 3.25rem;
+    align-items: center;
+  }
+  & > a img {
+    width: 17.625rem;
+    height: 4.4375rem;
+  }
+  @media (max-width: 1250px) {
     & {
-      display: flex;
-      gap: 3.25rem;
-      align-items: center;
+      gap: 1.25rem;
     }
     & > a img {
-      width: 17.625rem;
-      height: 4.4375rem;
+      width: 13.125rem;
+      height: auto;
     }
-    @media (max-width: 1250px) {
-      & {
-        gap: 1.25rem;
-      }
+  }
+  @media (max-width: 700px) {
+    & > a img {
+      width: clamp(7.5rem, 35vw, 10rem);
+      height: auto;
     }
-    @media (max-width: 1250px) {
-      & > a img {
-        width: 13.125rem;
-        height: auto;
-      }
+  }
+  @media (min-width: 701px) {
+    & {
+      gap: 2rem;
     }
-    @media (max-width: 700px) {
-      & > a img {
-        width: 10rem;
-        height: 2.5rem;
-      }
+    & > a img {
+      width: 14rem;
+      height: auto;
     }
-    @media (min-width: 701px) {
-      & {
-        gap: 2rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & > a img {
-        width: 14rem;
-        height: auto;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const NavLink = styled(Link, {
   label: 'NavLink',
@@ -197,55 +170,49 @@ export const NavLink = styled(Link, {
 export const Profile = styled('button', {
   label: 'Profile',
   target: 'e-t-4',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-size: 1.375rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  & img {
+    border: 2px solid ${colors.line.normal};
+    border-radius: 50%;
+    width: 2.625rem;
+    height: 2.625rem;
+  }
+  @media (max-width: 1250px) {
     & {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      font-size: 1.375rem;
-      font-weight: 500;
-      white-space: nowrap;
+      font-size: 1rem;
+      gap: 0.625rem;
+    }
+  }
+  @media (max-width: 700px) {
+    & {
+      margin-top: 0.25rem;
+      font-size: 0.8125rem;
+      gap: 0.5rem;
     }
     & img {
-      border: 2px solid ${colors.line.normal};
-      border-radius: 50%;
-      width: 2.625rem;
-      height: 2.625rem;
+      width: 2rem;
+      height: 2rem;
     }
-    @media (max-width: 1250px) {
-      & {
-        font-size: 1rem;
-        gap: 0.625rem;
-      }
+  }
+  @media (min-width: 701px) {
+    & {
+      font-size: 15px;
+      gap: 10px;
     }
-    @media (max-width: 700px) {
-      & {
-        margin-top: 0.25rem;
-        font-size: 0.8125rem;
-        gap: 0.5rem;
-      }
+    & img {
+      width: 32px;
+      height: 32px;
     }
-    @media (max-width: 700px) {
-      & img {
-        width: 2rem;
-        height: 2rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        font-size: 15px;
-        gap: 10px;
-      }
-    }
-    @media (min-width: 701px) {
-      & img {
-        width: 32px;
-        height: 32px;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Footer = styled('footer', {
   label: 'Footer',
@@ -253,44 +220,14 @@ export const Footer = styled('footer', {
 })(
   ({ theme }) => css`
     & {
-      padding: 3rem 5rem;
+      padding: clamp(1.75rem, 3vw, 2.5rem)
+        max(var(--page-gutter), calc((100% - var(--page-max-width)) / 2 + var(--page-gutter)));
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 2.5rem;
+      gap: var(--section-gap);
       background: ${theme.colors.background.elevated};
       border-top: 1px solid ${theme.colors.line.alternative};
-    }
-    @media (min-width: 2080px) {
-      & {
-        padding-inline: max(5rem, calc((100vw - 120rem) / 2));
-      }
-    }
-    @media (max-width: 1700px) {
-      & {
-        padding-inline: 2.5rem;
-        flex-wrap: wrap;
-      }
-    }
-    @media (max-width: 1250px) {
-      & {
-        padding: 2.25rem 2rem;
-      }
-    }
-    @media (max-width: 700px) {
-      & {
-        padding: 1.75rem 1.25rem;
-        gap: 1.75rem;
-      }
-    }
-    @media (min-width: 701px) {
-      & {
-        padding-block: 2rem;
-        padding-inline: max(
-          var(--page-gutter),
-          calc((100% - var(--page-max-width)) / 2 + var(--page-gutter))
-        );
-        gap: 1.75rem;
-      }
     }
   `,
 );
@@ -322,18 +259,16 @@ export const Logo = styled(Link, {
   label: 'Logo',
   target: 'e-t-7',
   shouldForwardProp: (prop) => !prop.startsWith('$'),
-})(
-  () => css`
-    & {
-      display: flex;
-      align-items: center;
-      gap: 0.625rem;
-      font-size: 1.5rem;
-      font-weight: 700;
-      line-height: 2.25rem;
-    }
-  `,
-);
+})`
+  & {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 2.25rem;
+  }
+`;
 
 export const Team = styled('div', {
   label: 'Team',
@@ -368,15 +303,11 @@ export const Team = styled('div', {
       & {
         width: 100%;
       }
-    }
-    @media (max-width: 700px) {
       & ul {
         display: grid;
         grid-template-columns: 1fr;
         gap: 0.625rem;
       }
-    }
-    @media (max-width: 700px) {
       & li {
         padding: 0.75rem 0.875rem;
       }
@@ -387,31 +318,29 @@ export const Team = styled('div', {
 export const MemberName = styled('div', {
   label: 'MemberName',
   target: 'e-t-9',
-})(
-  () => css`
+})`
+  & {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    white-space: nowrap;
+  }
+  & > span {
+    border-radius: 62.4375rem;
+    padding: 2px 0.5rem;
+    background: ${colors.fill.strong};
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1rem;
+  }
+  @media (max-width: 700px) {
     & {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      white-space: nowrap;
+      font-size: 0.875rem;
     }
-    & > span {
-      border-radius: 62.4375rem;
-      padding: 2px 0.5rem;
-      background: ${colors.fill.strong};
-      font-size: 0.75rem;
-      font-weight: 700;
-      line-height: 1rem;
-    }
-    @media (max-width: 700px) {
-      & {
-        font-size: 0.875rem;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Github = styled('div', {
   label: 'Github',

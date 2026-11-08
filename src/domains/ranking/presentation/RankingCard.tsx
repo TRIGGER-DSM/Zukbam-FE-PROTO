@@ -2,29 +2,44 @@ import * as S from './RankingCard.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import { rankTiers, type RankSummary } from '../domain/ranking';
 import { Asset } from '../../../shared/ui/Asset';
+import { tierThresholds } from '../domain/leaderboard';
+import type { ReactNode } from 'react';
 
 interface RankingCardProps {
-  rank: RankSummary;
+  rank?: RankSummary;
+  children?: ReactNode;
   onShowAll: () => void;
 }
 
-export function RankingCard({ rank, onShowAll }: RankingCardProps) {
+export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
+  const tier = tierThresholds.find((item) => item.label === rank?.title);
+  const currentTierIndex = rankTiers.findIndex((item) => item.id === tier?.id);
   return (
     <S.Card aria-labelledby="rank-title">
-      <S.Medal name="rank-current.svg" alt={rank.title + ' 메달'} />
+      <S.Medal
+        name={tier ? `rank-${tier.id}.svg` : 'rank-current.svg'}
+        alt={tier ? `${tier.label} 메달` : ''}
+      />
       <S.Progress>
-        <h2 id="rank-title">내 대나무</h2>
-        <h3>{rank.title}</h3>
-        <UI.Muted>
-          {rank.nextTitle}까지 {rank.nextXp - rank.xp} XP 남았어요.
-        </UI.Muted>
-        <S.Bamboo
-          name="bamboo-progress.svg"
-          alt={`${rank.xp.toLocaleString()} / ${rank.nextXp.toLocaleString()} XP`}
-        />
+        <h2 id="rank-title">랭크</h2>
+        <h3>{rank?.title ?? '—'}</h3>
+        {children}
+        {rank?.nextXp !== undefined ? (
+          <>
+            <UI.Muted>
+              {rank.nextTitle}까지 {rank.nextXp - rank.xp} XP 남았어요.
+            </UI.Muted>
+            <S.Bamboo
+              name="bamboo-progress.svg"
+              alt={`${rank.xp.toLocaleString()} / ${rank.nextXp.toLocaleString()} XP`}
+            />
+          </>
+        ) : (
+          <S.Track aria-hidden="true" />
+        )}
         <S.XpLabels>
-          <strong>{rank.xp.toLocaleString()} XP</strong>
-          <span>{rank.nextXp.toLocaleString()} XP</span>
+          <strong>{rank ? `${rank.xp.toLocaleString()} XP` : '— XP'}</strong>
+          {rank?.nextXp !== undefined && <span>{rank.nextXp.toLocaleString()} XP</span>}
         </S.XpLabels>
       </S.Progress>
       <S.Ladder>
@@ -36,18 +51,20 @@ export function RankingCard({ rank, onShowAll }: RankingCardProps) {
           {rankTiers.map((tier, i) => (
             <S.Tier
               key={tier.label}
-              $current={i === 3}
-              $locked={i > 3}
-              aria-current={i === 3 ? 'step' : undefined}
+              $current={i === currentTierIndex}
+              $locked={currentTierIndex >= 0 && i > currentTierIndex}
+              aria-current={i === currentTierIndex ? 'step' : undefined}
             >
               <Asset name={`rank-${tier.id}.svg`} />
               <strong>{tier.label}</strong>
             </S.Tier>
           ))}
         </S.Tiers>
-        <UI.Muted>
-          전체 {rank.position}위 · 상위 {rank.percentile}%
-        </UI.Muted>
+        {rank?.position !== undefined && rank.percentile !== undefined && (
+          <UI.Muted>
+            전체 {rank.position}위 · 상위 {rank.percentile}%
+          </UI.Muted>
+        )}
       </S.Ladder>
     </S.Card>
   );

@@ -1,5 +1,6 @@
 import * as S from './SubmissionProblemPanel.styles';
 import { useState } from 'react';
+import { SolutionHistory } from './SolutionHistory';
 import type { ProblemDetail } from '../../problem/domain/problemDetail';
 import type { SubmissionTab } from '../domain/submission';
 
@@ -35,10 +36,11 @@ function Sample({ label, value }: SampleProps) {
 
 interface SubmissionProblemPanelProps {
   problem: ProblemDetail;
+  tab: SubmissionTab;
+  onTabChange: (tab: SubmissionTab) => void;
 }
 
-export function SubmissionProblemPanel({ problem }: SubmissionProblemPanelProps) {
-  const [tab, setTab] = useState<SubmissionTab>('problem');
+export function SubmissionProblemPanel({ problem, tab, onTabChange }: SubmissionProblemPanelProps) {
   return (
     <S.Panel aria-label="문제 패널">
       <S.Tabs role="tablist" aria-label="문제 정보 탭">
@@ -62,7 +64,7 @@ export function SubmissionProblemPanel({ problem }: SubmissionProblemPanelProps)
             id={`submission-tab-${item.id}`}
             aria-selected={tab === item.id}
             aria-controls="submission-problem-content"
-            onClick={() => setTab(item.id as SubmissionTab)}
+            onClick={() => onTabChange(item.id as SubmissionTab)}
           >
             {item.label}
           </button>
@@ -119,12 +121,15 @@ export function SubmissionProblemPanel({ problem }: SubmissionProblemPanelProps)
               </S.Limits>
             </section>
           </>
+        ) : tab === 'history' ? (
+          <section>
+            <h2>제출 기록</h2>
+            <SolutionHistory problemId={problem.id} />
+          </section>
         ) : (
           <S.Empty>
-            <h2>{tab === 'history' ? '제출 기록' : '질문'}</h2>
-            <p>
-              {tab === 'history' ? '제출 기록 기능은 준비 중이에요.' : '질문 기능은 준비 중이에요.'}
-            </p>
+            <h2>질문</h2>
+            <p>질문 기능은 준비 중이에요.</p>
           </S.Empty>
         )}
       </S.Body>

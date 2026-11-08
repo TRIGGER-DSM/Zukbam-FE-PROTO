@@ -1,4 +1,3 @@
-import { detailSize as size } from '../../domains/problem/presentation/problemDetailSize';
 import * as Example from '../../domains/problem/presentation/ProblemExample.styles';
 import { colors } from '../../shared/styles/colors';
 import styled from '@emotion/styled';
@@ -8,55 +7,37 @@ import { ProblemDetailAsset } from '../../domains/problem/presentation/ProblemDe
 export const Page = styled('main', {
   label: 'Page',
   target: 'e-k-0',
-})(
-  () => css`
-    --detail-scale: clamp(0.875px, calc(0.5px + 0.026041667vw), 1px);
-    --detail-gutter: clamp(24px, 4.166667vw, 80px);
-    @media (max-width: 700px) {
-      --detail-scale: 0.875px;
-      --detail-gutter: 20px;
-    }
-  `,
-);
+})`
+  --detail-gutter: var(--page-gutter);
+`;
 
 export const Content = styled('div', {
   label: 'Content',
   target: 'e-k-1',
-})(
-  () => css`
+})`
+  & {
+    padding: 3rem var(--detail-gutter) 1.875rem;
+    max-width: var(--page-max-width);
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(17rem, 1fr);
+    gap: var(--section-gap);
+    align-items: start;
+  }
+  @media (max-width: 850px) {
     & {
-      padding: ${size(48)} var(--detail-gutter) ${size(30)};
-      max-width: 1920px;
-      margin-inline: auto;
-      min-height: ${size(964)};
-      display: grid;
-      grid-template-columns: minmax(0, 1160fr) minmax(0, 536fr);
-      gap: ${size(64)};
-      align-items: start;
+      grid-template-columns: 1fr;
+      padding: 2rem var(--detail-gutter);
+      gap: 2.5rem;
     }
-    @media (max-width: 1600px) {
-      & {
-        padding-inline: var(--detail-gutter);
-        gap: ${size(40)};
-        grid-template-columns: minmax(0, 1160fr) minmax(0, 536fr);
-      }
+  }
+  @media (max-width: 700px) {
+    & {
+      padding: 1.75rem 1.25rem 2rem;
+      gap: 2rem;
     }
-    @media (max-width: 1100px) {
-      & {
-        grid-template-columns: 1fr;
-        padding: ${size(32)} var(--detail-gutter);
-        min-height: 0;
-        gap: ${size(40)};
-      }
-    }
-    @media (max-width: 700px) {
-      & {
-        padding: ${size(28)} ${size(20)} ${size(32)};
-        gap: ${size(32)};
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Statement = styled('article', {
   label: 'Statement',
@@ -66,40 +47,40 @@ export const Statement = styled('article', {
     & {
       min-width: 0;
       & > ${Example.Section} {
-        gap: ${size(14)};
+        gap: 0.875rem;
       }
       & h2 {
-        font-size: ${size(24)};
-        line-height: ${size(32)};
+        font-size: 1.5rem;
+        line-height: 2rem;
       }
       & > ${Example.Section} > p {
-        font-size: ${size(18)};
-        line-height: ${size(30)};
+        font-size: 1.125rem;
+        line-height: 1.875rem;
       }
       & ${Example.Grid} {
-        gap: ${size(24)};
+        gap: 1.5rem;
       }
       & ${Example.Code} {
-        gap: ${size(10)};
+        gap: 0.625rem;
         h3,
         button {
-          font-size: ${size(16)};
-          line-height: ${size(24)};
+          font-size: 1rem;
+          line-height: 1.5rem;
         }
         pre {
-          padding: ${size(16)} ${size(20)};
-          height: ${size(236)};
-          font-size: ${size(16)};
-          line-height: ${size(26)};
+          padding: 1rem 1.25rem;
+          height: 14.75rem;
+          font-size: 1rem;
+          line-height: 1.625rem;
         }
       }
       display: flex;
       flex-direction: column;
-      gap: ${size(48)};
+      gap: 3rem;
     }
     @media (max-width: 700px) {
       & {
-        gap: ${size(32)};
+        gap: 2rem;
       }
     }
   `,
@@ -112,33 +93,33 @@ export const Rules = styled('ul', {
   ({ theme }) => css`
     & {
       color: ${colors.label.normal};
-      font-size: ${size(18)};
-      line-height: ${size(30)};
+      font-size: 1.125rem;
+      line-height: 1.875rem;
       overflow-wrap: anywhere;
     }
     & {
       display: flex;
       flex-direction: column;
-      gap: ${size(10)};
+      gap: 0.625rem;
     }
     & li {
       position: relative;
-      padding-left: ${size(16)};
+      padding-left: 1rem;
     }
     & li::before {
       content: '';
       position: absolute;
-      top: ${size(12)};
+      top: 0.75rem;
       left: 0;
-      width: ${size(6)};
-      height: ${size(6)};
+      width: 0.375rem;
+      height: 0.375rem;
       border-radius: 50%;
       background: ${theme.colors.primary.normal};
     }
     @media (max-width: 700px) {
       & {
-        font-size: ${size(18)};
-        line-height: ${size(30)};
+        font-size: 1.125rem;
+        line-height: 1.875rem;
       }
     }
   `,
@@ -147,29 +128,27 @@ export const Rules = styled('ul', {
 export const Sidebar = styled('div', {
   label: 'Sidebar',
   target: 'e-k-4',
-})(
-  () => css`
+})`
+  & {
+    position: relative;
+    min-width: 0;
+  }
+  @media (max-width: 1100px) {
     & {
-      position: relative;
-      min-width: 0;
+      max-width: 40.625rem;
+      width: 100%;
+      justify-self: center;
     }
-    @media (max-width: 1100px) {
-      & {
-        max-width: ${size(650)};
-        width: 100%;
-        justify-self: center;
-      }
-    }
-  `,
-);
+  }
+`;
 
 export const Mascot = styled(ProblemDetailAsset)`
   position: absolute;
   left: 50%;
-  top: ${size(-192)};
+  top: -12rem;
   transform: translateX(-50%);
-  width: ${size(300)};
-  height: ${size(199)};
+  width: 18.75rem;
+  height: 12.4375rem;
   object-fit: contain;
   pointer-events: none;
   @media (max-width: 1100px) {
@@ -186,17 +165,17 @@ export const Unavailable = styled('main', {
 })(
   ({ theme }) => css`
     & {
-      padding: ${size(100)} ${size(24)};
+      padding: 6.25rem 1.5rem;
       min-height: 60vh;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: ${size(24)};
+      gap: 1.5rem;
       text-align: center;
     }
     & h1 {
-      font-size: ${size(28)};
+      font-size: 1.75rem;
     }
     & > p {
       color: ${theme.colors.label.alternative};

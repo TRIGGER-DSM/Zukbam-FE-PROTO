@@ -5,6 +5,10 @@ const globalStyles = (theme: Theme) => css`
   :root {
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 87.5%;
+    --page-max-width: 96rem;
+    --page-content-width: 90rem;
+    --page-gutter: clamp(1rem, 3.5vw, 2.5rem);
+    --section-gap: clamp(1.25rem, 2.5vw, 2.5rem);
     color: ${colors.label.strong};
     background: ${theme.colors.background.normal};
     font-synthesis: none;
@@ -16,7 +20,7 @@ const globalStyles = (theme: Theme) => css`
   }
   body {
     margin: 0;
-    min-width: 360px;
+    min-width: 0;
   }
   button,
   a,
@@ -76,13 +80,6 @@ const globalStyles = (theme: Theme) => css`
     h2 {
       font-size: 1.1875rem;
       line-height: 1.75rem;
-    }
-  }
-  @media (min-width: 701px) {
-    :root {
-      --page-max-width: 1280px;
-      --page-gutter: 2rem;
-      --section-gap: 1.75rem;
     }
   }
   @media (prefers-reduced-motion: reduce) {

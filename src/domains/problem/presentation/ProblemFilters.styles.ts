@@ -112,8 +112,6 @@ export const Section = styled('section', {
       & {
         padding: 1.25rem 0;
       }
-    }
-    @media (max-width: 550px) {
       &:last-child {
         padding-bottom: 0;
       }
@@ -306,19 +304,13 @@ export const DifficultyFields = styled('div', {
         grid-template-columns: minmax(0, 1fr) 0.625rem minmax(0, 1fr);
         gap: 0.375rem;
       }
-    }
-    @media (max-width: 1200px) {
       & > label {
         padding: 0.5rem 0.375rem;
         gap: 0.1875rem;
       }
-    }
-    @media (max-width: 1200px) {
       & select {
         font-size: 0.75rem;
       }
-    }
-    @media (max-width: 1200px) {
       & label > img:first-of-type {
         width: 1rem;
         height: 1rem;
@@ -328,8 +320,6 @@ export const DifficultyFields = styled('div', {
       & select {
         font-size: 0.875rem;
       }
-    }
-    @media (max-width: 850px) {
       & > label {
         padding: 0.625rem;
       }
@@ -340,15 +330,13 @@ export const DifficultyFields = styled('div', {
 export const Heading = styled('div', {
   label: 'Heading',
   target: 'e-7-7',
-})(
-  () => css`
-    & {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  `,
-);
+})`
+  & {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+`;
 
 export const Logic = styled('div', {
   label: 'Logic',

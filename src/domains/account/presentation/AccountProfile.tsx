@@ -56,7 +56,7 @@ export function AccountProfile({ account }: AccountProfileProps) {
         <h2>{account.name}</h2>
         <dl>
           <div>
-            <dt>userId</dt>
+            <dt>사용자 번호</dt>
             <dd>{account.userId}</dd>
           </div>
           <div>

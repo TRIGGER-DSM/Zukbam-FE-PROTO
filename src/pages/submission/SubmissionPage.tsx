@@ -1,7 +1,7 @@
 import * as S from './SubmissionPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
@@ -10,6 +10,7 @@ import {
   submitSolution,
   solutionIdFromLocation,
   solutionOptions,
+  resultPath,
 } from '../../domains/submission/infrastructure/solutionApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import type { ProblemDetail } from '../../domains/problem/domain/problemDetail';
@@ -65,6 +66,7 @@ interface SubmissionWorkspaceProps {
 }
 
 function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [language, setLanguage] = useState<CodeLanguage>('python');
   const [demoVerdict, setDemoVerdict] = useState<DemoVerdict>('ACCEPTED');
@@ -107,7 +109,10 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
       void queryClient.invalidateQueries({ queryKey: [key] });
     }
     void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
-  }, [latestSolutionId, latestStatus, problem.id, queryClient]);
+    navigate(resultPath(problem.id, { solutionId: latestSolutionId, status: latestStatus }), {
+      replace: true,
+    });
+  }, [latestSolutionId, latestStatus, problem.id, queryClient, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsedSeconds((seconds) => seconds + 1), 1000);

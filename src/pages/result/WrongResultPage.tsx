@@ -3,6 +3,7 @@ import { Link, Navigate, useParams, useSearchParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
+import { isDemoMode } from '../../shared/demo/mode';
 import {
   resultPath,
   solutionOptions,
@@ -12,7 +13,7 @@ import {
 export function WrongResultPage() {
   const { problemId } = useParams();
   const [searchParams] = useSearchParams();
-  const solutionId = Number(searchParams.get('solutionId'));
+  const solutionId = Number(searchParams.get('solutionId') ?? (isDemoMode ? 10002 : 0));
   const solutionQuery = useQuery(solutionOptions(solutionId));
   const result = solutionQuery.data;
 

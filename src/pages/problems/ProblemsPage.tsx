@@ -23,6 +23,11 @@ import { ProblemDiscovery } from '../../domains/problem/presentation/ProblemDisc
 import { ProblemFilters } from '../../domains/problem/presentation/ProblemFilters';
 import { ProblemTable } from '../../domains/problem/presentation/ProblemTable';
 import { problemDetailPath } from '../../domains/problem/presentation/problemDetailPath';
+import { isDemoMode } from '../../shared/demo/mode';
+import {
+  recommendedProblems,
+  friendProblems,
+} from '../../domains/problem/infrastructure/problemFixture';
 
 interface SortOption {
   id: ProblemSort;
@@ -143,7 +148,11 @@ export function ProblemsPage() {
     <SiteLayout>
       <S.Page id="main">
         <UI.HiddenHeading>문제 목록</UI.HiddenHeading>
-        <ProblemDiscovery recommended={[]} friends={[]} onSelect={openProblem} />
+        <ProblemDiscovery
+          recommended={isDemoMode ? recommendedProblems : []}
+          friends={isDemoMode ? friendProblems : []}
+          onSelect={openProblem}
+        />
         <S.Browse>
           <ProblemFilters filters={filters} onChange={updateFilters} onReset={resetFilters} />
           <S.Results aria-label="문제 검색 결과">
@@ -165,7 +174,7 @@ export function ProblemsPage() {
               {sortOptions.map((sort) => (
                 <S.SortButton
                   key={sort.id}
-                  disabled={sort.disabled}
+                  disabled={sort.disabled && !isDemoMode}
                   aria-pressed={filters.sort === sort.id}
                   onClick={() => selectSort(sort.id)}
                 >

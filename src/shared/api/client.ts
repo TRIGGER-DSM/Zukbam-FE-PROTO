@@ -1,3 +1,5 @@
+import { getDemoToken, isDemoMode, setDemoToken } from '../demo/mode';
+
 const apiBase = import.meta.env.DEV
   ? '/api'
   : (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
@@ -10,6 +12,7 @@ interface SessionTokens {
 const sessionChangeEvent = 'auth-session-change';
 
 export function getAccessToken() {
+  if (isDemoMode) return getDemoToken();
   return sessionStorage.getItem('accessToken') ?? localStorage.getItem('accessToken');
 }
 
@@ -31,6 +34,12 @@ export function saveSession(tokens: SessionTokens, remember = false) {
     throw new Error('서버에서 로그인 정보를 받지 못했어요.');
   }
 
+  if (isDemoMode) {
+    setDemoToken(tokens.accessToken);
+    window.dispatchEvent(new Event(sessionChangeEvent));
+    return;
+  }
+
   removeStoredTokens();
   const storage = remember ? localStorage : sessionStorage;
   try {
@@ -45,6 +54,11 @@ export function saveSession(tokens: SessionTokens, remember = false) {
 }
 
 export function clearSession() {
+  if (isDemoMode) {
+    setDemoToken(null);
+    window.dispatchEvent(new Event(sessionChangeEvent));
+    return;
+  }
   removeStoredTokens();
   window.dispatchEvent(new Event(sessionChangeEvent));
 }
@@ -76,6 +90,10 @@ interface ApiOptions {
 }
 
 export async function apiResponse(path: string, options: ApiOptions = {}) {
+  if (isDemoMode) {
+    const { demoResponse } = await import('../demo/demoApi');
+    return demoResponse(path, options);
+  }
   const requestToken = getAccessToken();
   const headers = new Headers({ Accept: 'application/json' });
   if (options.authenticated) {

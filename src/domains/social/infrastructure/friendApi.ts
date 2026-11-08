@@ -10,6 +10,10 @@ import type {
 } from '../domain/friend';
 
 interface FriendResponse {
+  tier?: Friend['tier'];
+  tierLabel?: string;
+  streakDays?: number;
+  recentActivity?: string;
   friendshipId: number;
   userId: number;
   name: string;
@@ -17,6 +21,8 @@ interface FriendResponse {
 }
 
 interface ReceivedRequestResponse {
+  tier?: FriendRequest['tier'];
+  tierLabel?: string;
   friendshipId: number;
   requesterId: number;
   requesterName: string;
@@ -41,8 +47,10 @@ export function friendsOptions() {
             id: String(friend.userId),
             friendshipId: friend.friendshipId,
             name: friend.name,
-            tierLabel: '',
-            recentActivity: '',
+            tier: friend.tier,
+            tierLabel: friend.tierLabel ?? '',
+            streakDays: friend.streakDays,
+            recentActivity: friend.recentActivity ?? '',
           })),
         };
       }, signal),
@@ -64,7 +72,8 @@ export function receivedRequestsOptions() {
             id: String(request.requesterId),
             friendshipId: request.friendshipId,
             name: request.requesterName,
-            tierLabel: '',
+            tier: request.tier,
+            tierLabel: request.tierLabel ?? '',
             requestedAt: `${new Date(request.requestedAt).toLocaleString('ko-KR')} 요청`,
             status: 'pending',
           })),

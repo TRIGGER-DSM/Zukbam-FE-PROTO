@@ -2,6 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 import { apiJson, apiResponse, getAccessToken } from '../../../shared/api/client';
 import type { PageInfo } from '../../../shared/api/pagination';
 import type { CodeLanguage } from '../domain/submission';
+import { isDemoMode, type DemoVerdict } from '../../../shared/demo/mode';
 
 const languages = { python: 'Python', javascript: 'JavaScript', cpp: 'C++17' } as const;
 
@@ -38,10 +39,15 @@ export const solutionStatusLabels: Record<SolutionStatus, string> = {
   INTERNAL_ERROR: '채점 오류',
 };
 
-export function submitSolution(problemId: number, language: CodeLanguage, code: string) {
+export function submitSolution(
+  problemId: number,
+  language: CodeLanguage,
+  code: string,
+  demoStatus?: DemoVerdict,
+) {
   return apiResponse(`/solutions/${problemId}`, {
     method: 'POST',
-    body: { language: languages[language], code },
+    body: { language: languages[language], code, ...(isDemoMode && { demoStatus }) },
     authenticated: true,
   });
 }
@@ -60,7 +66,11 @@ export function solutionHistoryOptions(problemId: number, email: string, page: n
       return apiJson<SolutionPage>(`/solutions?${params}`, { authenticated: true, signal });
     },
     refetchInterval: (query) =>
-      query.state.data?.solutions.some((solution) => solution.status === 'PENDING') ? 3000 : false,
+      query.state.data?.solutions.some((solution) => solution.status === 'PENDING')
+        ? isDemoMode
+          ? 500
+          : 3000
+        : false,
   });
 }
 
@@ -70,7 +80,8 @@ export function solutionOptions(solutionId: number) {
     enabled: Number.isSafeInteger(solutionId) && solutionId > 0,
     queryFn: ({ signal }) =>
       apiJson<Solution>(`/solutions/${solutionId}`, { authenticated: true, signal }),
-    refetchInterval: (query) => (query.state.data?.status === 'PENDING' ? 3000 : false),
+    refetchInterval: (query) =>
+      query.state.data?.status === 'PENDING' ? (isDemoMode ? 500 : 3000) : false,
   });
 }
 
@@ -83,7 +94,7 @@ export function solutionIdFromLocation(response: Response) {
   const location = response.headers.get('Location');
   if (!location) return;
   try {
-    const path = new URL(location, response.url).pathname;
+    const path = new URL(location, response.url || 'https://demo.local').pathname;
     const match = path.match(/\/solutions\/(\d+)\/?$/);
     const id = Number(match?.[1]);
     return Number.isSafeInteger(id) && id > 0 ? id : undefined;

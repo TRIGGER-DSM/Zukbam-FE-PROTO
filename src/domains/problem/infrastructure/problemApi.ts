@@ -3,6 +3,7 @@ import { apiJson } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
 import { difficulties, problemPageSize, type Problem } from '../domain/problem';
 import type { ProblemDetail } from '../domain/problemDetail';
+import { isDemoMode } from '../../../shared/demo/mode';
 
 type ProblemRank = 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3' | 'LEVEL_4' | 'LEVEL_5';
 
@@ -34,6 +35,17 @@ function difficulty(rank: ProblemRank) {
 }
 
 async function problemPage(page: number, size: number, signal?: AbortSignal) {
+  if (isDemoMode) {
+    const { demoProblems } = await import('./demoProblems');
+    signal?.throwIfAborted();
+    return {
+      page,
+      size,
+      totalElements: demoProblems.length,
+      totalPages: Math.ceil(demoProblems.length / size),
+      items: demoProblems.slice(page * size, (page + 1) * size),
+    };
+  }
   const result = await apiJson<ProblemListResponse>(`/problems?page=${page}&size=${size}`, {
     signal,
   });
@@ -66,6 +78,13 @@ export function problemDetailOptions(id: number) {
     queryKey: ['problem', id],
     enabled: Number.isSafeInteger(id) && id > 0,
     queryFn: async ({ signal }): Promise<ProblemDetail> => {
+      if (isDemoMode) {
+        const { demoProblemDetail } = await import('./demoProblems');
+        signal.throwIfAborted();
+        const detail = demoProblemDetail(id);
+        if (!detail) throw new Error('문제를 찾을 수 없어요.');
+        return detail;
+      }
       const problem = await apiJson<ProblemDetailResponse>(`/problems/${id}`, { signal });
       return {
         id: problem.problemId,

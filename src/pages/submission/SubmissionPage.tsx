@@ -24,6 +24,7 @@ import { codeTemplates } from '../../domains/submission/infrastructure/codeTempl
 import { CodeEditor } from '../../domains/submission/presentation/CodeEditor';
 import { SubmissionAsset } from '../../domains/submission/presentation/SubmissionAsset';
 import { SubmissionProblemPanel } from '../../domains/submission/presentation/SubmissionProblemPanel';
+import { isDemoMode, type DemoVerdict } from '../../shared/demo/mode';
 
 const panelWidth = { min: 30, max: 65, initial: 43.1818, step: 2 };
 
@@ -62,6 +63,7 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [language, setLanguage] = useState<CodeLanguage>('python');
+  const [demoVerdict, setDemoVerdict] = useState<DemoVerdict>('ACCEPTED');
   const [drafts, setDrafts] = useState({ ...codeTemplates });
   const [fontSize, setFontSize] = useState(14);
   const [problemPanelWidth, setProblemPanelWidth] = useState(panelWidth.initial);
@@ -77,7 +79,7 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   const hasSource = source.trim().length > 0;
   const matchesExample = firstExample && testInput.trim() === firstExample.input.trim();
   const submission = useMutation({
-    mutationFn: () => submitSolution(problem.id, language, source),
+    mutationFn: () => submitSolution(problem.id, language, source, demoVerdict),
     onSuccess: (response) => {
       void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
       void queryClient.invalidateQueries({ queryKey: ['growth'] });
@@ -109,6 +111,14 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
 
   function runCode() {
     setConsoleTab('result');
+    if (isDemoMode && hasSource) {
+      setRunMessage(
+        matchesExample
+          ? `예제 출력 (시연 데이터)\n${firstExample.output}`
+          : '시연 모드에서는 예제 입력의 출력만 제공해요.',
+      );
+      return;
+    }
     setRunMessage(hasSource ? '코드 실행 기능은 준비 중이에요.' : '실행할 코드를 입력해 주세요.');
   }
 
@@ -193,6 +203,16 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
                   ))}
                 </select>
                 <span>{selectedLanguage.filename}</span>
+                {isDemoMode && (
+                  <select
+                    aria-label="시연 채점 결과"
+                    value={demoVerdict}
+                    onChange={(event) => setDemoVerdict(event.target.value as DemoVerdict)}
+                  >
+                    <option value="ACCEPTED">시연: 정답</option>
+                    <option value="WRONG_ANSWER">시연: 오답</option>
+                  </select>
+                )}
               </S.Language>
               <S.Tools>
                 <span>폰트 크기</span>

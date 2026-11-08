@@ -7,7 +7,7 @@ import { RankingAsset } from '../../domains/ranking/presentation/RankingAsset';
 import { Podium } from '../../domains/ranking/presentation/Podium';
 import { RankingSidebar } from '../../domains/ranking/presentation/RankingSidebar';
 import { LeaderboardTable } from '../../domains/ranking/presentation/LeaderboardTable';
-import { getAccessToken } from '../../shared/api/client';
+import { useAccessToken } from '../../shared/hooks/useAccessToken';
 
 interface RankingMetricOption {
   id: RankingMetric;
@@ -57,7 +57,7 @@ export function RankingPage() {
   const [metric, setMetric] = useState<RankingMetric>('xp');
   const [period, setPeriod] = useState<RankingPeriod>('weekly');
   const leaderboard = getLeaderboard(period, metric);
-  const myRank = getAccessToken() ? leaderboard.me : undefined;
+  const myRank = useAccessToken() ? leaderboard.me : undefined;
   return (
     <SiteLayout>
       <S.Page id="main">

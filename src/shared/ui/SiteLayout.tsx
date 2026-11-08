@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { Asset } from './Asset';
 import { useQuery } from '@tanstack/react-query';
-import { getAccessToken } from '../api/client';
+import { useAccessToken } from '../hooks/useAccessToken';
 import { myProfileOptions, studentNumber } from '../../domains/member/infrastructure/profileApi';
 
 const teamMembers = [
@@ -70,7 +70,7 @@ interface AppHeaderProps {
 export function AppHeader({ active }: AppHeaderProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const signedIn = Boolean(getAccessToken());
+  const signedIn = Boolean(useAccessToken());
   const profilePath = signedIn || active !== undefined ? '/mypage/friends' : '/login';
   const profile = useQuery({
     ...myProfileOptions(),
@@ -81,9 +81,10 @@ export function AppHeader({ active }: AppHeaderProps) {
   );
   const activeLabel = active ?? currentSection?.label;
   const defaultProfileLabel = active ? '2312 정일웅' : signedIn ? '마이페이지' : '로그인';
-  const profileLabel = profile
-    ? [studentNumber(profile), profile.name].filter(Boolean).join(' ')
-    : defaultProfileLabel;
+  const profileLabel =
+    signedIn && profile
+      ? [studentNumber(profile), profile.name].filter(Boolean).join(' ')
+      : defaultProfileLabel;
   return (
     <S.Header>
       <S.HeaderContent>

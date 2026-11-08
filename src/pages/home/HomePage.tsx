@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
-import { getAccessToken } from '../../shared/api/client';
+import { useAccessToken } from '../../shared/hooks/useAccessToken';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { StreakDialog } from '../../domains/activity/presentation/StreakDialog';
 import { streakMilestoneFixture } from '../../domains/activity/infrastructure/streakMilestoneFixture';
@@ -37,9 +37,10 @@ export function HomePage() {
   const [preview, setPreview] = useState<NoticeListPreview | NoticePreview | null>(null);
   const { quests, notices } = homeFixture;
   const modal = searchParams.get('modal');
-  const signedIn = Boolean(getAccessToken());
+  const signedIn = Boolean(useAccessToken());
   const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
-  const rank = profile.data && { title: profile.data.rank, xp: profile.data.score };
+  const rank =
+    signedIn && profile.data ? { title: profile.data.rank, xp: profile.data.score } : undefined;
 
   function closeCelebration() {
     setSearchParams(

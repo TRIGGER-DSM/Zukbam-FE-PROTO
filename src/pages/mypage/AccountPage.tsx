@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
-import { clearSession, getAccessToken } from '../../shared/api/client';
+import { clearSession } from '../../shared/api/client';
+import { useAccessToken } from '../../shared/hooks/useAccessToken';
 import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
 import { friendsOptions } from '../../domains/social/infrastructure/friendApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
@@ -11,19 +12,21 @@ import { MyPageLayout } from './MyPageLayout';
 import * as S from './FriendsPage.styles';
 
 export function AccountPage() {
+  const signedIn = Boolean(useAccessToken());
   const profile = useQuery(myProfileOptions());
-  const friends = useQuery({ ...friendsOptions(), enabled: Boolean(getAccessToken()) });
+  const friends = useQuery({ ...friendsOptions(), enabled: signedIn });
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const account = profile.data && {
-    name: profile.data.name,
-    email: profile.data.email,
-    phone: '',
-    joinedAt: '—',
-    friendCount: friends.data?.length,
-    rank: profile.data.rank,
-    experience: profile.data.score,
-  };
+  const account = signedIn &&
+    profile.data && {
+      name: profile.data.name,
+      email: profile.data.email,
+      phone: '',
+      joinedAt: '—',
+      friendCount: friends.data?.length,
+      rank: profile.data.rank,
+      experience: profile.data.score,
+    };
 
   function logout() {
     clearSession();
@@ -50,7 +53,7 @@ export function AccountPage() {
             <h2 id="logout-title">로그아웃</h2>
             <p>이 브라우저에 저장된 로그인 정보를 지워요.</p>
           </div>
-          <Account.Exit variant="danger" disabled={!getAccessToken()} onClick={logout}>
+          <Account.Exit variant="danger" disabled={!signedIn} onClick={logout}>
             로그아웃
           </Account.Exit>
         </Account.Logout>

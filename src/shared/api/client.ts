@@ -7,8 +7,23 @@ interface SessionTokens {
   refreshToken: string;
 }
 
+const sessionChangeEvent = 'auth-session-change';
+
 export function getAccessToken() {
   return sessionStorage.getItem('accessToken') ?? localStorage.getItem('accessToken');
+}
+
+export function subscribeToSession(onChange: () => void) {
+  function handleStorage(event: StorageEvent) {
+    if (event.key === 'accessToken' || event.key === null) onChange();
+  }
+
+  window.addEventListener(sessionChangeEvent, onChange);
+  window.addEventListener('storage', handleStorage);
+  return () => {
+    window.removeEventListener(sessionChangeEvent, onChange);
+    window.removeEventListener('storage', handleStorage);
+  };
 }
 
 export function saveSession(tokens: SessionTokens, remember = false) {
@@ -16,13 +31,25 @@ export function saveSession(tokens: SessionTokens, remember = false) {
     throw new Error('서버에서 로그인 정보를 받지 못했어요.');
   }
 
-  clearSession();
+  removeStoredTokens();
   const storage = remember ? localStorage : sessionStorage;
-  storage.setItem('refreshToken', tokens.refreshToken);
-  storage.setItem('accessToken', tokens.accessToken);
+  try {
+    storage.setItem('refreshToken', tokens.refreshToken);
+    storage.setItem('accessToken', tokens.accessToken);
+  } catch (error) {
+    removeStoredTokens();
+    throw error;
+  } finally {
+    window.dispatchEvent(new Event(sessionChangeEvent));
+  }
 }
 
 export function clearSession() {
+  removeStoredTokens();
+  window.dispatchEvent(new Event(sessionChangeEvent));
+}
+
+function removeStoredTokens() {
   sessionStorage.removeItem('accessToken');
   sessionStorage.removeItem('refreshToken');
   localStorage.removeItem('accessToken');
@@ -49,11 +76,14 @@ interface ApiOptions {
 }
 
 export async function apiResponse(path: string, options: ApiOptions = {}) {
+  const requestToken = getAccessToken();
   const headers = new Headers({ Accept: 'application/json' });
   if (options.authenticated) {
-    const token = getAccessToken();
-    if (!token) throw new ApiError(401, '로그인이 필요한 기능이에요.');
-    headers.set('Authorization', `Bearer ${token}`);
+    if (!requestToken) {
+      clearSession();
+      throw new ApiError(401, '로그인이 필요한 기능이에요.');
+    }
+    headers.set('Authorization', `Bearer ${requestToken}`);
   }
   if (options.body) headers.set('Content-Type', 'application/json');
   const response = await fetch(`${apiBase}${path}`, {
@@ -66,6 +96,9 @@ export async function apiResponse(path: string, options: ApiOptions = {}) {
     throw new Error('서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.', { cause: error });
   });
   if (!response.ok) {
+    if (response.status === 401 && getAccessToken() === requestToken) {
+      clearSession();
+    }
     const error: { message?: string; code?: string } | null = await response
       .json()
       .catch(() => null);

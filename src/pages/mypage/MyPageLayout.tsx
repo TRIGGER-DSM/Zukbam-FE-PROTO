@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { receivedRequestsOptions } from '../../domains/social/infrastructure/friendApi';
-import { getAccessToken } from '../../shared/api/client';
+import { useAccessToken } from '../../shared/hooks/useAccessToken';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import * as S from './FriendsPage.styles';
 
@@ -40,9 +40,10 @@ const menuItems: MyPageMenuItem[] = [
 export function MyPageLayout({ children, pendingCount }: MyPageLayoutProps) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const signedIn = Boolean(useAccessToken());
   const requests = useQuery({
     ...receivedRequestsOptions(),
-    enabled: Boolean(getAccessToken()) && pendingCount === undefined,
+    enabled: signedIn && pendingCount === undefined,
   });
   const requestCount = pendingCount ?? requests.data?.length ?? 0;
 

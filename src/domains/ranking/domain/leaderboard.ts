@@ -15,6 +15,12 @@ export interface RankedUser {
   isMe?: boolean;
 }
 
+export interface MyRank extends Omit<RankedUser, 'position' | 'streak'> {
+  position?: number;
+  streak?: number;
+  rankLabel: string;
+}
+
 export const tierThresholds: {
   id: TierId;
   label: string;

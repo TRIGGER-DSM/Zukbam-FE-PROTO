@@ -1,30 +1,35 @@
 import * as S from './LeaderboardTable.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
-import type { RankedUser, RankingMetric } from '../domain/leaderboard';
+import {
+  tierThresholds,
+  type MyRank,
+  type RankedUser,
+  type RankingMetric,
+} from '../domain/leaderboard';
 import { RankingAsset } from './RankingAsset';
 
 interface LeaderboardTableProps {
   rows: RankedUser[];
-  me?: RankedUser;
+  me?: MyRank;
   metric: RankingMetric;
 }
 
 export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
   const scoreLabel = metric === 'xp' ? 'XP' : metric === 'solved' ? '푼 문제 수' : '스트릭';
   const scoreIcon = metric === 'xp' ? 'xp' : metric === 'solved' ? 'solved' : 'streak';
-  const renderRow = (user: RankedUser) => (
+  const renderRow = (user: RankedUser | MyRank) => (
     <S.Row key={user.id} $mine={!!user.isMe}>
-      <S.Position>{user.position}</S.Position>
+      <S.Position>{user.position ?? '—'}</S.Position>
       <S.CardCell>
         <RankingAsset
-          name={user.isMe ? 'card-me' : user.tier === 'gold' ? 'card-gold' : 'card-10'}
-          alt={user.tier === 'gold' ? '금죽' : user.isMe ? '대나무 5m' : '대나무 10m'}
+          name={user.isMe ? `tier-${user.tier}` : user.tier === 'gold' ? 'card-gold' : 'card-10'}
+          alt={tierThresholds.find((tier) => tier.id === user.tier)?.label}
         />
       </S.CardCell>
       <S.Score>
         <span>
           <RankingAsset name={scoreIcon} />
-          {user[metric].toLocaleString()}
+          {user[metric]?.toLocaleString() ?? '—'}
         </span>
       </S.Score>
       <S.User>

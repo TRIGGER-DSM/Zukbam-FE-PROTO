@@ -37,6 +37,23 @@ try {
   const social = await load('domains/social/infrastructure/friendApi.ts');
   const activity = await load('domains/activity/infrastructure/activityApi.ts');
   const ranking = await load('domains/ranking/application/getLeaderboard.ts');
+  const { getMyRank } = await load('domains/ranking/application/getMyRank.ts');
+  const customProfile = {
+    userId: 42,
+    name: '테스트 사용자',
+    score: 3200,
+    solvedCount: 87,
+    rank: '금죽',
+  };
+  const personalRank = getMyRank(customProfile, 7);
+  assert.equal(personalRank.name, customProfile.name);
+  assert.equal(personalRank.id, String(customProfile.userId));
+  assert.equal(personalRank.xp, customProfile.score);
+  assert.equal(personalRank.solved, customProfile.solvedCount);
+  assert.equal(personalRank.tier, 'gold');
+  assert.equal(personalRank.streak, 7);
+  assert.equal(personalRank.position, undefined);
+  assert.equal(getMyRank({ ...customProfile, score: 50, rank: '죽순' }).tier, 'sprout');
   const catalogue = await queries.fetchQuery(problems.problemCatalogueOptions());
   assert.ok(catalogue.length > 10);
   for (const problem of catalogue) {
@@ -49,7 +66,7 @@ try {
     const board = ranking.getLeaderboard(period, 'xp');
     assert.equal(board.podium.length, 3);
     assert.ok(board.rows.length);
-    assert.ok(board.me.name);
+    assert.equal(board.me, undefined);
   }
   for (const verdict of ['ACCEPTED', 'WRONG_ANSWER']) {
     const response = await submissions.submitSolution(1000, 'python', 'print(3)', verdict);
@@ -72,6 +89,12 @@ try {
   assert.ok((await queries.fetchQuery(social.friendsOptions())).length);
   assert.ok((await queries.fetchQuery(social.receivedRequestsOptions())).length);
   assert.equal((await queries.fetchQuery(activity.growthOptions())).activityDays.length, 365);
+  const profile = await api.apiJson('/users/me', { authenticated: true });
+  const streak = await queries.fetchQuery(activity.streakOptions());
+  const myRank = getMyRank(profile, streak.currentStreak, 184);
+  assert.equal(myRank.xp, 1260);
+  assert.equal(myRank.solved, 62);
+  assert.equal(myRank.streak, 13);
   api.clearSession();
   assert.equal(api.getAccessToken(), null);
   assert.equal(sessionStorage.getItem('accessToken'), 'real-token-untouched');

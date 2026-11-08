@@ -94,17 +94,6 @@ const weekly: RankedUser[] = [
   },
 ];
 
-export const currentRankedUser: RankedUser = {
-  id: 'me',
-  name: '김민서',
-  position: 184,
-  xp: 1240,
-  solved: 61,
-  streak: 10,
-  tier: '5',
-  isMe: true,
-};
-
 export const leaderboardFixtures: Record<RankingPeriod, RankedUser[]> = {
   weekly,
   monthly: weekly.map((user, index) => ({

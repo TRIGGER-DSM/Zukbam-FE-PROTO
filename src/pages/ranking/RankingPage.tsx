@@ -8,6 +8,12 @@ import { Podium } from '../../domains/ranking/presentation/Podium';
 import { RankingSidebar } from '../../domains/ranking/presentation/RankingSidebar';
 import { LeaderboardTable } from '../../domains/ranking/presentation/LeaderboardTable';
 import { useAccessToken } from '../../shared/hooks/useAccessToken';
+import { useQuery } from '@tanstack/react-query';
+import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
+import { streakOptions } from '../../domains/activity/infrastructure/activityApi';
+import { getMyRank } from '../../domains/ranking/application/getMyRank';
+import { ApiFeedback } from '../../shared/ui/ApiFeedback';
+import { isDemoMode } from '../../shared/demo/mode';
 
 interface RankingMetricOption {
   id: RankingMetric;
@@ -57,7 +63,13 @@ export function RankingPage() {
   const [metric, setMetric] = useState<RankingMetric>('xp');
   const [period, setPeriod] = useState<RankingPeriod>('weekly');
   const leaderboard = getLeaderboard(period, metric);
-  const myRank = useAccessToken() ? leaderboard.me : undefined;
+  const signedIn = Boolean(useAccessToken());
+  const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
+  const streak = useQuery({ ...streakOptions(), enabled: signedIn });
+  const myRank =
+    signedIn && profile.data
+      ? getMyRank(profile.data, streak.data?.currentStreak, isDemoMode ? 184 : undefined)
+      : undefined;
   return (
     <SiteLayout>
       <S.Page id="main">
@@ -108,6 +120,10 @@ export function RankingPage() {
           </S.Toolbar>
           <S.Results aria-live="polite" aria-atomic="false">
             <Podium users={leaderboard.podium} metric={metric} />
+            {signedIn && <ApiFeedback pending={profile.isPending} error={profile.error} />}
+            {signedIn && metric === 'streak' && (
+              <ApiFeedback pending={streak.isPending} error={streak.error} />
+            )}
             <LeaderboardTable rows={leaderboard.rows} me={myRank} metric={metric} />
           </S.Results>
           <RankingSidebar me={myRank} />

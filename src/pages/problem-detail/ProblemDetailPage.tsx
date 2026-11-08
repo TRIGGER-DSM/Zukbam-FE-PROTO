@@ -25,20 +25,22 @@ export function ProblemDetailPage() {
               <Example.Section>
                 <h2>문제</h2>
                 <Statement>{problem.description}</Statement>
-                <S.Rules>
-                  {problem.rules.map((rule) => (
-                    <li key={rule}>{rule}</li>
-                  ))}
-                </S.Rules>
-                <p>{problem.objective}</p>
+                {problem.rules.length > 0 && (
+                  <S.Rules>
+                    {problem.rules.map((rule) => (
+                      <li key={rule}>{rule}</li>
+                    ))}
+                  </S.Rules>
+                )}
+                {problem.objective.trim() && <p>{problem.objective}</p>}
               </Example.Section>
-              {problem.input && (
+              {problem.input.trim() && (
                 <Example.Section>
                   <h2>입력</h2>
                   <p>{problem.input}</p>
                 </Example.Section>
               )}
-              {problem.output && (
+              {problem.output.trim() && (
                 <Example.Section>
                   <h2>출력</h2>
                   <p>{problem.output}</p>

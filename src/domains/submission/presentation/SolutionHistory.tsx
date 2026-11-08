@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { ApiFeedback } from '../../../shared/ui/ApiFeedback';
 import { myProfileOptions } from '../../member/infrastructure/profileApi';
+import { Spinner } from '../../../shared/ui/Spinner';
+import * as S from './SolutionHistory.styles';
 import {
   resultPath,
   solutionHistoryOptions,
@@ -26,13 +28,16 @@ export function SolutionHistory({ problemId }: SolutionHistoryProps) {
       />
       {result &&
         (result.solutions.length ? (
-          <ul>
+          <ul aria-live="polite">
             {result.solutions.map((solution) => (
               <li key={solution.solutionId}>
                 <Link to={resultPath(problemId, solution)}>
                   #{solution.solutionId} · {solution.language} ·{' '}
-                  {solutionStatusLabels[solution.status]} ·{' '}
-                  {new Date(solution.submittedAt).toLocaleString('ko-KR')}
+                  <S.Status $status={solution.status}>
+                    {solution.status === 'PENDING' && <Spinner />}
+                    {solutionStatusLabels[solution.status]}
+                  </S.Status>{' '}
+                  · {new Date(solution.submittedAt).toLocaleString('ko-KR')}
                 </Link>
               </li>
             ))}

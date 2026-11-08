@@ -91,21 +91,27 @@ export function SubmissionProblemPanel({
             <section>
               <h2>문제</h2>
               <p>{problem.description}</p>
-              <ul>
-                {problem.rules.map((rule) => (
-                  <li key={rule}>{rule}</li>
-                ))}
-              </ul>
-              <p>{problem.objective}</p>
+              {problem.rules.length > 0 && (
+                <ul>
+                  {problem.rules.map((rule) => (
+                    <li key={rule}>{rule}</li>
+                  ))}
+                </ul>
+              )}
+              {problem.objective.trim() && <p>{problem.objective}</p>}
             </section>
-            <section>
-              <h2>입력</h2>
-              <p>{problem.input}</p>
-            </section>
-            <section>
-              <h2>출력</h2>
-              <p>{problem.output}</p>
-            </section>
+            {problem.input.trim() && (
+              <section>
+                <h2>입력</h2>
+                <p>{problem.input}</p>
+              </section>
+            )}
+            {problem.output.trim() && (
+              <section>
+                <h2>출력</h2>
+                <p>{problem.output}</p>
+              </section>
+            )}
             {problem.examples.map((example, index) => (
               <section key={index}>
                 <h2>예제 {index + 1}</h2>

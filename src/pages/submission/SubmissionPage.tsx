@@ -6,7 +6,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
 import { problemDetailOptions } from '../../domains/problem/infrastructure/problemApi';
-import { submitSolution } from '../../domains/submission/infrastructure/solutionApi';
+import {
+  submitSolution,
+  solutionIdFromLocation,
+  solutionOptions,
+} from '../../domains/submission/infrastructure/solutionApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import type { ProblemDetail } from '../../domains/problem/domain/problemDetail';
 import {
@@ -22,6 +26,10 @@ import { CodeEditor } from '../../domains/submission/presentation/CodeEditor';
 import { SubmissionAsset } from '../../domains/submission/presentation/SubmissionAsset';
 import { SubmissionProblemPanel } from '../../domains/submission/presentation/SubmissionProblemPanel';
 import { isDemoMode, type DemoVerdict } from '../../shared/demo/mode';
+import {
+  SubmissionStatus,
+  type SubmissionPhase,
+} from '../../domains/submission/presentation/SubmissionStatus';
 
 const panelWidth = { min: 30, max: 65, initial: 43.1818, step: 2 };
 
@@ -72,21 +80,34 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   const workspaceRef = useRef<HTMLDivElement>(null);
   const [problemTab, setProblemTab] = useState<SubmissionTab>('problem');
   const [historyVersion, setHistoryVersion] = useState(0);
+  const [latestSolutionId, setLatestSolutionId] = useState<number | null>(null);
+  const judgement = useQuery(solutionOptions(latestSolutionId ?? 0));
+  const latestStatus = judgement.data?.status;
+  const isJudging =
+    latestSolutionId !== null && !judgement.error && (!latestStatus || latestStatus === 'PENDING');
   const source = drafts[language];
   const hasSource = source.trim().length > 0;
   const matchesExample = firstExample && testInput.trim() === firstExample.input.trim();
   const submission = useMutation({
+    onMutate: () => setLatestSolutionId(null),
     mutationFn: () => submitSolution(problem.id, language, source, demoVerdict),
-    onSuccess: () => {
+    onSuccess: (response) => {
       void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
-      void queryClient.invalidateQueries({ queryKey: ['growth'] });
-      void queryClient.invalidateQueries({ queryKey: ['streak'] });
-      setRunMessage('풀이를 제출했어요. 제출 기록에서 채점 결과를 확인할 수 있어요.');
+      setLatestSolutionId(solutionIdFromLocation(response) ?? null);
+      setRunMessage('');
       setHistoryVersion((version) => version + 1);
       setProblemTab('history');
     },
     onError: (error) => setRunMessage(error.message),
   });
+
+  useEffect(() => {
+    if (!latestSolutionId || !latestStatus || latestStatus === 'PENDING') return;
+    for (const key of ['me', 'growth', 'streak']) {
+      void queryClient.invalidateQueries({ queryKey: [key] });
+    }
+    void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
+  }, [latestSolutionId, latestStatus, problem.id, queryClient]);
 
   useEffect(() => {
     const timer = setInterval(() => setElapsedSeconds((seconds) => seconds + 1), 1000);
@@ -145,6 +166,13 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   }
 
   const selectedLanguage = codeLanguages.find((item) => item.id === language)!;
+  let submissionPhase: SubmissionPhase | undefined;
+  if (submission.isPending) submissionPhase = 'submitting';
+  else if (submission.error || judgement.error) submissionPhase = 'error';
+  else if (submission.isSuccess) {
+    if (!latestSolutionId) submissionPhase = 'submitted';
+    else submissionPhase = isJudging ? 'judging' : 'finished';
+  }
   return (
     <SiteLayout>
       <S.Page id="main">
@@ -279,16 +307,35 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
                 )}
               </S.Output>
             </S.Console>
+            {submissionPhase && (
+              <SubmissionStatus
+                phase={submissionPhase}
+                solution={judgement.data}
+                error={submission.error ?? judgement.error}
+                onRetry={
+                  judgement.error
+                    ? () => {
+                        void judgement.refetch();
+                      }
+                    : undefined
+                }
+              />
+            )}
             <S.RunBar>
               <p>
                 <SubmissionAsset name="streak" />
                 {submission.isPending
                   ? '풀이를 제출하고 있어요.'
-                  : '풀이가 준비되면 제출해 주세요.'}
+                  : isJudging
+                    ? '채점 결과를 기다리고 있어요.'
+                    : '풀이가 준비되면 제출해 주세요.'}
               </p>
               <button onClick={runCode}>코드 실행</button>
-              <button disabled={submission.isPending || !hasSource} onClick={handleSubmit}>
-                제출하기
+              <button
+                disabled={submission.isPending || isJudging || !hasSource}
+                onClick={handleSubmit}
+              >
+                {submission.isPending ? '제출 중…' : isJudging ? '채점 중…' : '제출하기'}
               </button>
             </S.RunBar>
           </S.Editor>

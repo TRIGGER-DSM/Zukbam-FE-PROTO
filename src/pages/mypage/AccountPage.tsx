@@ -19,6 +19,7 @@ export function AccountPage() {
   const navigate = useNavigate();
   const account = signedIn &&
     profile.data && {
+      userId: profile.data.userId,
       name: profile.data.name,
       email: profile.data.email,
       phone: '',

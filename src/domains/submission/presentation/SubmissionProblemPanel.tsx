@@ -35,12 +35,18 @@ function Sample({ label, value }: SampleProps) {
 }
 
 interface SubmissionProblemPanelProps {
+  historyVersion?: number;
   problem: ProblemDetail;
   tab: SubmissionTab;
   onTabChange: (tab: SubmissionTab) => void;
 }
 
-export function SubmissionProblemPanel({ problem, tab, onTabChange }: SubmissionProblemPanelProps) {
+export function SubmissionProblemPanel({
+  problem,
+  tab,
+  onTabChange,
+  historyVersion,
+}: SubmissionProblemPanelProps) {
   return (
     <S.Panel aria-label="문제 패널">
       <S.Tabs role="tablist" aria-label="문제 정보 탭">
@@ -124,7 +130,7 @@ export function SubmissionProblemPanel({ problem, tab, onTabChange }: Submission
         ) : tab === 'history' ? (
           <section>
             <h2>제출 기록</h2>
-            <SolutionHistory problemId={problem.id} />
+            <SolutionHistory key={historyVersion} problemId={problem.id} />
           </section>
         ) : (
           <S.Empty>

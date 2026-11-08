@@ -41,6 +41,9 @@ export function AcceptedResultPage() {
         <S.Page id="main" aria-labelledby="accepted-title">
           <S.Mascot
             src="/images/result/celebrate.png"
+            sizes="(max-width: 700px) 252px, 288px"
+            loading="eager"
+            fetchPriority="high"
             alt="정답을 축하하는 판다"
             width="360"
             height="320"

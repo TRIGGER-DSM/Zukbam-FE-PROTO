@@ -183,7 +183,12 @@ export function HomeBanner({ variant, position = 'active', onClick }: HomeBanner
       <S.Art>
         <Asset name={`${banner.id}-deco.svg`} />
         {banner.id !== 'hot' ? (
-          <Asset name={`${banner.id}-mascot.png`} />
+          <Asset
+            name={`${banner.id}-mascot.png`}
+            sizes="(max-width: 700px) calc(100vw - 2rem), (max-width: 1365px) 68vw, 928px"
+            loading={position === 'active' ? 'eager' : 'lazy'}
+            fetchPriority={position === 'active' ? 'high' : 'low'}
+          />
         ) : (
           <>
             <Asset name="hot-yellow.svg" />

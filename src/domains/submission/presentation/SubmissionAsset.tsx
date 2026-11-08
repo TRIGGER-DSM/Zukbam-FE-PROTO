@@ -1,7 +1,9 @@
+import { Image } from '../../../shared/ui/Image';
+
 interface SubmissionAssetProps {
   name: string;
 }
 
 export function SubmissionAsset({ name }: SubmissionAssetProps) {
-  return <img src={`/images/submission/${name}.svg`} alt="" />;
+  return <Image src={`/images/submission/${name}.svg`} alt="" />;
 }

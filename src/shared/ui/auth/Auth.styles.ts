@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Link } from 'react-router';
 import { colors } from '../../styles/colors';
 import { Button } from '../Button';
+import { Image } from '../Image';
 
 const badgePositions = {
   java: { x: 66.7, y: 32 },
@@ -91,7 +92,7 @@ export const Tagline = styled.p`
   }
 `;
 
-export const Mascot = styled.img`
+export const Mascot = styled(Image)`
   position: absolute;
   top: 52%;
   left: 15%;
@@ -132,7 +133,9 @@ export const BadgeMark = styled.span`
   height: 4.8cqw;
 `;
 
-export const BadgeIcon = styled.img<BadgeIconProps>`
+export const BadgeIcon = styled(Image, {
+  shouldForwardProp: (prop) => !prop.startsWith('$'),
+})<BadgeIconProps>`
   width: ${({ $narrow }) => ($narrow ? '4cqw' : '4.4cqw')};
   height: auto;
 `;

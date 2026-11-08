@@ -2,6 +2,7 @@ import { colors } from '../../shared/styles/colors';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import { Link } from 'react-router';
+import { Image } from '../../shared/ui/Image';
 
 export const Page = styled('main', {
   label: 'Page',
@@ -26,7 +27,7 @@ export const Page = styled('main', {
   }
 `;
 
-export const Mascot = styled('img', {
+export const Mascot = styled(Image, {
   label: 'Mascot',
   target: 'e-o-1',
 })`

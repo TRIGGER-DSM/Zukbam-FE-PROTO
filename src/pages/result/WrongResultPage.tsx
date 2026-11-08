@@ -27,6 +27,9 @@ export function WrongResultPage() {
         <S.Page id="main" aria-labelledby="wrong-title">
           <S.Mascot
             src="/images/result/disappointed.png"
+            sizes="(max-width: 700px) 252px, 288px"
+            loading="eager"
+            fetchPriority="high"
             alt="다시 도전을 기다리는 판다"
             width="360"
             height="320"

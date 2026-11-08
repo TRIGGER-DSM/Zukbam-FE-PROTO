@@ -89,7 +89,7 @@ export function AppHeader({ active }: AppHeaderProps) {
     <S.Header>
       <S.HeaderContent>
         <Link to="/" aria-label="죽빰 홈">
-          <Asset name="wordmark.svg" />
+          <Asset name="wordmark.svg" loading="eager" />
         </Link>
         <nav aria-label="주 메뉴">
           {navigationItems.map(({ label, to }) => (

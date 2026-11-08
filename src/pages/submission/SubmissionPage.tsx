@@ -1,15 +1,12 @@
 import * as S from './SubmissionPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
 import { problemDetailOptions } from '../../domains/problem/infrastructure/problemApi';
-import {
-  submitSolution,
-  solutionIdFromLocation,
-} from '../../domains/submission/infrastructure/solutionApi';
+import { submitSolution } from '../../domains/submission/infrastructure/solutionApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import type { ProblemDetail } from '../../domains/problem/domain/problemDetail';
 import {
@@ -60,7 +57,6 @@ interface SubmissionWorkspaceProps {
 }
 
 function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [language, setLanguage] = useState<CodeLanguage>('python');
   const [demoVerdict, setDemoVerdict] = useState<DemoVerdict>('ACCEPTED');
@@ -75,21 +71,18 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   const [previewTitle, setPreviewTitle] = useState<string | null>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
   const [problemTab, setProblemTab] = useState<SubmissionTab>('problem');
+  const [historyVersion, setHistoryVersion] = useState(0);
   const source = drafts[language];
   const hasSource = source.trim().length > 0;
   const matchesExample = firstExample && testInput.trim() === firstExample.input.trim();
   const submission = useMutation({
     mutationFn: () => submitSolution(problem.id, language, source, demoVerdict),
-    onSuccess: (response) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
       void queryClient.invalidateQueries({ queryKey: ['growth'] });
       void queryClient.invalidateQueries({ queryKey: ['streak'] });
-      const solutionId = solutionIdFromLocation(response);
-      if (solutionId) {
-        navigate(`/problems/${problem.id}/result?solutionId=${solutionId}`);
-        return;
-      }
       setRunMessage('풀이를 제출했어요. 제출 기록에서 채점 결과를 확인할 수 있어요.');
+      setHistoryVersion((version) => version + 1);
       setProblemTab('history');
     },
     onError: (error) => setRunMessage(error.message),
@@ -172,7 +165,12 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
           </S.Navigation>
         </S.ProblemBar>
         <S.Workspace ref={workspaceRef} $problemWidth={`${problemPanelWidth}%`}>
-          <SubmissionProblemPanel problem={problem} tab={problemTab} onTabChange={setProblemTab} />
+          <SubmissionProblemPanel
+            problem={problem}
+            tab={problemTab}
+            onTabChange={setProblemTab}
+            historyVersion={historyVersion}
+          />
           <S.Resizer
             role="separator"
             aria-label="문제 패널 너비"

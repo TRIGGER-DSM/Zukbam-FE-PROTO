@@ -27,7 +27,14 @@ export function AuthArt({ className }: AuthArtProps) {
         <img src={`${imageDirectory}/wordmark.svg`} alt="" width="480" height="85" />
       </S.Brand>
       <S.Tagline>매일 한 문제, 대나무처럼 쑥쑥 코딩 실력을 키워보세요</S.Tagline>
-      <S.Mascot src={`${imageDirectory}/mascot.png`} alt="" width="700" height="600" />
+      <S.Mascot
+        src={`${imageDirectory}/mascot.png`}
+        alt=""
+        width="700"
+        height="600"
+        sizes="(max-width: 760px) 1px, (max-width: 1600px) 35vw, 700px"
+        fetchPriority="low"
+      />
       {languageBadges.map(({ name, image, position }) => (
         <S.Badge key={position} $position={position}>
           <S.BadgeMark>

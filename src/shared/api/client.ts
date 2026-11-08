@@ -89,6 +89,21 @@ interface ApiOptions {
   authenticated?: boolean;
 }
 
+interface ErrorDetail {
+  reson?: unknown;
+  reason?: unknown;
+}
+
+interface ErrorResponse {
+  errors?: ErrorDetail | ErrorDetail[];
+  message?: unknown;
+  code?: unknown;
+}
+
+function isErrorMessage(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
 export async function apiResponse(path: string, options: ApiOptions = {}) {
   if (isDemoMode) {
     const { demoResponse } = await import('../demo/demoApi');
@@ -117,13 +132,20 @@ export async function apiResponse(path: string, options: ApiOptions = {}) {
     if (response.status === 401 && getAccessToken() === requestToken) {
       clearSession();
     }
-    const error: { message?: string; code?: string } | null = await response
-      .json()
-      .catch(() => null);
+    const error: ErrorResponse | null = await response.json().catch(() => null);
+    const details = Array.isArray(error?.errors) ? error.errors : [error?.errors];
+    const reasons = details
+      .map((detail) => [detail?.reson, detail?.reason].find(isErrorMessage))
+      .filter(isErrorMessage);
+    const message = reasons.length
+      ? reasons.join('\n')
+      : isErrorMessage(error?.message)
+        ? error.message
+        : `요청에 실패했어요. (${response.status})`;
     throw new ApiError(
       response.status,
-      error?.message ?? `요청에 실패했어요. (${response.status})`,
-      error?.code,
+      message,
+      typeof error?.code === 'string' ? error.code : undefined,
     );
   }
   return response;

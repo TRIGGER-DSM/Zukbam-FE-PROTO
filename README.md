@@ -2,6 +2,14 @@
 
 React + TypeScript + Vite 기반 죽빰 프런트엔드.
 
+## 이미지 로딩
+
+PNG 원본은 `public/images`에 보관하고 실제 화면에서는 `src/assets/images`의 무손실 WebP를 사용합니다. `Image` 컴포넌트는 이미지 크기에 맞는 `srcSet`, 비동기 디코딩, 기본 지연 로딩을 적용합니다. 첫 화면의 주요 배너·결과 이미지는 즉시 로딩하며, 화면별 `sizes`로 작은 화면에서 큰 이미지를 받지 않도록 합니다.
+
+원본 수정 후 Pillow(WebP 지원)가 설치된 Python에서 `python scripts/optimize-images.py`를 실행하면 WebP와 이미지 매핑을 다시 생성합니다. 축소본이 원본 크기의 WebP보다 커지면 제외합니다. 이후 `pnpm exec prettier --write src/shared/assets/imageSources.ts`로 매핑 파일을 정리합니다. 검증은 `node scripts/check-images.mjs`로 실행합니다.
+
+배포 시 `public/_headers`로 해시가 있는 `/assets/*`는 1년, 기존 `/images/*`는 하루 동안 브라우저 캐시를 사용합니다. 개발 서버에는 이 배포용 캐시 설정이 적용되지 않습니다.
+
 ## 영상 시연용 mock 모드
 
 개발 서버에서 `/?demo=1`로 접속하면 가상 사용자 김민서로 시작합니다. 같은 탭에서 이동하거나 새로고침해도 시연 모드가 유지됩니다. `/?demo=0`으로 접속하면 실제 API 모드로 돌아갑니다. 환경 변수 `VITE_DEMO_MODE=true`로도 활성화할 수 있습니다.

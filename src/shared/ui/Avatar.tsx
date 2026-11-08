@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import styled from '@emotion/styled';
+import { Image } from './Image';
 
 interface RootStyleProps {
   $size: number;
@@ -16,7 +17,7 @@ export function Avatar({ name, size = 40, ...props }: AvatarProps) {
   );
 }
 
-const Root = styled.img<RootStyleProps>`
+const Root = styled(Image, { shouldForwardProp: (prop) => !prop.startsWith('$') })<RootStyleProps>`
   width: ${({ $size }) => $size / 16}rem;
   height: ${({ $size }) => $size / 16}rem;
   border-radius: 50%;

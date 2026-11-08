@@ -1,6 +1,7 @@
 import type { AccountProfile } from '../domain/account';
 
 export const accountFixture: AccountProfile = {
+  userId: 2312,
   name: '정일웅',
   phone: '010 - 7545 - 6782',
   email: 'ilwoong@dsm.hs.kr',

@@ -188,6 +188,7 @@ export const Body = styled('div', {
       font-size: 1rem;
       line-height: 1.625rem;
       color: ${colors.label.normal};
+      white-space: pre-wrap;
       overflow-wrap: anywhere;
     }
     & ul {

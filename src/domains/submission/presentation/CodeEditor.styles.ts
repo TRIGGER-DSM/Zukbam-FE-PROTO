@@ -25,9 +25,12 @@ export const Host = styled.div`
   flex: 1;
   min-height: 0;
   min-width: 0;
-  .cm-editor {
+  && .cm-editor {
     position: absolute;
     inset: 0;
+    height: 100%;
+    min-width: 0;
+    max-width: 100%;
     color: ${colors.label.normal};
     background: transparent;
     font-size: inherit;
@@ -36,7 +39,12 @@ export const Host = styled.div`
     outline: none;
   }
   .cm-scroller {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: ${colors.label.assistive} transparent;
     font-family: inherit;
     font-size: inherit;
     line-height: 1.7;
@@ -44,6 +52,9 @@ export const Host = styled.div`
   .cm-content {
     padding: 1.25rem 0;
     caret-color: ${colors.primary.strong};
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
   }
   .cm-line {
     padding: 0 1rem;

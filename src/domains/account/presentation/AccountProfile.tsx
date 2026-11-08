@@ -56,6 +56,10 @@ export function AccountProfile({ account }: AccountProfileProps) {
         <h2>{account.name}</h2>
         <dl>
           <div>
+            <dt>userId</dt>
+            <dd>{account.userId}</dd>
+          </div>
+          <div>
             <dt>연락처</dt>
             <dd>
               <div>

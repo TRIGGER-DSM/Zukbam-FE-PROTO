@@ -49,7 +49,7 @@ export function ProblemDetailPage() {
               ))}
             </S.Statement>
             <S.Sidebar>
-              <S.Mascot name="mascot.png" />
+              <S.Mascot name="mascot.png" sizes="300px" />
               <ProblemDetailSidebar
                 problem={problem}
                 onWrite={() => navigate(`/problems/${problem.id}/submit`)}

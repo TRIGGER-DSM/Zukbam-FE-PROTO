@@ -1,6 +1,7 @@
 import type { GrowthSummary } from '../domain/growth';
 import * as S from './Growth.styles';
 import { ActivityHeatmap } from './ActivityHeatmap';
+import { Image } from '../../../shared/ui/Image';
 
 interface GrowthActivityProps {
   summary: GrowthSummary;
@@ -22,7 +23,7 @@ export function GrowthActivity({ summary }: GrowthActivityProps) {
           {summary.activityDays ? (
             <ActivityHeatmap days={summary.activityDays} />
           ) : (
-            <img src="/images/growth/heatmap.svg" alt={`${year}년 날짜별 풀이 활동`} />
+            <Image src="/images/growth/heatmap.svg" alt={`${year}년 날짜별 풀이 활동`} />
           )}
           <S.Months>
             {summary.activityDays

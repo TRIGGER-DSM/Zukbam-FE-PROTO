@@ -7,6 +7,7 @@ import { friendsOptions } from '../../domains/social/infrastructure/friendApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { AccountProfile } from '../../domains/account/presentation/AccountProfile';
 import { AccountRank } from '../../domains/account/presentation/AccountRank';
+import { AccountXp } from '../../domains/account/presentation/AccountXp';
 import * as Account from '../../domains/account/presentation/Account.styles';
 import { MyPageLayout } from './MyPageLayout';
 import * as S from './FriendsPage.styles';
@@ -26,7 +27,7 @@ export function AccountPage() {
       joinedAt: '—',
       friendCount: friends.data?.length,
       rank: profile.data.rank,
-      experience: profile.data.score,
+      experience: profile.data.xp,
     };
 
   function logout() {
@@ -46,6 +47,7 @@ export function AccountPage() {
           <>
             <AccountProfile account={account} />
             <AccountRank account={account} />
+            <AccountXp key={account.userId} userId={account.userId} />
           </>
         )}
         <Account.Logout aria-labelledby="logout-title">

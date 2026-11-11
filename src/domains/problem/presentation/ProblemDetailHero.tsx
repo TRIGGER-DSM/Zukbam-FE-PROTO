@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './ProblemDetailHero.styles';
 import type { ProblemDetail } from '../domain/problemDetail';
 import { ProblemDetailAsset } from './ProblemDetailAsset';
@@ -24,15 +25,11 @@ export function ProblemDetailHero({ problem }: ProblemDetailHeroProps) {
           </div>
           <div>
             <dt>제출</dt>
-            <dd>{problem.submissions?.toLocaleString() ?? '—'}</dd>
+            <dd>{formatNumber(problem.submissions)}</dd>
           </div>
           <div>
             <dt>맞힌 사람</dt>
-            <dd>
-              {problem.solvedCount === undefined
-                ? '—'
-                : `${problem.solvedCount.toLocaleString()}명`}
-            </dd>
+            <dd>{problem.solvedCount == null ? '—' : `${formatNumber(problem.solvedCount)}명`}</dd>
           </div>
         </S.Statistics>
         {problem.friends.length > 0 && (

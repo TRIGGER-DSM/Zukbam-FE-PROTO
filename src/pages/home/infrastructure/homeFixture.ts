@@ -1,23 +1,10 @@
-import type { ActivitySummary } from '../../../domains/activity/domain/activity';
 import type { Announcement } from '../../../domains/announcement/domain/announcement';
 import type { Quest } from '../../../domains/quest/domain/quest';
-import type { RankSummary } from '../../../domains/ranking/domain/ranking';
 // Design fixtures. Replace this adapter with an API repository when connecting the backend.
 export const homeFixture: {
-  activity: ActivitySummary;
   quests: Quest[];
-  rank: RankSummary;
   notices: Announcement[];
 } = {
-  activity: {
-    streak: 10,
-    nextStreak: 13,
-    longestStreak: 31,
-    daysToRecord: 19,
-    completedWeekdays: 3,
-    year: 2026,
-    monthlySolved: 18,
-  },
   quests: [
     {
       id: 'solve',
@@ -38,14 +25,6 @@ export const homeFixture: {
       target: 1,
     },
   ],
-  rank: {
-    title: '대나무 5m',
-    xp: 1240,
-    nextXp: 1600,
-    nextTitle: '대나무 10m',
-    position: 184,
-    percentile: 18.4,
-  },
   notices: [
     {
       id: 'challenge',

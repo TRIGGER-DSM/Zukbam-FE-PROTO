@@ -171,6 +171,9 @@ interface HomeBannerProps {
 
 export function HomeBanner({ variant, position = 'active', onClick }: HomeBannerProps) {
   const banner = banners.find((item) => item.id === variant)!;
+  const isHot = variant === 'hot';
+  const Copy = isHot ? S.HotCopy : S.Copy;
+  const Pill = isHot ? S.HotPill : S.Pill;
   return (
     <S.Banner
       $variant={banner.id}
@@ -180,37 +183,36 @@ export function HomeBanner({ variant, position = 'active', onClick }: HomeBanner
       aria-label={`${banner.title} ${banner.highlight}`}
       onClick={onClick}
     >
-      <S.Art>
-        <Asset name={`${banner.id}-deco.svg`} />
-        {banner.id !== 'hot' ? (
+      {isHot ? (
+        <S.HotArt aria-hidden="true">
+          <Asset name="hot-deco.svg" />
+          <Asset name="hot-yellow.svg" />
+          <Asset name="hot-cyan.svg" />
+          <S.Tag $slot="today">TODAY</S.Tag>
+          <S.Tag $slot="hot">HOT 문제</S.Tag>
+          <S.Tag $slot="reward">정답 보상</S.Tag>
+          <S.Tag $slot="xp">+20 XP</S.Tag>
+        </S.HotArt>
+      ) : (
+        <S.Art>
+          <Asset name={`${banner.id}-deco.svg`} />
           <Asset
             name={`${banner.id}-mascot.png`}
             sizes="(max-width: 700px) calc(100vw - 2rem), (max-width: 1365px) 68vw, 928px"
             loading={position === 'active' ? 'eager' : 'lazy'}
             fetchPriority={position === 'active' ? 'high' : 'low'}
           />
-        ) : (
-          <>
-            <Asset name="hot-yellow.svg" />
-            <Asset name="hot-cyan.svg" />
-            <S.YellowTag>
-              <small>TODAY</small>HOT 문제
-            </S.YellowTag>
-            <S.CyanTag>
-              <small>정답 보상</small>+20 XP
-            </S.CyanTag>
-          </>
-        )}
-      </S.Art>
-      <S.Copy>
+        </S.Art>
+      )}
+      <Copy>
         <S.Eyebrow>{banner.eyebrow}</S.Eyebrow>
         <strong>
-          {banner.title}
-          <br />
+          <span>{banner.title}</span>
+          {!isHot && <br />}
           <em>{banner.highlight}</em>
         </strong>
-      </S.Copy>
-      <S.Pill>{banner.pill}</S.Pill>
+      </Copy>
+      <Pill>{banner.pill}</Pill>
       {banner.id === 'recommend' && (
         <S.Board>
           <span>오늘의 추천 문제</span>

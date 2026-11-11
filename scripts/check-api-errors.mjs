@@ -18,13 +18,12 @@ class MemoryStorage {
 
 globalThis.sessionStorage = new MemoryStorage();
 globalThis.localStorage = new MemoryStorage();
-globalThis.window = Object.assign(new EventTarget(), { location: { search: '?demo=0' } });
+globalThis.window = Object.assign(new EventTarget(), { location: { search: '' } });
 let response;
 globalThis.fetch = async () => response.clone();
 
 const server = await createServer({
   configFile: false,
-  define: { 'import.meta.env.VITE_DEMO_MODE': '"false"' },
   server: { middlewareMode: true },
   appType: 'custom',
 });

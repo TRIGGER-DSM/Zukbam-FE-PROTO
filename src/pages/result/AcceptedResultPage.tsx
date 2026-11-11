@@ -1,21 +1,19 @@
 import * as S from './AcceptedResultPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { problemDetailOptions } from '../../domains/problem/infrastructure/problemApi';
 import { resultPath, solutionOptions } from '../../domains/submission/infrastructure/solutionApi';
 import { streakOptions } from '../../domains/activity/infrastructure/activityApi';
-import { isDemoMode } from '../../shared/demo/mode';
 
 export function AcceptedResultPage() {
   const { problemId } = useParams();
   const [searchParams] = useSearchParams();
-  const solutionId = Number(searchParams.get('solutionId') ?? (isDemoMode ? 10001 : 0));
-  const queryClient = useQueryClient();
+  const solutionId = Number(searchParams.get('solutionId') ?? 0);
   const solutionQuery = useQuery(solutionOptions(solutionId));
   const problem = useQuery(problemDetailOptions(Number(problemId))).data;
   const result = solutionQuery.data;
@@ -23,13 +21,6 @@ export function AcceptedResultPage() {
   const isAccepted = result?.status === 'ACCEPTED';
   const streak = useQuery({ ...streakOptions(), enabled: isAccepted });
   const [previewTitle, setPreviewTitle] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!isDemoMode || !isAccepted) return;
-    for (const key of ['me', 'growth', 'streak', 'problems']) {
-      void queryClient.invalidateQueries({ queryKey: [key] });
-    }
-  }, [isAccepted, solutionId, queryClient]);
 
   if (result && !isJudging && !isAccepted) {
     return <Navigate replace to={resultPath(Number(problemId), result)} />;

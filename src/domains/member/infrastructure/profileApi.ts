@@ -12,7 +12,7 @@ export interface UserProfile {
   email: string;
   name: string;
   role: 'STUDENT' | 'TEACHER';
-  score: number;
+  xp?: number | null;
   rank: string;
   solvedCount: number;
   student?: StudentInfo | null;

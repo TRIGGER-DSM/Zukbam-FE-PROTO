@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import type { MemberProfile } from '../domain/member';
 import { Avatar } from '../../../shared/ui/Avatar';
 import { Button } from '../../../shared/ui/Button';
@@ -12,7 +13,7 @@ export function ProfileCard({ member, onEdit }: ProfileCardProps) {
   const stats = [
     ['현재 스트릭', `${member.streak}일`],
     ['최장 스트릭', `${member.bestStreak}일`],
-    ['총 정답', `${member.solved.toLocaleString('ko-KR')}문제`],
+    ['총 정답', `${formatNumber(member.solved, 'ko-KR')}문제`],
     ['친구', `${member.friends}명`],
   ];
   return (
@@ -28,7 +29,7 @@ export function ProfileCard({ member, onEdit }: ProfileCardProps) {
           <strong>{member.tier}</strong>
           <span>·</span>
           <img src="/images/home/xp.svg" alt="" />
-          <S.Xp>{member.xp.toLocaleString('ko-KR')} XP</S.Xp>
+          <S.Xp>{formatNumber(member.xp, 'ko-KR')} XP</S.Xp>
         </S.Tier>
       </S.Info>
       <S.Stats>

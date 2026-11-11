@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './LeaderboardTable.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import {
@@ -21,15 +22,17 @@ export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
     <S.Row key={user.id} $mine={!!user.isMe}>
       <S.Position>{user.position ?? '—'}</S.Position>
       <S.CardCell>
-        <RankingAsset
-          name={user.isMe ? `tier-${user.tier}` : user.tier === 'gold' ? 'card-gold' : 'card-10'}
-          alt={tierThresholds.find((tier) => tier.id === user.tier)?.label}
-        />
+        {user.tier && (
+          <RankingAsset
+            name={user.isMe ? `tier-${user.tier}` : user.tier === 'gold' ? 'card-gold' : 'card-10'}
+            alt={tierThresholds.find((tier) => tier.id === user.tier)?.label}
+          />
+        )}
       </S.CardCell>
       <S.Score>
         <span>
           <RankingAsset name={scoreIcon} />
-          {user[metric]?.toLocaleString() ?? '—'}
+          {formatNumber(user[metric])}
         </span>
       </S.Score>
       <S.User>

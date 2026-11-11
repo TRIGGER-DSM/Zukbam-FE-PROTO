@@ -7,6 +7,6 @@ export interface AccountProfile {
   friendCount?: number;
   rank: string;
   nextRank?: string;
-  experience: number;
+  experience?: number | null;
   nextRankExperience?: number;
 }

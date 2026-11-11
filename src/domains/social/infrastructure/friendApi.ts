@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../../shared/format';
 import { queryOptions } from '@tanstack/react-query';
 import { apiJson, apiResponse, getAccessToken } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
@@ -74,7 +75,7 @@ export function receivedRequestsOptions() {
             name: request.requesterName,
             tier: request.tier,
             tierLabel: request.tierLabel ?? '',
-            requestedAt: `${new Date(request.requestedAt).toLocaleString('ko-KR')} 요청`,
+            requestedAt: `${formatDateTime(request.requestedAt)} 요청`,
             status: 'pending',
           })),
         };

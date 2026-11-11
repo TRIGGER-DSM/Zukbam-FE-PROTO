@@ -15,9 +15,11 @@ export interface RankedUser {
   isMe?: boolean;
 }
 
-export interface MyRank extends Omit<RankedUser, 'position' | 'streak'> {
+export interface MyRank extends Omit<RankedUser, 'position' | 'streak' | 'xp' | 'tier'> {
   position?: number;
   streak?: number;
+  xp?: number;
+  tier?: TierId;
   rankLabel: string;
 }
 

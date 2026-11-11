@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './RankUpDialog.styles';
 import { useId } from 'react';
 import { Link } from 'react-router';
@@ -36,11 +37,11 @@ export function RankUpDialog({ promotion, onClose }: RankUpDialogProps) {
               <img src="/images/rank-up/next-medal.svg" alt="" />
               {promotion.nextTier}까지
             </p>
-            <strong>{promotion.remainingXp.toLocaleString('ko-KR')} XP</strong>
+            <strong>{formatNumber(promotion.remainingXp, 'ko-KR')} XP</strong>
           </div>
           <S.Progress
             src="/images/rank-up/progress.svg"
-            alt={`${promotion.nextTier}까지 ${promotion.remainingXp.toLocaleString('ko-KR')} XP 남았어요`}
+            alt={`${promotion.nextTier}까지 ${formatNumber(promotion.remainingXp, 'ko-KR')} XP 남았어요`}
           />
         </S.Next>
         <S.Actions>

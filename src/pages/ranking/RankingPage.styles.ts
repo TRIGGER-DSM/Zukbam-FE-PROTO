@@ -73,6 +73,7 @@ export const Countdown = styled.div`
   strong {
     font-size: 1.5rem;
     line-height: 2rem;
+    font-variant-numeric: tabular-nums;
   }
   small {
     margin-right: 0.25rem;

@@ -1,9 +1,9 @@
+import { formatNumber, formatDateTime } from '../../shared/format';
 import * as S from './WrongResultPage.styles';
 import { Link, Navigate, useParams, useSearchParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
-import { isDemoMode } from '../../shared/demo/mode';
 import {
   resultPath,
   solutionOptions,
@@ -13,7 +13,7 @@ import {
 export function WrongResultPage() {
   const { problemId } = useParams();
   const [searchParams] = useSearchParams();
-  const solutionId = Number(searchParams.get('solutionId') ?? (isDemoMode ? 10002 : 0));
+  const solutionId = Number(searchParams.get('solutionId') ?? 0);
   const solutionQuery = useQuery(solutionOptions(solutionId));
   const result = solutionQuery.data;
 
@@ -46,8 +46,8 @@ export function WrongResultPage() {
                 <S.Status>{solutionStatusLabels[result.status]}</S.Status>
               </div>
               <p>
-                제출 #{result.solutionId.toLocaleString('ko-KR')} ·{' '}
-                {new Date(result.submittedAt).toLocaleString('ko-KR')}
+                제출 #{formatNumber(result.solutionId, 'ko-KR')} ·{' '}
+                {formatDateTime(result.submittedAt)}
               </p>
             </S.SummaryHeading>
             <S.Statistics>

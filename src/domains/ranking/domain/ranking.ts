@@ -1,6 +1,6 @@
 export interface RankSummary {
   title: string;
-  xp: number;
+  xp?: number | null;
   nextXp?: number;
   nextTitle?: string;
   position?: number;

@@ -1,3 +1,4 @@
+import { formatDateTime } from '../../../shared/format';
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
@@ -37,7 +38,7 @@ export function SolutionHistory({ problemId }: SolutionHistoryProps) {
                     {solution.status === 'PENDING' && <Spinner />}
                     {solutionStatusLabels[solution.status]}
                   </S.Status>{' '}
-                  · {new Date(solution.submittedAt).toLocaleString('ko-KR')}
+                  · {formatDateTime(solution.submittedAt)}
                 </Link>
               </li>
             ))}

@@ -3,14 +3,19 @@ import { apiJson } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
 import { difficulties, problemPageSize, type Problem } from '../domain/problem';
 import type { ProblemDetail } from '../domain/problemDetail';
-import { isDemoMode } from '../../../shared/demo/mode';
 
-type ProblemRank = 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3' | 'LEVEL_4' | 'LEVEL_5';
+interface ProblemRankResponse {
+  problemRankId: number;
+  name: string;
+  xp: number;
+}
+
+type LegacyRank = 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3' | 'LEVEL_4' | 'LEVEL_5';
 
 interface ProblemSummaryResponse {
   problemId: number;
   title: string;
-  rank: ProblemRank;
+  rank: ProblemRankResponse | LegacyRank;
 }
 
 interface ProblemListResponse extends PageInfo {
@@ -30,22 +35,16 @@ interface ProblemDetailResponse extends ProblemSummaryResponse {
   testCases: TestCaseResponse[];
 }
 
-function difficulty(rank: ProblemRank) {
-  return difficulties[Number(rank.slice(-1)) - 1].id;
+function difficulty(rank: ProblemSummaryResponse['rank']) {
+  const name = typeof rank === 'string' ? rank : rank?.name;
+  const match = difficulties.find(
+    (item, index) => item.label === name?.trim() || name === `LEVEL_${index + 1}`,
+  );
+  if (!match) throw new Error('문제 난이도 정보를 확인할 수 없어요.');
+  return match.id;
 }
 
 async function problemPage(page: number, size: number, signal?: AbortSignal) {
-  if (isDemoMode) {
-    const { demoProblems } = await import('./demoProblems');
-    signal?.throwIfAborted();
-    return {
-      page,
-      size,
-      totalElements: demoProblems.length,
-      totalPages: Math.ceil(demoProblems.length / size),
-      items: demoProblems.slice(page * size, (page + 1) * size),
-    };
-  }
   const result = await apiJson<ProblemListResponse>(`/problems?page=${page}&size=${size}`, {
     signal,
   });
@@ -53,6 +52,7 @@ async function problemPage(page: number, size: number, signal?: AbortSignal) {
     id: problem.problemId,
     title: problem.title,
     difficulty: difficulty(problem.rank),
+    xp: typeof problem.rank === 'object' ? problem.rank?.xp : undefined,
     categories: [],
   }));
   return { ...result, items };
@@ -78,13 +78,6 @@ export function problemDetailOptions(id: number) {
     queryKey: ['problem', id],
     enabled: Number.isSafeInteger(id) && id > 0,
     queryFn: async ({ signal }): Promise<ProblemDetail> => {
-      if (isDemoMode) {
-        const { demoProblemDetail } = await import('./demoProblems');
-        signal.throwIfAborted();
-        const detail = demoProblemDetail(id);
-        if (!detail) throw new Error('문제를 찾을 수 없어요.');
-        return detail;
-      }
       const problem = await apiJson<ProblemDetailResponse>(`/problems/${id}`, { signal });
       return {
         id: problem.problemId,
@@ -96,6 +89,7 @@ export function problemDetailOptions(id: number) {
         output: '',
         examples: problem.testCases.filter((testCase) => testCase.isSample),
         difficulty: difficulty(problem.rank),
+        xp: typeof problem.rank === 'object' ? problem.rank?.xp : undefined,
         difficultyDescription: '',
         timeLimit: `${problem.timeLimit}초`,
         memoryLimit: `${problem.memoryLimit} MB`,

@@ -114,6 +114,7 @@ export const Banner = styled('button', {
       css`
         & {
           background: ${colors.banner.hotBg};
+          border-radius: 3.888889% / 10%;
         }
       `
     }
@@ -122,23 +123,6 @@ export const Banner = styled('button', {
       css`
         & {
           background: ${colors.banner.liveBg};
-        }
-      `
-    }
-  ${
-      $variant === 'hot' &&
-      css`
-        & ${Copy} {
-          top: 5.425rem;
-        }
-      `
-    }
-  ${
-      $variant === 'hot' &&
-      css`
-        & ${Pill} {
-          left: 48.825rem;
-          top: 19.25rem;
         }
       `
     }
@@ -162,69 +146,6 @@ export const Banner = styled('button', {
         }
       `
     }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (max-width: 700px) {
-          & ${Copy} {
-            top: 22.14%;
-          }
-        }
-      `
-    }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (max-width: 700px) {
-          & ${Pill} {
-            left: 77.5%;
-            top: 78.57%;
-          }
-        }
-      `
-    }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (min-width: 701px) and (max-width: 1250px) {
-          & ${Copy} {
-            top: 22.14%;
-          }
-        }
-      `
-    }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (min-width: 701px) and (max-width: 1250px) {
-          & ${Pill} {
-            left: 77.5%;
-            top: 78.57%;
-          }
-        }
-      `
-    }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (min-width: 701px) {
-          & ${Copy} {
-            top: 22.14%;
-          }
-        }
-      `
-    }
-    ${
-      $variant === 'hot' &&
-      css`
-        @media (min-width: 701px) {
-          & ${Pill} {
-            left: 77.5%;
-            top: 78.57%;
-          }
-        }
-      `
-    }
   `,
 );
 
@@ -239,189 +160,63 @@ export const Art = styled('span', {
   }
   & > img {
     position: absolute;
-    width: 63rem;
-    height: 24.5rem;
+    width: 100%;
+    height: 100%;
     object-fit: fill;
     left: 0;
     top: 0;
   }
-  & > img[src$='hot-deco.svg'] {
-    width: 71.75rem;
-    height: 57.75rem;
+`;
+
+export const HotArt = styled.span`
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  > img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
   }
-  & > img[src$='hot-cyan.svg'] {
-    top: -0.875rem;
+
+  > img:first-of-type {
+    top: -67.857143%;
+    width: 113.888889%;
   }
-  @media (max-width: 700px) {
-    & {
-      width: 100%;
-      height: 100%;
-      zoom: 1;
-      transform: none;
-    }
-    & > img {
-      width: 100%;
-      height: 100%;
-    }
-    & > img[src$='hot-deco.svg'] {
-      width: 113.89%;
-      height: 235.71%;
-    }
-    & > img[src$='hot-cyan.svg'] {
-      top: -3.57%;
-    }
-  }
-  @media (min-width: 701px) and (max-width: 1250px) {
-    & > img {
-      width: 100%;
-      height: 100%;
-    }
-    & > img[src$='hot-deco.svg'] {
-      width: 113.89%;
-      height: 235.71%;
-    }
-    & > img[src$='hot-cyan.svg'] {
-      top: -3.57%;
-    }
-  }
-  @media (min-width: 701px) {
-    & > img {
-      width: 100%;
-      height: 100%;
-    }
-    & > img[src$='hot-deco.svg'] {
-      width: 113.89%;
-      height: 235.71%;
-    }
-    & > img[src$='hot-cyan.svg'] {
-      top: -3.57%;
-    }
+
+  > img:last-of-type {
+    top: -3.571429%;
   }
 `;
 
-export const YellowTag = styled('span', {
-  label: 'YellowTag',
-  target: 'e-i-4',
-})`
-  & {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 3.5rem;
-    white-space: nowrap;
-  }
-  & small {
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-  }
-  & {
-    left: 45.5rem;
-    top: 4.0625rem;
-    color: #2a2433;
-    transform: rotate(8deg);
-  }
-  @media (max-width: 700px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.22%;
-      top: 16.58%;
-    }
-  }
-  @media (min-width: 701px) and (max-width: 1250px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.22%;
-      top: 16.58%;
-    }
-  }
-  @media (min-width: 701px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.22%;
-      top: 16.58%;
-    }
-  }
-`;
+const tagSlots = {
+  today: { left: '79.02%', top: '24.74%', caption: true, cyan: false },
+  hot: { left: '81.92%', top: '35.04%', caption: false, cyan: false },
+  reward: { left: '78.43%', top: '54.90%', caption: true, cyan: true },
+  xp: { left: '78.55%', top: '67.22%', caption: false, cyan: true },
+};
 
-export const CyanTag = styled('span', {
-  label: 'CyanTag',
-  target: 'e-i-5',
-})`
-  & {
+interface TagProps {
+  $slot: keyof typeof tagSlots;
+}
+
+export const Tag = styled.span<TagProps>(({ $slot }) => {
+  const { left, top, caption, cyan } = tagSlots[$slot];
+  return css`
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 3.5rem;
+    left: ${left};
+    top: ${top};
+    transform: translate(-50%, -50%) rotate(${cyan ? '8deg' : '-14deg'});
+    font-family: ${caption ? "'Noto Sans KR'" : "'Black Han Sans'"}, sans-serif;
+    font-size: ${caption ? '2.222222cqw' : '5.555556cqw'};
+    font-weight: ${caption ? 900 : 400};
+    line-height: 1;
     white-space: nowrap;
-  }
-  & small {
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 900;
-  }
-  & {
-    left: 45.6875rem;
-    top: 12.25rem;
-    color: #1b3b57;
-    transform: rotate(-8deg);
-  }
-  @media (max-width: 700px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.52%;
-      top: 50%;
-    }
-  }
-  @media (min-width: 701px) and (max-width: 1250px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.52%;
-      top: 50%;
-    }
-  }
-  @media (min-width: 701px) {
-    & {
-      font-size: 5.55cqw;
-    }
-    & small {
-      font-size: 2.22cqw;
-    }
-    & {
-      left: 72.52%;
-      top: 50%;
-    }
-  }
-`;
+    color: ${cyan ? '#1b3b57' : '#2a2433'};
+  `;
+});
 
 export const Copy = styled('span', {
   label: 'Copy',
@@ -477,6 +272,22 @@ export const Copy = styled('span', {
       font-size: 6.389cqw;
       line-height: 1.22;
     }
+  }
+`;
+
+export const HotCopy = styled(Copy)`
+  && {
+    left: 6.111111%;
+    top: 22.142857%;
+    gap: 1.944444cqw;
+    color: ${colors.banner.title};
+  }
+
+  && > strong {
+    display: grid;
+    gap: 0.277778cqw;
+    font-size: 6.388889cqw;
+    line-height: 7.777778cqw;
   }
 `;
 
@@ -551,6 +362,18 @@ export const Pill = styled('span', {
       font-size: 2.36cqw;
       line-height: 1.4;
     }
+  }
+`;
+
+export const HotPill = styled(Pill)`
+  && {
+    left: 77.5%;
+    top: 78.571429%;
+    padding: 0.833333cqw 2.222222cqw;
+    color: ${colors.banner.title};
+    font-size: 2.361111cqw;
+    line-height: 3.333333cqw;
+    white-space: nowrap;
   }
 `;
 

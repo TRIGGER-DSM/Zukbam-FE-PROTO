@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './ProblemTable.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import type { ReactNode } from 'react';
@@ -86,7 +87,7 @@ export function ProblemTable({ problems, emptyContent, onSelect }: ProblemTableP
                   </span>
                 )}
               </S.XpCell>
-              <S.SolversCell>{problem.solvers?.toLocaleString() ?? '—'}</S.SolversCell>
+              <S.SolversCell>{formatNumber(problem.solvers)}</S.SolversCell>
               <S.AttemptsCell>{problem.attempts?.toFixed(2) ?? '—'}</S.AttemptsCell>
             </tr>
           ))}

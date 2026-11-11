@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './RankingCard.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import { rankTiers, type RankSummary } from '../domain/ranking';
@@ -14,6 +15,8 @@ interface RankingCardProps {
 export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
   const tier = tierThresholds.find((item) => item.label === rank?.title);
   const currentTierIndex = rankTiers.findIndex((item) => item.id === tier?.id);
+  const xp = rank?.xp;
+  const nextXp = rank?.nextXp;
   return (
     <S.Card aria-labelledby="rank-title">
       <S.Medal
@@ -24,22 +27,22 @@ export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
         <h2 id="rank-title">랭크</h2>
         <h3>{rank?.title ?? '—'}</h3>
         {children}
-        {rank?.nextXp !== undefined ? (
+        {xp != null && nextXp != null ? (
           <>
             <UI.Muted>
-              {rank.nextTitle}까지 {rank.nextXp - rank.xp} XP 남았어요.
+              {rank?.nextTitle}까지 {nextXp - xp} XP 남았어요.
             </UI.Muted>
             <S.Bamboo
               name="bamboo-progress.svg"
-              alt={`${rank.xp.toLocaleString()} / ${rank.nextXp.toLocaleString()} XP`}
+              alt={`${formatNumber(xp)} / ${formatNumber(nextXp)} XP`}
             />
           </>
         ) : (
           <S.Track aria-hidden="true" />
         )}
         <S.XpLabels>
-          <strong>{rank ? `${rank.xp.toLocaleString()} XP` : '— XP'}</strong>
-          {rank?.nextXp !== undefined && <span>{rank.nextXp.toLocaleString()} XP</span>}
+          <strong>{formatNumber(xp)} XP</strong>
+          {nextXp != null && <span>{formatNumber(nextXp)} XP</span>}
         </S.XpLabels>
       </S.Progress>
       <S.Ladder>

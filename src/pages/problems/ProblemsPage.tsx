@@ -1,3 +1,4 @@
+import { formatNumber } from '../../shared/format';
 import * as S from './ProblemsPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useState, type FormEvent } from 'react';
@@ -23,7 +24,6 @@ import { ProblemDiscovery } from '../../domains/problem/presentation/ProblemDisc
 import { ProblemFilters } from '../../domains/problem/presentation/ProblemFilters';
 import { ProblemTable } from '../../domains/problem/presentation/ProblemTable';
 import { problemDetailPath } from '../../domains/problem/presentation/problemDetailPath';
-import { isDemoMode } from '../../shared/demo/mode';
 import {
   recommendedProblems,
   friendProblems,
@@ -149,8 +149,8 @@ export function ProblemsPage() {
       <S.Page id="main">
         <UI.HiddenHeading>문제 목록</UI.HiddenHeading>
         <ProblemDiscovery
-          recommended={isDemoMode ? recommendedProblems : []}
-          friends={isDemoMode ? friendProblems : []}
+          recommended={recommendedProblems}
+          friends={friendProblems}
           onSelect={openProblem}
         />
         <S.Browse>
@@ -167,14 +167,14 @@ export function ProblemsPage() {
               />
             </S.Search>
             <S.Count aria-live="polite">
-              <strong>{totalProblems.toLocaleString()}</strong> 문제
+              <strong>{formatNumber(totalProblems)}</strong> 문제
             </S.Count>
             <S.Sort role="group" aria-label="문제 정렬">
               <strong>정렬</strong>
               {sortOptions.map((sort) => (
                 <S.SortButton
                   key={sort.id}
-                  disabled={sort.disabled && !isDemoMode}
+                  disabled={sort.disabled}
                   aria-pressed={filters.sort === sort.id}
                   onClick={() => selectSort(sort.id)}
                 >

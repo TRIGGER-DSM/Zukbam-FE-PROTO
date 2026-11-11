@@ -40,7 +40,7 @@ export function HomePage() {
   const signedIn = Boolean(useAccessToken());
   const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
   const rank =
-    signedIn && profile.data ? { title: profile.data.rank, xp: profile.data.score } : undefined;
+    signedIn && profile.data ? { title: profile.data.rank, xp: profile.data.xp } : undefined;
 
   function closeCelebration() {
     setSearchParams(

@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import type { AccountProfile } from '../domain/account';
 import * as S from './Account.styles';
 import { tierThresholds } from '../../ranking/domain/leaderboard';
@@ -15,7 +16,7 @@ export function AccountRank({ account }: AccountRankProps) {
         <h2 id="account-rank-title">랭크</h2>
         <h3>{account.rank}</h3>
         <S.Values>
-          <strong>{account.experience.toLocaleString('ko-KR')} XP</strong>
+          <strong>{formatNumber(account.experience, 'ko-KR')} XP</strong>
         </S.Values>
       </S.Progress>
     </S.Rank>

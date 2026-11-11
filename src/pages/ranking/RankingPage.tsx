@@ -1,5 +1,9 @@
 import * as S from './RankingPage.styles';
-import { useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
+import {
+  getRankingCountdown,
+  type CountdownPeriod,
+} from '../../domains/ranking/domain/rankingCountdown';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { getLeaderboard } from '../../domains/ranking/application/getLeaderboard';
 import type { RankingMetric, RankingPeriod } from '../../domains/ranking/domain/leaderboard';
@@ -13,7 +17,6 @@ import { myProfileOptions } from '../../domains/member/infrastructure/profileApi
 import { streakOptions } from '../../domains/activity/infrastructure/activityApi';
 import { getMyRank } from '../../domains/ranking/application/getMyRank';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
-import { isDemoMode } from '../../shared/demo/mode';
 
 interface RankingMetricOption {
   id: RankingMetric;
@@ -67,9 +70,7 @@ export function RankingPage() {
   const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
   const streak = useQuery({ ...streakOptions(), enabled: signedIn });
   const myRank =
-    signedIn && profile.data
-      ? getMyRank(profile.data, streak.data?.currentStreak, isDemoMode ? 184 : undefined)
-      : undefined;
+    signedIn && profile.data ? getMyRank(profile.data, streak.data?.currentStreak) : undefined;
   return (
     <SiteLayout>
       <S.Page id="main">
@@ -79,19 +80,7 @@ export function RankingPage() {
               <span>샘플 랭킹</span>
               <h1>누가 가장 높이 자랐을까요?</h1>
             </S.Intro>
-            <S.Countdown aria-label="랭킹 갱신까지 2일 14시간 32분 8초">
-              <span>랭킹 갱신까지</span>
-              <div>
-                <strong>02</strong>
-                <small>일</small>
-                <strong>14</strong>
-                <small>시간</small>
-                <strong>32</strong>
-                <small>분</small>
-                <strong>08</strong>
-                <small>초</small>
-              </div>
-            </S.Countdown>
+            {period !== 'all' && <RankingCountdown period={period} />}
             <S.Filters>
               <S.Segment role="group" aria-label="랭킹 기준">
                 {metrics.map((item) => (
@@ -130,5 +119,41 @@ export function RankingPage() {
         </S.Shell>
       </S.Page>
     </SiteLayout>
+  );
+}
+
+function RankingCountdown({ period }: { period: CountdownPeriod }) {
+  const [now, setNow] = useState(Date.now);
+
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    const timer = window.setInterval(update, 1000);
+    document.addEventListener('visibilitychange', update);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }, []);
+
+  const { days, hours, minutes, seconds } = getRankingCountdown(period, now);
+  const units = [
+    { value: days, label: '일' },
+    { value: hours, label: '시간' },
+    { value: minutes, label: '분' },
+    { value: seconds, label: '초' },
+  ];
+
+  return (
+    <S.Countdown role="timer" aria-label="랭킹 갱신까지">
+      <span aria-hidden="true">랭킹 갱신까지</span>
+      <div>
+        {units.map(({ value, label }) => (
+          <Fragment key={label}>
+            <strong>{String(value).padStart(2, '0')}</strong>
+            <small>{label}</small>
+          </Fragment>
+        ))}
+      </div>
+    </S.Countdown>
   );
 }

@@ -1,3 +1,4 @@
+import { formatNumber } from '../../../shared/format';
 import * as S from './Podium.styles';
 import type { RankedUser, RankingMetric } from '../domain/leaderboard';
 import { RankingAsset } from './RankingAsset';
@@ -21,11 +22,12 @@ export function Podium({ users, metric }: PodiumProps) {
         ))}
         {users.map((user, index) => {
           const place = index + 1;
+          const formattedMetric = formatNumber(user[metric]);
           return (
             <S.Badge
               key={user.id}
               $place={place}
-              aria-label={`${place}위 ${user.name}, ${user[metric].toLocaleString()} ${unit}`}
+              aria-label={`${place}위 ${user.name}, ${formattedMetric} ${unit}`}
             >
               {['shadow', 'shield', 'inner', 'deco', 'sparkles', 'crown'].map((layer) => (
                 <S.Layer
@@ -56,7 +58,7 @@ export function Podium({ users, metric }: PodiumProps) {
                   name={metric === 'xp' ? 'xp' : metric === 'solved' ? 'solved' : 'streak'}
                 />
                 <span>
-                  {user[metric].toLocaleString()} {unit}
+                  {formattedMetric} {unit}
                 </span>
               </S.Score>
             </S.Badge>

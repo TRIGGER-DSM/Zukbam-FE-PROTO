@@ -49,7 +49,8 @@ export const Table = styled('table', {
       font-weight: 700;
       text-align: left;
     }
-    & th:nth-of-type(4) {
+    & tr > :nth-child(4) {
+      padding-inline: 0;
       text-align: center;
     }
     & th:nth-of-type(n + 5) {

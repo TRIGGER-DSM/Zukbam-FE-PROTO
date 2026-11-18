@@ -9,17 +9,24 @@ import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { ProblemDetailHero } from '../../domains/problem/presentation/ProblemDetailHero';
 import { ProblemDetailSidebar } from '../../domains/problem/presentation/ProblemDetailSidebar';
 import { ProblemExample } from '../../domains/problem/presentation/ProblemExample';
+import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
+import { useAccessToken } from '../../shared/hooks/useAccessToken';
 
 export function ProblemDetailPage() {
   const navigate = useNavigate();
   const { problemId } = useParams();
   const detail = useQuery(problemDetailOptions(Number(problemId)));
+  const signedIn = Boolean(useAccessToken());
+  const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
   const problem = detail.data;
   return (
     <SiteLayout>
       {problem ? (
         <S.Page id="main">
           <ProblemDetailHero problem={problem} />
+          {signedIn && profile.data?.role === 'TEACHER' && (
+            <EditLink to={`/admin/problems/${problem.id}/edit`}>문제 수정</EditLink>
+          )}
           <S.Content>
             <S.Statement aria-label="문제 설명">
               <Example.Section>
@@ -74,4 +81,10 @@ export function ProblemDetailPage() {
 const Statement = styled.p`
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+`;
+
+const EditLink = styled(Link)`
+  justify-self: end;
+  color: ${({ theme }) => theme.colors.primary.normal};
+  font-weight: 700;
 `;

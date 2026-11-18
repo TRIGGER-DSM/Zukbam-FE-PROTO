@@ -13,9 +13,10 @@ interface LeaderboardTableProps {
   rows: RankedUser[];
   me?: MyRank;
   metric: RankingMetric;
+  emptyMessage?: string;
 }
 
-export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
+export function LeaderboardTable({ rows, me, metric, emptyMessage }: LeaderboardTableProps) {
   const scoreLabel = metric === 'xp' ? 'XP' : metric === 'solved' ? '푼 문제 수' : '스트릭';
   const scoreIcon = metric === 'xp' ? 'xp' : metric === 'solved' ? 'solved' : 'streak';
   const renderRow = (user: RankedUser | MyRank) => (
@@ -24,7 +25,13 @@ export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
       <S.CardCell>
         {user.tier && (
           <RankingAsset
-            name={user.isMe ? `tier-${user.tier}` : user.tier === 'gold' ? 'card-gold' : 'card-10'}
+            name={
+              !user.isMe && user.tier === 'gold'
+                ? 'card-gold'
+                : !user.isMe && user.tier === '10'
+                  ? 'card-10'
+                  : `tier-${user.tier}`
+            }
             alt={tierThresholds.find((tier) => tier.id === user.tier)?.label}
           />
         )}
@@ -65,11 +72,18 @@ export function LeaderboardTable({ rows, me, metric }: LeaderboardTableProps) {
         </thead>
         <tbody>
           {rows.map(renderRow)}
-          {me && (
+          {emptyMessage && (
+            <S.Ellipsis>
+              <td colSpan={5}>{emptyMessage}</td>
+            </S.Ellipsis>
+          )}
+          {me && !rows.some((row) => row.id === me.id) && (
             <>
-              <S.Ellipsis aria-hidden="true">
-                <td colSpan={5}>···</td>
-              </S.Ellipsis>
+              {rows.length > 0 && (
+                <S.Ellipsis aria-hidden="true">
+                  <td colSpan={5}>···</td>
+                </S.Ellipsis>
+              )}
               {renderRow(me)}
             </>
           )}

@@ -11,14 +11,15 @@ import {
 } from '../../domains/submission/infrastructure/solutionApi';
 
 export function WrongResultPage() {
-  const { problemId } = useParams();
+  const { problemId: routeProblemId } = useParams();
   const [searchParams] = useSearchParams();
   const solutionId = Number(searchParams.get('solutionId') ?? 0);
   const solutionQuery = useQuery(solutionOptions(solutionId));
   const result = solutionQuery.data;
+  const problemId = result?.problemId ?? Number(routeProblemId);
 
   if (result && (result.status === 'PENDING' || result.status === 'ACCEPTED')) {
-    return <Navigate replace to={resultPath(Number(problemId), result)} />;
+    return <Navigate replace to={resultPath(problemId, result)} />;
   }
 
   return (
@@ -65,7 +66,9 @@ export function WrongResultPage() {
               </div>
               <div>
                 <dt>코드 길이</dt>
-                <dd>{new TextEncoder().encode(result.code).length} B</dd>
+                <dd>
+                  {result.code == null ? '—' : `${new TextEncoder().encode(result.code).length} B`}
+                </dd>
               </div>
             </S.Statistics>
             <S.Notice>
@@ -75,7 +78,9 @@ export function WrongResultPage() {
           </S.Summary>
           <S.Actions>
             <S.Review to={`/problems/${problemId}`}>문제 다시 보기</S.Review>
-            <S.Retry to={`/problems/${problemId}/submit`}>코드 고치러 가기</S.Retry>
+            <S.Retry to={`/problems/${problemId}/submit?retry=${result.solutionId}`}>
+              코드 고치러 가기
+            </S.Retry>
           </S.Actions>
         </S.Page>
       ) : (

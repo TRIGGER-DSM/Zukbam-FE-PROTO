@@ -1,11 +1,12 @@
 import * as S from './RankingPage.styles';
 import { Fragment, useEffect, useState } from 'react';
+import { Link } from 'react-router';
 import {
   getRankingCountdown,
   type CountdownPeriod,
 } from '../../domains/ranking/domain/rankingCountdown';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
-import { getLeaderboard } from '../../domains/ranking/application/getLeaderboard';
+import { rankingPageOptions } from '../../domains/ranking/infrastructure/rankingApi';
 import type { RankingMetric, RankingPeriod } from '../../domains/ranking/domain/leaderboard';
 import { RankingAsset } from '../../domains/ranking/presentation/RankingAsset';
 import { Podium } from '../../domains/ranking/presentation/Podium';
@@ -65,29 +66,45 @@ const periods: RankingPeriodOption[] = [
 export function RankingPage() {
   const [metric, setMetric] = useState<RankingMetric>('xp');
   const [period, setPeriod] = useState<RankingPeriod>('weekly');
-  const leaderboard = getLeaderboard(period, metric);
+  const [page, setPage] = useState(0);
   const signedIn = Boolean(useAccessToken());
+  const firstPage = useQuery({ ...rankingPageOptions(period, metric, 0), enabled: signedIn });
+  const leaderboard = useQuery({
+    ...rankingPageOptions(period, metric, page),
+    enabled: signedIn && page > 0,
+  });
+  const result = page === 0 ? firstPage : leaderboard;
+  const podium = signedIn ? (firstPage.data?.users.slice(0, 3) ?? []) : [];
+  const users = signedIn ? (result.data?.users ?? []) : [];
+  const rows = page === 0 && users.length > 3 ? users.slice(3) : users;
   const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
   const streak = useQuery({ ...streakOptions(), enabled: signedIn });
+  const myId = signedIn && profile.data ? String(profile.data.userId) : undefined;
+  const rankedMe = users.find(({ id }) => id === myId) ?? podium.find(({ id }) => id === myId);
   const myRank =
-    signedIn && profile.data ? getMyRank(profile.data, streak.data?.currentStreak) : undefined;
+    signedIn && profile.data
+      ? getMyRank(profile.data, streak.data?.currentStreak, rankedMe?.position)
+      : undefined;
   return (
     <SiteLayout>
       <S.Page id="main">
         <S.Shell>
           <S.Toolbar>
             <S.Intro>
-              <span>샘플 랭킹</span>
+              <span>랭킹</span>
               <h1>누가 가장 높이 자랐을까요?</h1>
             </S.Intro>
-            {period !== 'all' && <RankingCountdown period={period} />}
+            {period !== 'all' && metric !== 'streak' && <RankingCountdown period={period} />}
             <S.Filters>
               <S.Segment role="group" aria-label="랭킹 기준">
                 {metrics.map((item) => (
                   <button
                     key={item.id}
                     aria-pressed={metric === item.id}
-                    onClick={() => setMetric(item.id)}
+                    onClick={() => {
+                      setMetric(item.id);
+                      setPage(0);
+                    }}
                   >
                     <RankingAsset name={item.icon} />
                     {item.label}
@@ -98,8 +115,12 @@ export function RankingPage() {
                 {periods.map((item) => (
                   <button
                     key={item.id}
-                    aria-pressed={period === item.id}
-                    onClick={() => setPeriod(item.id)}
+                    disabled={metric === 'streak'}
+                    aria-pressed={(metric === 'streak' ? 'all' : period) === item.id}
+                    onClick={() => {
+                      setPeriod(item.id);
+                      setPage(0);
+                    }}
                   >
                     {item.label}
                   </button>
@@ -108,12 +129,42 @@ export function RankingPage() {
             </S.Filters>
           </S.Toolbar>
           <S.Results aria-live="polite" aria-atomic="false">
-            <Podium users={leaderboard.podium} metric={metric} />
+            <Podium users={podium} metric={metric} />
+            {signedIn && <ApiFeedback pending={result.isPending} error={result.error} />}
+            {!signedIn && (
+              <S.LoginNotice>
+                랭킹을 보려면 <Link to="/login">로그인</Link>해 주세요.
+              </S.LoginNotice>
+            )}
             {signedIn && <ApiFeedback pending={profile.isPending} error={profile.error} />}
             {signedIn && metric === 'streak' && (
               <ApiFeedback pending={streak.isPending} error={streak.error} />
             )}
-            <LeaderboardTable rows={leaderboard.rows} me={myRank} metric={metric} />
+            <LeaderboardTable
+              rows={rows.map((row) => (row.id === myId ? { ...row, isMe: true } : row))}
+              me={rankedMe && myRank ? { ...myRank, ...rankedMe, isMe: true } : myRank}
+              metric={metric}
+              emptyMessage={
+                signedIn && result.isSuccess && !users.length ? '표시할 랭킹이 없어요.' : undefined
+              }
+            />
+            {signedIn && (firstPage.data?.totalPages ?? 0) > 1 && (
+              <S.Pagination aria-label="랭킹 페이지">
+                <button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>
+                  이전
+                </button>
+                <span>
+                  {page + 1} / {firstPage.data?.totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={page + 1 >= (firstPage.data?.totalPages ?? 0)}
+                  onClick={() => setPage(page + 1)}
+                >
+                  다음
+                </button>
+              </S.Pagination>
+            )}
           </S.Results>
           <RankingSidebar me={myRank} />
         </S.Shell>

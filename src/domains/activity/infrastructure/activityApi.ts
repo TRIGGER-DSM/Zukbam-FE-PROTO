@@ -28,15 +28,16 @@ export function streakOptions() {
   });
 }
 
-export function growthOptions() {
+export function growthOptions(userId?: number, viewerId?: number) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date());
   const from = dateAfter(today, -364);
+  const path = userId === undefined ? '/streaks/me' : `/streaks/${userId}`;
   return queryOptions({
-    queryKey: ['growth', today, Boolean(getAccessToken())],
+    queryKey: ['growth', today, Boolean(getAccessToken()), userId, viewerId],
     queryFn: async ({ signal }): Promise<GrowthSummary> => {
       const [streak, grass] = await Promise.all([
-        apiJson<StreakResponse>('/streaks/me', { authenticated: true, signal }),
-        apiJson<GrassResponse>(`/streaks/me/grass?from=${from}&to=${today}`, {
+        apiJson<StreakResponse>(path, { authenticated: true, signal }),
+        apiJson<GrassResponse>(`${path}/grass?from=${from}&to=${today}`, {
           authenticated: true,
           signal,
         }),

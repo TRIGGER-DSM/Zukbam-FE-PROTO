@@ -1,6 +1,15 @@
 import styled from '@emotion/styled';
 import { colors } from '../../shared/styles/colors';
 
+export const LoginNotice = styled.p`
+  text-align: center;
+  color: ${colors.label.neutral};
+  a {
+    color: ${colors.primary.normal};
+    text-decoration: underline;
+  }
+`;
+
 export const Page = styled.main`
   padding: clamp(1.5rem, 4vw, 3rem) var(--page-gutter);
   background: ${colors.background.elevated};
@@ -157,5 +166,20 @@ export const Results = styled.div`
   @media (max-width: 1250px) {
     margin-top: 1rem;
     padding-bottom: 0;
+  }
+`;
+export const Pagination = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  button {
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.5rem;
+    background: ${colors.fill.normal};
+  }
+  button:disabled {
+    opacity: 0.45;
+    cursor: default;
   }
 `;

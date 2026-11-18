@@ -31,6 +31,7 @@ import { highlightSelectionMatches, search, searchKeymap } from '@codemirror/sea
 import { tags } from '@lezer/highlight';
 import type { CodeLanguage } from '../domain/submission';
 import { colors } from '../../../shared/styles/colors';
+import { completeC, completeJava } from './languageCompletion';
 
 export const externalChange = Annotation.define<boolean>();
 
@@ -130,7 +131,17 @@ export async function loadLanguage(language: CodeLanguage) {
       return (await import('@codemirror/lang-python')).python();
     case 'javascript':
       return (await import('@codemirror/lang-javascript')).javascript();
+    case 'c':
+      return [
+        (await import('@codemirror/lang-cpp')).cpp(),
+        EditorState.languageData.of(() => [{ autocomplete: completeC }]),
+      ];
     case 'cpp':
       return (await import('@codemirror/lang-cpp')).cpp();
+    case 'java':
+      return [
+        (await import('@codemirror/lang-java')).java(),
+        EditorState.languageData.of(() => [{ autocomplete: completeJava }]),
+      ];
   }
 }

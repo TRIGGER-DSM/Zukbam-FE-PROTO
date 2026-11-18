@@ -37,17 +37,19 @@ export function Podium({ users, metric }: PodiumProps) {
                   $place={place}
                 />
               ))}
-              <S.Layer
-                name={
-                  user.tier === 'black'
-                    ? 'podium-1-medal'
-                    : user.tier === 'gold'
-                      ? 'podium-3-medal'
-                      : `tier-${user.tier}`
-                }
-                $layer="medal"
-                $place={place}
-              />
+              {user.tier && (
+                <S.Layer
+                  name={
+                    user.tier === 'black'
+                      ? 'podium-1-medal'
+                      : user.tier === 'gold'
+                        ? 'podium-3-medal'
+                        : `tier-${user.tier}`
+                  }
+                  $layer="medal"
+                  $place={place}
+                />
+              )}
               <S.CrownNumber aria-hidden="true">{place}</S.CrownNumber>
               <S.User>
                 <RankingAsset name={`podium-${place}-avatar`} />

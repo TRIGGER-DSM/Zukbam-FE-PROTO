@@ -55,13 +55,3 @@ export const Name = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-
-export const NewBadge = styled.span`
-  flex-shrink: 0;
-  padding: 2px 6px;
-  border-radius: 999px;
-  color: ${colors.static.black};
-  background: ${colors.primary.normal};
-  font-size: 0.75rem;
-  font-weight: 700;
-`;

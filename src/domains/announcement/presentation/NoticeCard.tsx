@@ -2,14 +2,17 @@ import * as S from './NoticeCard.styles';
 import * as UI from '../../../shared/ui/primitives.styles';
 import type { Announcement } from '../domain/announcement';
 import { Asset } from '../../../shared/ui/Asset';
+import type { ReactNode } from 'react';
+import { formatNoticeDate } from './formatNoticeDate';
 
 interface NoticeCardProps {
   notices: Announcement[];
   onSelect: (notice: Announcement) => void;
   onShowAll: () => void;
+  children?: ReactNode;
 }
 
-export function NoticeCard({ notices, onSelect, onShowAll }: NoticeCardProps) {
+export function NoticeCard({ notices, onSelect, onShowAll, children }: NoticeCardProps) {
   return (
     <S.Card aria-labelledby="notice-title">
       <UI.NoticeHeading>
@@ -23,16 +26,16 @@ export function NoticeCard({ notices, onSelect, onShowAll }: NoticeCardProps) {
       </UI.NoticeHeading>
       <ul>
         {notices.map((notice) => (
-          <li key={notice.id}>
+          <li key={notice.noticeId}>
             <button onClick={() => onSelect(notice)}>
-              <S.Date>{notice.date}</S.Date>
+              <S.Date>{formatNoticeDate(notice.createdAt)}</S.Date>
               <S.Name>{notice.title}</S.Name>
-              {notice.isNew && <S.NewBadge>NEW</S.NewBadge>}
               <Asset name="chevron.svg" />
             </button>
           </li>
         ))}
       </ul>
+      {children}
     </S.Card>
   );
 }

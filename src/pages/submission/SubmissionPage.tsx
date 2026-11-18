@@ -1,7 +1,7 @@
 import * as S from './SubmissionPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
@@ -19,10 +19,10 @@ import {
   clampFontSize,
   formatElapsedTime,
   type CodeLanguage,
+  type CodeDraft,
   type ConsoleTab,
   type SubmissionTab,
 } from '../../domains/submission/domain/submission';
-import { codeTemplates } from '../../domains/submission/infrastructure/codeTemplates';
 import { CodeEditor } from '../../domains/submission/presentation/CodeEditor';
 import { SubmissionAsset } from '../../domains/submission/presentation/SubmissionAsset';
 import { SubmissionProblemPanel } from '../../domains/submission/presentation/SubmissionProblemPanel';
@@ -44,31 +44,56 @@ function clampPanelWidth(width: number) {
 
 export function SubmissionPage() {
   const { problemId } = useParams();
+  const [params] = useSearchParams();
+  const retry = params.get('retry');
+  const previous = useQuery(solutionOptions(Number(retry)));
   const problemQuery = useQuery(problemDetailOptions(Number(problemId)));
   const problem = problemQuery.data;
-  if (!problem) {
+  const solution = previous.data;
+  const previousLanguage = codeLanguages.find(
+    (option) => option.apiLanguage === solution?.language,
+  );
+  const draft =
+    previousLanguage &&
+    solution?.code != null &&
+    (solution.problemId === undefined || solution.problemId === Number(problemId))
+      ? { language: previousLanguage.id, source: solution.code }
+      : undefined;
+  if (!problem || (retry !== null && !draft)) {
     return (
       <SiteLayout>
         <S.Unavailable id="main">
           <h1>풀이 제출</h1>
-          <ApiFeedback pending={problemQuery.isLoading} error={problemQuery.error} />
+          <ApiFeedback
+            pending={problemQuery.isLoading || previous.isLoading}
+            error={problemQuery.error ?? previous.error}
+          />
+          {retry !== null && !previous.isLoading && !previous.error && !draft && (
+            <p>이 제출의 코드를 불러올 수 없어요.</p>
+          )}
+          {retry !== null && <Link to={`/problems/${problemId}/submit`}>빈 편집기 열기</Link>}
           <Link to="/problems">문제 목록으로</Link>
         </S.Unavailable>
       </SiteLayout>
     );
   }
-  return <SubmissionWorkspace key={problem.id} problem={problem} />;
+  return (
+    <SubmissionWorkspace key={`${problem.id}-${retry ?? ''}`} problem={problem} draft={draft} />
+  );
 }
 
 interface SubmissionWorkspaceProps {
   problem: ProblemDetail;
+  draft?: CodeDraft | null;
 }
 
-function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
+function SubmissionWorkspace({ problem, draft }: SubmissionWorkspaceProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [language, setLanguage] = useState<CodeLanguage>('python');
-  const [drafts, setDrafts] = useState({ ...codeTemplates });
+  const [language, setLanguage] = useState<CodeLanguage>(draft?.language ?? 'python');
+  const [drafts, setDrafts] = useState<Partial<Record<CodeLanguage, string>>>(() =>
+    draft ? { [draft.language]: draft.source } : {},
+  );
   const [fontSize, setFontSize] = useState(14);
   const [problemPanelWidth, setProblemPanelWidth] = useState(panelWidth.initial);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -85,7 +110,7 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   const latestStatus = judgement.data?.status;
   const isJudging =
     latestSolutionId !== null && !judgement.error && (!latestStatus || latestStatus === 'PENDING');
-  const source = drafts[language];
+  const source = drafts[language] ?? '';
   const hasSource = source.trim().length > 0;
   const matchesExample = firstExample && testInput.trim() === firstExample.input.trim();
   const submission = useMutation({
@@ -103,7 +128,15 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
 
   useEffect(() => {
     if (!latestSolutionId || !latestStatus || latestStatus === 'PENDING') return;
-    for (const key of ['me', 'growth', 'streak', 'xp-histories']) {
+    for (const key of [
+      'me',
+      'growth',
+      'streak',
+      'xp-histories',
+      'today-quests',
+      'rankings',
+      'student-submissions',
+    ]) {
       void queryClient.invalidateQueries({ queryKey: [key] });
     }
     void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
@@ -122,7 +155,7 @@ function SubmissionWorkspace({ problem }: SubmissionWorkspaceProps) {
   }
 
   function resetSource() {
-    updateSource(codeTemplates[language]);
+    updateSource('');
     setRunMessage('');
   }
 

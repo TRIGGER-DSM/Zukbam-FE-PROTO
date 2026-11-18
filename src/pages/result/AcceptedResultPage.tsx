@@ -11,19 +11,20 @@ import { resultPath, solutionOptions } from '../../domains/submission/infrastruc
 import { streakOptions } from '../../domains/activity/infrastructure/activityApi';
 
 export function AcceptedResultPage() {
-  const { problemId } = useParams();
+  const { problemId: routeProblemId } = useParams();
   const [searchParams] = useSearchParams();
   const solutionId = Number(searchParams.get('solutionId') ?? 0);
   const solutionQuery = useQuery(solutionOptions(solutionId));
-  const problem = useQuery(problemDetailOptions(Number(problemId))).data;
   const result = solutionQuery.data;
+  const problemId = result?.problemId ?? Number(routeProblemId);
+  const problem = useQuery(problemDetailOptions(problemId)).data;
   const isJudging = result?.status === 'PENDING';
   const isAccepted = result?.status === 'ACCEPTED';
   const streak = useQuery({ ...streakOptions(), enabled: isAccepted });
   const [previewTitle, setPreviewTitle] = useState<string | null>(null);
 
   if (result && !isJudging && !isAccepted) {
-    return <Navigate replace to={resultPath(Number(problemId), result)} />;
+    return <Navigate replace to={resultPath(problemId, result)} />;
   }
 
   return (

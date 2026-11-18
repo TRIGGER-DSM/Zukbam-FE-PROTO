@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { clearSession } from '../../shared/api/client';
+import { formatDateTime } from '../../shared/format';
 import { useAccessToken } from '../../shared/hooks/useAccessToken';
 import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
 import { friendsOptions } from '../../domains/social/infrastructure/friendApi';
@@ -24,7 +25,10 @@ export function AccountPage() {
       name: profile.data.name,
       email: profile.data.email,
       phone: '',
-      joinedAt: '—',
+      joinedAt: formatDateTime(profile.data.createdAt, {
+        timeZone: 'Asia/Seoul',
+        dateStyle: 'medium',
+      }),
       friendCount: friends.data?.length,
       rank: profile.data.rank,
       experience: profile.data.xp,

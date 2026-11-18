@@ -3,6 +3,10 @@ export interface Quest {
   title: string;
   current: number;
   target: number;
+  difficulty?: 'EASY' | 'NORMAL' | 'HARD';
+  completed?: boolean;
+  rewardXp?: number;
+  rewarded?: boolean;
 }
 
 export function questProgress(quest: Quest) {

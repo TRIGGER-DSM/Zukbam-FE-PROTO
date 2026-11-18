@@ -16,6 +16,7 @@
     "@codemirror/autocomplete": "^6.20.4",
     "@codemirror/commands": "^6.11.1",
     "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-java": "^6.0.2",
     "@codemirror/lang-javascript": "^6.2.5",
     "@codemirror/lang-python": "^6.2.1",
     "@codemirror/language": "^6.13.1",
@@ -28,6 +29,7 @@
     "@tanstack/react-query": "^5.105.3",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
     "react-router": "^8.5.1"
   },
   "devDependencies": {

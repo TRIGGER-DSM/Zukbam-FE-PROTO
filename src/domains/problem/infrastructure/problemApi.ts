@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { apiJson } from '../../../shared/api/client';
+import { apiJson, apiResponse } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
 import { difficulties, problemPageSize, type Problem } from '../domain/problem';
 import type { ProblemDetail } from '../domain/problemDetail';
@@ -22,7 +22,7 @@ interface ProblemListResponse extends PageInfo {
   problems: ProblemSummaryResponse[];
 }
 
-interface TestCaseResponse {
+export interface ProblemTestCase {
   input: string;
   output: string;
   isSample: boolean;
@@ -32,7 +32,71 @@ interface ProblemDetailResponse extends ProblemSummaryResponse {
   content: string;
   memoryLimit: number;
   timeLimit: number;
-  testCases: TestCaseResponse[];
+  testCases: ProblemTestCase[];
+}
+
+export interface ProblemInput {
+  title: string;
+  content: string;
+  problemRankId: number;
+  timeLimit: number;
+  memoryLimit: number;
+  testCases: ProblemTestCase[];
+}
+
+export function problemRankOptions() {
+  return queryOptions({
+    queryKey: ['problem-ranks'],
+    queryFn: async ({ signal }) => {
+      const result = await apiJson<{ problemRanks: ProblemRankResponse[] }>('/problem-ranks', {
+        signal,
+      });
+      return result.problemRanks;
+    },
+  });
+}
+
+export async function createProblem(input: ProblemInput) {
+  await apiResponse('/problems', { method: 'POST', body: input, authenticated: true });
+}
+
+export interface EditableProblem extends ProblemDetailResponse {
+  rank: ProblemRankResponse;
+}
+
+export function editableProblemOptions(id: number, enabled: boolean) {
+  return queryOptions({
+    queryKey: ['editable-problem', id, enabled],
+    enabled: enabled && Number.isSafeInteger(id) && id > 0,
+    gcTime: 0,
+    queryFn: ({ signal }) =>
+      apiJson<EditableProblem>(`/problems/${id}`, { signal, authenticated: true }),
+  });
+}
+
+export async function updateProblem(id: number, input: ProblemInput) {
+  await apiResponse(`/problems/${id}`, { method: 'PUT', body: input, authenticated: true });
+}
+
+export async function updateProblemCases(problem: EditableProblem, testCases: ProblemTestCase[]) {
+  const id = problem.problemId;
+  const latest = await apiJson<EditableProblem>(`/problems/${id}`, { authenticated: true });
+  if (JSON.stringify(latest.testCases) !== JSON.stringify(problem.testCases)) {
+    throw new Error('테스트케이스가 변경됐어요. 목록을 다시 확인한 뒤 저장해 주세요.');
+  }
+  const { title, content, memoryLimit, timeLimit, rank } = latest;
+  await updateProblem(id, {
+    title,
+    content,
+    memoryLimit,
+    timeLimit,
+    problemRankId: rank.problemRankId,
+    testCases: testCases.map(({ input, output, isSample }) => ({ input, output, isSample })),
+  });
+}
+
+export async function deleteProblem(id: number) {
+  await apiResponse(`/problems/${id}`, { method: 'DELETE', authenticated: true });
 }
 
 function difficulty(rank: ProblemSummaryResponse['rank']) {

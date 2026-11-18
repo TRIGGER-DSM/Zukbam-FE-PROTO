@@ -1,4 +1,4 @@
-export type CodeLanguage = 'python' | 'javascript' | 'cpp';
+export type CodeLanguage = 'python' | 'javascript' | 'cpp' | 'c' | 'java';
 
 export type SubmissionTab = 'problem' | 'history' | 'questions';
 
@@ -13,21 +13,37 @@ export const codeLanguages: {
   id: CodeLanguage;
   label: string;
   filename: string;
+  apiLanguage: string;
 }[] = [
   {
     id: 'python',
     label: 'Python 3',
     filename: 'main.py',
+    apiLanguage: 'Python',
   },
   {
     id: 'javascript',
     label: 'JavaScript',
     filename: 'main.js',
+    apiLanguage: 'JavaScript',
   },
   {
     id: 'cpp',
     label: 'C++17',
     filename: 'main.cpp',
+    apiLanguage: 'C++17',
+  },
+  {
+    id: 'c',
+    label: 'C (C99)',
+    filename: 'main.c',
+    apiLanguage: 'C99',
+  },
+  {
+    id: 'java',
+    label: 'Java',
+    filename: 'Main.java',
+    apiLanguage: 'Java',
   },
 ];
 

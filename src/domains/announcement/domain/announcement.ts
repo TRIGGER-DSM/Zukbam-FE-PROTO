@@ -1,6 +1,10 @@
 export interface Announcement {
-  id: string;
-  date: string;
+  noticeId: number;
   title: string;
-  isNew?: boolean;
+  authorName: string;
+  createdAt: string;
+}
+
+export interface AnnouncementDetail extends Announcement {
+  content: string;
 }

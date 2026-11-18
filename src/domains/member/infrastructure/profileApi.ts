@@ -8,6 +8,7 @@ interface StudentInfo {
 }
 
 export interface UserProfile {
+  createdAt?: string | null;
   userId: number;
   email: string;
   name: string;

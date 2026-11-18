@@ -11,7 +11,7 @@ export interface RankedUser {
   xp: number;
   solved: number;
   streak: number;
-  tier: TierId;
+  tier?: TierId;
   isMe?: boolean;
 }
 
@@ -64,12 +64,3 @@ export const tierThresholds: {
     minimumXp: 0,
   },
 ];
-
-export function sortLeaderboard(users: RankedUser[], metric: RankingMetric): RankedUser[] {
-  return [...users]
-    .sort((a, b) => b[metric] - a[metric] || a.position - b.position)
-    .map((user, index) => ({
-      ...user,
-      position: index + 1,
-    }));
-}

@@ -32,3 +32,42 @@ export const NoticeButton = styled.button`
   text-align: left;
   line-height: 1.6;
 `;
+
+export const NoticePagination = styled.nav`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  button:disabled {
+    opacity: 0.45;
+  }
+`;
+
+export const NoticeContent = styled.div`
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  overflow-wrap: anywhere;
+  ul,
+  ol {
+    padding-inline-start: 1.5rem;
+  }
+  ul {
+    list-style: disc;
+  }
+  ol {
+    list-style: decimal;
+  }
+  a {
+    color: ${colors.primary.normal};
+    text-decoration: underline;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  pre {
+    margin: 0;
+    overflow-x: auto;
+  }
+`;

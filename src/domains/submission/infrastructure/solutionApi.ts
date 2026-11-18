@@ -1,9 +1,7 @@
 import { queryOptions } from '@tanstack/react-query';
 import { apiJson, apiResponse, getAccessToken } from '../../../shared/api/client';
 import type { PageInfo } from '../../../shared/api/pagination';
-import type { CodeLanguage } from '../domain/submission';
-
-const languages = { python: 'Python', javascript: 'JavaScript', cpp: 'C++17' } as const;
+import { codeLanguages, type CodeLanguage } from '../domain/submission';
 
 type SolutionStatus =
   | 'PENDING'
@@ -16,8 +14,9 @@ type SolutionStatus =
 
 export interface Solution {
   solutionId: number;
+  problemId?: number;
   language: 'C99' | 'C++17' | 'Java' | 'Python' | 'JavaScript' | 'Text';
-  code: string;
+  code: string | null;
   memoryUsage: number | null;
   time: number | null;
   status: SolutionStatus;
@@ -39,9 +38,11 @@ export const solutionStatusLabels: Record<SolutionStatus, string> = {
 };
 
 export function submitSolution(problemId: number, language: CodeLanguage, code: string) {
+  const apiLanguage = codeLanguages.find((option) => option.id === language)?.apiLanguage;
+  if (!apiLanguage) throw new Error('지원하는 언어를 선택해 주세요.');
   return apiResponse(`/solutions/${problemId}`, {
     method: 'POST',
-    body: { language: languages[language], code },
+    body: { language: apiLanguage, code },
     authenticated: true,
   });
 }
@@ -61,6 +62,50 @@ export function solutionHistoryOptions(problemId: number, email: string, page: n
     },
     refetchInterval: (query) =>
       query.state.data?.solutions.some((solution) => solution.status === 'PENDING') ? 3000 : false,
+  });
+}
+
+export async function recentSubmissions(
+  email: string,
+  cutoff: number,
+  signal: AbortSignal,
+  problemId?: number,
+) {
+  const params = new URLSearchParams({ email, size: '100' });
+  if (problemId !== undefined) params.set('problemId', String(problemId));
+  const records: Solution[] = [];
+  for (let page = 1; ; page += 1) {
+    params.set('page', String(page));
+    const result = await apiJson<SolutionPage>(`/solutions?${params}`, {
+      authenticated: true,
+      signal,
+    });
+    const recent = result.solutions.filter((record) => Date.parse(record.submittedAt) >= cutoff);
+    records.push(...recent);
+    if (
+      page >= result.totalPages ||
+      !result.solutions.length ||
+      recent.length < result.solutions.length
+    )
+      break;
+  }
+  return records;
+}
+
+export function studentSubmissionOptions(
+  teacherId: number | undefined,
+  email: string,
+  problemId: number | undefined,
+  weeks: number,
+  enabled: boolean,
+) {
+  return queryOptions({
+    queryKey: ['student-submissions', teacherId, email, problemId, weeks],
+    enabled: enabled && teacherId !== undefined && Boolean(email),
+    gcTime: 0,
+    queryFn: async ({ signal }) => {
+      return recentSubmissions(email, Date.now() - weeks * 7 * 86_400_000, signal, problemId);
+    },
   });
 }
 

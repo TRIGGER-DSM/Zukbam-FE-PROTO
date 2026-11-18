@@ -163,8 +163,6 @@ export function filterProblems(problems: Problem[], filters: ProblemFilters) {
 
 export interface RecommendedProblem {
   problem: Problem;
-  reason: string;
-  acceptance: number;
 }
 
 export type FriendCardTone = 'red' | 'blue' | 'green' | 'yellow';
@@ -172,7 +170,8 @@ export type FriendCardTone = 'red' | 'blue' | 'green' | 'yellow';
 export interface FriendProblem {
   problem: Problem;
   friend: string;
+  friendId: string;
   time: string;
   tone: FriendCardTone;
-  tier: TierId;
+  tier?: TierId;
 }

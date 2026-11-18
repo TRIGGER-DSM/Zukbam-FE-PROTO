@@ -1,8 +1,6 @@
 export interface RankSummary {
   title: string;
   xp?: number | null;
-  nextXp?: number;
-  nextTitle?: string;
   position?: number;
   percentile?: number;
 }

@@ -52,29 +52,6 @@ export const Progress = styled.div`
   }
 `;
 
-export const Bamboo = styled(Asset)`
-  display: block;
-  width: 100%;
-  height: auto;
-`;
-
-export const Track = styled.div`
-  min-height: 1.625rem;
-  margin-block: 1rem 0.625rem;
-  border-radius: 5px;
-  background: ${colors.fill.strong};
-`;
-
-export const XpLabels = styled.div`
-  display: flex;
-  justify-content: space-between;
-  color: ${colors.label.assistive};
-  font-size: 1rem;
-  strong {
-    color: ${colors.label.neutral};
-  }
-`;
-
 export const Ladder = styled.div`
   display: grid;
   gap: 0.75rem;

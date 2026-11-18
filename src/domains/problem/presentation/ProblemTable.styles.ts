@@ -129,11 +129,11 @@ export const ColTag = styled('col', {
   target: 'e-8-4',
 })`
   & {
-    width: 4.5rem;
+    width: 9rem;
   }
   @media (max-width: 1600px) {
     & {
-      width: 3.25rem;
+      width: 7rem;
     }
   }
 `;
@@ -268,9 +268,12 @@ export const TagCell = styled('td', {
   label: 'TagCell',
   target: 'e-8-c',
 })`
-  & > button {
+  & > span {
     display: block;
-    margin: auto;
+    padding: 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    overflow-wrap: anywhere;
   }
 `;
 

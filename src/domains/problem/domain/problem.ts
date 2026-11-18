@@ -6,6 +6,15 @@ export type ProblemStatus = 'solved' | 'attempted' | 'unattempted';
 
 export type ProblemSort = 'id' | 'difficulty' | 'title' | 'solvers' | 'attempts' | 'random';
 
+export interface ProblemCategory {
+  categoryId: number;
+  name: string;
+}
+
+export interface ProblemCategoryCount extends ProblemCategory {
+  problemCount: number;
+}
+
 export const problemPageSize = 10;
 
 export const difficulties: {
@@ -170,7 +179,7 @@ export type FriendCardTone = 'red' | 'blue' | 'green' | 'yellow';
 export interface FriendProblem {
   problem: Problem;
   friend: string;
-  friendId: string;
+  additionalFriends: number;
   time: string;
   tone: FriendCardTone;
   tier?: TierId;

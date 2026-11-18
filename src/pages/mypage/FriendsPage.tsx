@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { MyPageLayout } from './MyPageLayout';
+import { friendProblemsKey } from '../../domains/problem/infrastructure/friendProblemApi';
 import * as UI from '../../shared/ui/primitives.styles';
 import type { Friend } from '../../domains/social/domain/friend';
 import { filterFriends } from '../../domains/social/application/filterFriends';
@@ -30,7 +31,10 @@ export function FriendsPage() {
       queryClient.setQueriesData<Friend[]>({ queryKey: friendsKey }, (previous) =>
         previous?.filter((item) => item.friendshipId !== friend.friendshipId),
       );
-      await queryClient.invalidateQueries({ queryKey: friendsKey });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: friendsKey }),
+        queryClient.invalidateQueries({ queryKey: friendProblemsKey }),
+      ]);
     },
   });
   const visibleFriends = filterFriends(directory.data ?? [], searchQuery);

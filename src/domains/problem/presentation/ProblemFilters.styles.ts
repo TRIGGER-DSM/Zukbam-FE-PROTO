@@ -365,6 +365,39 @@ export const Logic = styled('div', {
   `,
 );
 
+export const CategoryPicker = styled.div`
+  &:focus-within > [role='group'] {
+    display: grid;
+  }
+`;
+
+export const CategoryOptions = styled.div(
+  ({ theme }) => css`
+    display: none;
+    margin-top: 0.375rem;
+    padding: 0.25rem;
+    max-height: 12rem;
+    overflow-y: auto;
+    background: ${theme.colors.fill.normal};
+    border-radius: 0.75rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      text-align: left;
+      padding: 0.375rem 0.5rem;
+      font-size: 0.8125rem;
+    }
+
+    button:hover,
+    button:focus-visible {
+      color: ${theme.colors.primary.strong};
+    }
+  `,
+);
+
 export const CategoryInput = styled('label', {
   label: 'CategoryInput',
   target: 'e-7-9',

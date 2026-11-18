@@ -5,7 +5,7 @@ import { Avatar } from '../../../shared/ui/Avatar';
 import type { FriendCardTone } from '../domain/problem';
 
 interface FriendArtStyleProps {
-  $tone: FriendCardTone;
+  $tone?: FriendCardTone;
 }
 
 export const Root = styled('div', {
@@ -365,14 +365,14 @@ export const FriendArt = styled('span', {
   label: 'FriendArt',
   target: 'e-5-b',
 })<FriendArtStyleProps>(
-  ({ $tone }) => css`
+  ({ $tone, theme }) => css`
     & {
       display: block;
       position: relative;
       overflow: hidden;
       width: 100%;
       height: 9.375rem;
-      background: ${colors.friendCard[$tone]};
+      background: ${$tone ? colors.friendCard[$tone] : theme.colors.fill.normal};
     }
     @media (max-width: 1200px) {
       & {
@@ -405,6 +405,35 @@ export const FriendAvatar = styled(Avatar)`
   height: 109.333333%;
   width: auto;
   aspect-ratio: 1;
+`;
+
+export const AvatarPlaceholder = styled.span`
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 105%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.colors.fill.strong};
+`;
+
+export const Placeholder = styled.span`
+  width: 55%;
+  height: 1rem;
+  border-radius: 0.375rem;
+  background: ${({ theme }) => theme.colors.fill.strong};
+
+  &:nth-child(2) {
+    width: 78%;
+    height: 1.625rem;
+  }
+
+  &:last-child {
+    width: 30%;
+    height: 1.75rem;
+    border-radius: 999px;
+  }
 `;
 
 export const FriendBadge = styled.span`

@@ -232,6 +232,28 @@ export const Row = styled.tr<RowStyleProps>`
   }
 `;
 
+export const PreviewRow = styled(Row)`
+  td > span {
+    display: block;
+    width: 70%;
+    height: 0.625rem;
+    border-radius: 999px;
+    background: ${colors.fill.strong};
+  }
+  td:nth-child(-n + 2) > span {
+    margin-inline: auto;
+  }
+  td:nth-child(2) > span {
+    width: min(75%, 3.25rem);
+    height: auto;
+    aspect-ratio: 3 / 4;
+    border-radius: 0.5rem;
+  }
+  td:last-child > span {
+    margin-left: auto;
+  }
+`;
+
 export const Ellipsis = styled.tr`
   height: 2.125rem;
   color: ${colors.label.assistive};

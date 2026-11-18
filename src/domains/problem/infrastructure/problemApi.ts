@@ -1,7 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
-import { apiJson, apiResponse } from '../../../shared/api/client';
+import { apiJson, apiResponse, getAccessToken } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
-import { difficulties, problemPageSize, type Problem } from '../domain/problem';
+import {
+  difficulties,
+  problemPageSize,
+  type Problem,
+  type ProblemCategory,
+  type ProblemCategoryCount,
+} from '../domain/problem';
 import type { ProblemDetail } from '../domain/problemDetail';
 
 interface ProblemRankResponse {
@@ -12,10 +18,11 @@ interface ProblemRankResponse {
 
 type LegacyRank = 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3' | 'LEVEL_4' | 'LEVEL_5';
 
-interface ProblemSummaryResponse {
+export interface ProblemSummaryResponse {
   problemId: number;
   title: string;
   rank: ProblemRankResponse | LegacyRank;
+  categories?: ProblemCategory[];
 }
 
 interface ProblemListResponse extends PageInfo {
@@ -52,6 +59,18 @@ export function problemRankOptions() {
         signal,
       });
       return result.problemRanks;
+    },
+  });
+}
+
+export function problemCategoryOptions() {
+  return queryOptions({
+    queryKey: ['problem-categories'],
+    queryFn: async ({ signal }) => {
+      const result = await apiJson<{ categories: ProblemCategoryCount[] }>('/categories', {
+        signal,
+      });
+      return result.categories;
     },
   });
 }
@@ -110,28 +129,32 @@ function difficulty(rank: ProblemSummaryResponse['rank']) {
 
 async function problemPage(page: number, size: number, signal?: AbortSignal) {
   const result = await apiJson<ProblemListResponse>(`/problems?page=${page}&size=${size}`, {
+    authenticated: 'optional',
     signal,
   });
-  const items: Problem[] = result.problems.map((problem) => ({
+  return { ...result, items: result.problems.map(toProblem) };
+}
+
+export function toProblem(problem: ProblemSummaryResponse): Problem {
+  return {
     id: problem.problemId,
     title: problem.title,
     difficulty: difficulty(problem.rank),
     xp: typeof problem.rank === 'object' ? problem.rank?.xp : undefined,
-    categories: [],
-  }));
-  return { ...result, items };
+    categories: problem.categories?.map(({ name }) => name) ?? [],
+  };
 }
 
 export function problemPageOptions(page: number) {
   return queryOptions({
-    queryKey: ['problems', page],
+    queryKey: ['problems', page, Boolean(getAccessToken())],
     queryFn: ({ signal }) => problemPage(page, problemPageSize, signal),
   });
 }
 
 export function problemCatalogueOptions() {
   return queryOptions({
-    queryKey: ['problems', 'catalogue'],
+    queryKey: ['problems', 'catalogue', Boolean(getAccessToken())],
     queryFn: ({ signal }) =>
       collectPages((page, requestSignal) => problemPage(page, 100, requestSignal), signal),
   });
@@ -157,7 +180,7 @@ export function problemDetailOptions(id: number) {
         difficultyDescription: '',
         timeLimit: `${problem.timeLimit}초`,
         memoryLimit: `${problem.memoryLimit} MB`,
-        category: '—',
+        category: problem.categories?.map(({ name }) => name).join(', ') || '—',
         friends: [],
         additionalFriends: 0,
       };

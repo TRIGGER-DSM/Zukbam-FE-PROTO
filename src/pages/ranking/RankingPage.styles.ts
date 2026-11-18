@@ -1,15 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '../../shared/styles/colors';
 
-export const LoginNotice = styled.p`
-  text-align: center;
-  color: ${colors.label.neutral};
-  a {
-    color: ${colors.primary.normal};
-    text-decoration: underline;
-  }
-`;
-
 export const Page = styled.main`
   padding: clamp(1.5rem, 4vw, 3rem) var(--page-gutter);
   background: ${colors.background.elevated};
@@ -168,6 +159,30 @@ export const Results = styled.div`
     padding-bottom: 0;
   }
 `;
+
+export const LoginNotice = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: ${colors.label.neutral};
+
+  a {
+    padding: 0.5rem 0.875rem;
+    border: 1px solid ${colors.line.normal};
+    border-radius: 0.5rem;
+    background: ${colors.fill.normal};
+    color: ${colors.label.normal};
+    font-weight: 700;
+  }
+
+  a:hover {
+    background: ${colors.fill.strong};
+  }
+`;
+
 export const Pagination = styled.nav`
   display: flex;
   align-items: center;

@@ -1,11 +1,14 @@
 import * as S from './SubmissionPage.styles';
 import * as UI from '../../shared/ui/primitives.styles';
 import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
+import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
 import { PreviewDialog } from '../../shared/ui/PreviewDialog';
+import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
 import { problemDetailOptions } from '../../domains/problem/infrastructure/problemApi';
+import { friendProblemsKey } from '../../domains/problem/infrastructure/friendProblemApi';
+import { ApiError } from '../../shared/api/client';
 import {
   submitSolution,
   solutionIdFromLocation,
@@ -43,6 +46,40 @@ function clampPanelWidth(width: number) {
 }
 
 export function SubmissionPage() {
+  const { key } = useLocation();
+  const profile = myProfileOptions('optional');
+  const session = useQuery({
+    ...profile,
+    queryKey: [...profile.queryKey, 'submission-entry', key],
+    gcTime: 0,
+    retry: false,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  if (session.error instanceof ApiError && session.error.status === 401) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (session.isSuccess && !session.isFetching) {
+    return <AuthenticatedSubmission />;
+  }
+
+  return (
+    <S.Unavailable id="main">
+      <h1>풀이 제출</h1>
+      <ApiFeedback pending={session.isPending || session.isFetching} error={session.error} />
+      {session.isError && !session.isFetching && (
+        <button type="button" onClick={() => void session.refetch()}>
+          다시 시도
+        </button>
+      )}
+    </S.Unavailable>
+  );
+}
+
+function AuthenticatedSubmission() {
   const { problemId } = useParams();
   const [params] = useSearchParams();
   const retry = params.get('retry');
@@ -140,6 +177,9 @@ function SubmissionWorkspace({ problem, draft }: SubmissionWorkspaceProps) {
       void queryClient.invalidateQueries({ queryKey: [key] });
     }
     void queryClient.invalidateQueries({ queryKey: ['solutions', problem.id] });
+    if (latestStatus === 'ACCEPTED') {
+      void queryClient.invalidateQueries({ queryKey: friendProblemsKey });
+    }
     navigate(resultPath(problem.id, { solutionId: latestSolutionId, status: latestStatus }), {
       replace: true,
     });

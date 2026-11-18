@@ -1,3 +1,4 @@
+import { friendProblemsKey } from '../../domains/problem/infrastructure/friendProblemApi';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
@@ -42,6 +43,7 @@ export function FriendRequestsPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: requestsKey }),
         queryClient.invalidateQueries({ queryKey: friendsKey }),
+        queryClient.invalidateQueries({ queryKey: friendProblemsKey }),
       ]);
     },
   });

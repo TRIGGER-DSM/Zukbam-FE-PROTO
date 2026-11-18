@@ -66,17 +66,7 @@ export function ProblemTable({ problems, emptyContent, onSelect }: ProblemTableP
                 </S.Title>
               </td>
               <S.TagCell>
-                {problem.categories.length > 0 ? (
-                  <button
-                    aria-label={`${problem.title} 분류: ${problem.categories.join(', ')}`}
-                    title={problem.categories.join(', ')}
-                    onClick={() => onSelect(problem)}
-                  >
-                    <ProblemAsset name="tag" />
-                  </button>
-                ) : (
-                  '—'
-                )}
+                <span>{problem.categories.join(', ') || '—'}</span>
               </S.TagCell>
               <S.XpCell>
                 {problem.xp === undefined ? (

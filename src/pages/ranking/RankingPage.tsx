@@ -128,48 +128,65 @@ export function RankingPage() {
               </S.PeriodSegment>
             </S.Filters>
           </S.Toolbar>
-          <S.Results aria-live="polite" aria-atomic="false">
-            <Podium users={podium} metric={metric} />
-            {signedIn && <ApiFeedback pending={result.isPending} error={result.error} />}
-            {!signedIn && (
-              <S.LoginNotice>
-                랭킹을 보려면 <Link to="/login">로그인</Link>해 주세요.
-              </S.LoginNotice>
-            )}
-            {signedIn && <ApiFeedback pending={profile.isPending} error={profile.error} />}
-            {signedIn && metric === 'streak' && (
-              <ApiFeedback pending={streak.isPending} error={streak.error} />
-            )}
-            <LeaderboardTable
-              rows={rows.map((row) => (row.id === myId ? { ...row, isMe: true } : row))}
-              me={rankedMe && myRank ? { ...myRank, ...rankedMe, isMe: true } : myRank}
-              metric={metric}
-              emptyMessage={
-                signedIn && result.isSuccess && !users.length ? '표시할 랭킹이 없어요.' : undefined
-              }
-            />
-            {signedIn && (firstPage.data?.totalPages ?? 0) > 1 && (
-              <S.Pagination aria-label="랭킹 페이지">
-                <button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>
-                  이전
-                </button>
-                <span>
-                  {page + 1} / {firstPage.data?.totalPages}
-                </span>
-                <button
-                  type="button"
-                  disabled={page + 1 >= (firstPage.data?.totalPages ?? 0)}
-                  onClick={() => setPage(page + 1)}
-                >
-                  다음
-                </button>
-              </S.Pagination>
-            )}
-          </S.Results>
+          {signedIn ? (
+            <S.Results aria-live="polite" aria-atomic="false">
+              <Podium users={podium} metric={metric} />
+              <ApiFeedback pending={result.isPending} error={result.error} />
+              <ApiFeedback pending={profile.isPending} error={profile.error} />
+              {metric === 'streak' && (
+                <ApiFeedback pending={streak.isPending} error={streak.error} />
+              )}
+              <LeaderboardTable
+                rows={rows.map((row) => (row.id === myId ? { ...row, isMe: true } : row))}
+                me={rankedMe && myRank ? { ...myRank, ...rankedMe, isMe: true } : myRank}
+                metric={metric}
+                emptyMessage={
+                  result.isSuccess && !users.length ? '표시할 랭킹이 없어요.' : undefined
+                }
+              />
+              {(firstPage.data?.totalPages ?? 0) > 1 && (
+                <S.Pagination aria-label="랭킹 페이지">
+                  <button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>
+                    이전
+                  </button>
+                  <span>
+                    {page + 1} / {firstPage.data?.totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={page + 1 >= (firstPage.data?.totalPages ?? 0)}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    다음
+                  </button>
+                </S.Pagination>
+              )}
+            </S.Results>
+          ) : (
+            <GuestRanking metric={metric} />
+          )}
           <RankingSidebar me={myRank} />
         </S.Shell>
       </S.Page>
     </SiteLayout>
+  );
+}
+
+function GuestRanking({ metric }: { metric: RankingMetric }) {
+  return (
+    <S.Results>
+      <Podium users={[]} metric={metric} />
+      <LeaderboardTable
+        rows={[]}
+        metric={metric}
+        preview={
+          <S.LoginNotice>
+            <p>로그인하면 전체 순위와 내 순위를 볼 수 있어요.</p>
+            <Link to="/login">로그인</Link>
+          </S.LoginNotice>
+        }
+      />
+    </S.Results>
   );
 }
 

@@ -72,7 +72,7 @@ interface ApiOptions {
   method?: 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: object;
   signal?: AbortSignal;
-  authenticated?: boolean;
+  authenticated?: boolean | 'optional';
 }
 
 interface ErrorDetail {
@@ -94,11 +94,11 @@ export async function apiResponse(path: string, options: ApiOptions = {}) {
   const requestToken = getAccessToken();
   const headers = new Headers({ Accept: 'application/json' });
   if (options.authenticated) {
-    if (!requestToken) {
+    if (!requestToken && options.authenticated === true) {
       clearSession();
       throw new ApiError(401, '로그인이 필요한 기능이에요.');
     }
-    headers.set('Authorization', `Bearer ${requestToken}`);
+    if (requestToken) headers.set('Authorization', `Bearer ${requestToken}`);
   }
   if (options.body) headers.set('Content-Type', 'application/json');
   const response = await fetch(`${apiBase}${path}`, {

@@ -8,15 +8,23 @@ import {
   type RankingMetric,
 } from '../domain/leaderboard';
 import { RankingAsset } from './RankingAsset';
+import type { ReactNode } from 'react';
 
 interface LeaderboardTableProps {
   rows: RankedUser[];
   me?: MyRank;
   metric: RankingMetric;
   emptyMessage?: string;
+  preview?: ReactNode;
 }
 
-export function LeaderboardTable({ rows, me, metric, emptyMessage }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  rows,
+  me,
+  metric,
+  emptyMessage,
+  preview,
+}: LeaderboardTableProps) {
   const scoreLabel = metric === 'xp' ? 'XP' : metric === 'solved' ? '푼 문제 수' : '스트릭';
   const scoreIcon = metric === 'xp' ? 'xp' : metric === 'solved' ? 'solved' : 'streak';
   const renderRow = (user: RankedUser | MyRank) => (
@@ -57,6 +65,7 @@ export function LeaderboardTable({ rows, me, metric, emptyMessage }: Leaderboard
   );
   return (
     <S.Panel aria-label="전체 랭킹">
+      {preview}
       <S.Table>
         <UI.HiddenCaption>
           {scoreLabel} 기준 전체 랭킹{me && '과 내 순위'}
@@ -71,6 +80,26 @@ export function LeaderboardTable({ rows, me, metric, emptyMessage }: Leaderboard
           </tr>
         </thead>
         <tbody>
+          {preview &&
+            [1, 2, 3, 4].map((index) => (
+              <S.PreviewRow key={index} $mine={false} aria-hidden="true">
+                <td>
+                  <span />
+                </td>
+                <td>
+                  <span />
+                </td>
+                <td>
+                  <span />
+                </td>
+                <td>
+                  <span />
+                </td>
+                <td>
+                  <span />
+                </td>
+              </S.PreviewRow>
+            ))}
           {rows.map(renderRow)}
           {emptyMessage && (
             <S.Ellipsis>

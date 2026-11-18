@@ -26,10 +26,10 @@ export function studentNumber(profile: UserProfile) {
     : '';
 }
 
-export function myProfileOptions() {
+export function myProfileOptions(authenticated: true | 'optional' = true) {
   return queryOptions({
     queryKey: ['me', Boolean(getAccessToken())],
-    queryFn: ({ signal }) => apiJson<UserProfile>('/users/me', { authenticated: true, signal }),
+    queryFn: ({ signal }) => apiJson<UserProfile>('/users/me', { authenticated, signal }),
   });
 }
 

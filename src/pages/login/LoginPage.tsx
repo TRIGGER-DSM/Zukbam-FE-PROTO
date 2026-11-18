@@ -57,7 +57,7 @@ export function LoginPage() {
                   name="email"
                   type="email"
                   autoComplete="username"
-                  placeholder="minseo@school.ac.kr"
+                  placeholder="minseo@dsm.hs.kr"
                   required
                 />
               </S.InputBox>

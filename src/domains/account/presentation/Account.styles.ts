@@ -169,20 +169,6 @@ export const Progress = styled.div`
     }
   }
 `;
-export const Values = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  color: ${colors.label.assistive};
-  font-size: 1rem;
-  line-height: 1.625rem;
-  strong {
-    color: ${colors.label.neutral};
-  }
-  @media (max-width: 600px) {
-    font-size: 12px;
-  }
-`;
 export const Logout = styled.section`
   display: flex;
   align-items: center;

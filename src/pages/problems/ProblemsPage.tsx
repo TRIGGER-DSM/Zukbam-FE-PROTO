@@ -17,6 +17,7 @@ import {
 } from '../../domains/problem/domain/problem';
 import {
   problemCatalogueOptions,
+  problemCategoryOptions,
   problemPageOptions,
 } from '../../domains/problem/infrastructure/problemApi';
 import { ProblemAsset } from '../../domains/problem/presentation/ProblemAsset';
@@ -25,8 +26,6 @@ import { ProblemFilters } from '../../domains/problem/presentation/ProblemFilter
 import { ProblemTable } from '../../domains/problem/presentation/ProblemTable';
 import { problemDetailPath } from '../../domains/problem/presentation/problemDetailPath';
 import { friendProblemOptions } from '../../domains/problem/infrastructure/friendProblemApi';
-import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
-import { friendsOptions } from '../../domains/social/infrastructure/friendApi';
 import { useAccessToken } from '../../shared/hooks/useAccessToken';
 
 interface SortOption {
@@ -88,14 +87,11 @@ export function ProblemsPage() {
   const [filters, setFilters] = useState<ProblemFilterValues>(defaultProblemFilters);
   const [searchInput, setSearchInput] = useState('');
   const [page, setPage] = useState(1);
+  const categories = useQuery(problemCategoryOptions());
   const signedIn = Boolean(useAccessToken());
-  const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
-  const friends = useQuery({ ...friendsOptions(), enabled: signedIn });
   const discoveryPage = useQuery({ ...problemPageOptions(0), enabled: signedIn });
   const discoveryProblems = discoveryPage.data?.items.slice(0, 4) ?? [];
-  const friendProblems = useQuery(
-    friendProblemOptions(signedIn ? profile.data?.userId : undefined, friends.data ?? []),
-  );
+  const friendProblems = useQuery(friendProblemOptions(signedIn));
   const needsCatalogue =
     hasProblemFilters(filters) || filters.sort !== 'id' || filters.direction !== 'asc';
   const pageQuery = useQuery({ ...problemPageOptions(page - 1), enabled: !needsCatalogue });
@@ -163,24 +159,21 @@ export function ProblemsPage() {
             recommendationFeedback={
               <ApiFeedback pending={discoveryPage.isLoading} error={discoveryPage.error} />
             }
-            friendFeedback={
-              <ApiFeedback
-                pending={
-                  profile.isPending ||
-                  friends.isPending ||
-                  discoveryPage.isLoading ||
-                  friendProblems.isLoading
-                }
-                error={
-                  profile.error ?? friends.error ?? discoveryPage.error ?? friendProblems.error
-                }
-              />
-            }
+            friendPending={friendProblems.isPending}
+            friendError={friendProblems.error}
             onSelect={openProblem}
           />
         )}
         <S.Browse>
-          <ProblemFilters filters={filters} onChange={updateFilters} onReset={resetFilters} />
+          <ProblemFilters
+            filters={filters}
+            categories={categories.data ?? []}
+            categoryFeedback={
+              <ApiFeedback pending={categories.isPending} error={categories.error} />
+            }
+            onChange={updateFilters}
+            onReset={resetFilters}
+          />
           <S.Results aria-label="문제 검색 결과">
             <S.Search role="search" onSubmit={handleSearchSubmit}>
               <S.SearchInput

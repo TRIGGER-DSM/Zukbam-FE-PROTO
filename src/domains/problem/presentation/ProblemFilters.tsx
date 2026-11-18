@@ -1,10 +1,17 @@
 import * as S from './ProblemFilters.styles';
-import { difficulties, type ProblemFilters as ProblemFilterValues } from '../domain/problem';
+import type { ReactNode } from 'react';
+import {
+  difficulties,
+  type ProblemCategoryCount,
+  type ProblemFilters as ProblemFilterValues,
+} from '../domain/problem';
 import { ProblemAsset } from './ProblemAsset';
 import { RangeFilter } from './RangeFilter';
 
 interface ProblemFiltersProps {
   filters: ProblemFilterValues;
+  categories: ProblemCategoryCount[];
+  categoryFeedback: ReactNode;
   onChange: (patch: Partial<ProblemFilterValues>) => void;
   onReset: () => void;
 }
@@ -24,8 +31,27 @@ const statusOptions: StatusOption[] = [
 const difficultyBounds = ['min', 'max'] as const;
 const highestDifficultyIndex = difficulties.length - 1;
 
-export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersProps) {
+export function ProblemFilters({
+  filters,
+  categories,
+  categoryFeedback,
+  onChange,
+  onReset,
+}: ProblemFiltersProps) {
   const { difficultyMin, difficultyMax } = filters;
+  const categoryTerms = filters.categories.split(/[,，]/);
+  const categorySearch = categoryTerms.at(-1)?.trim().toLocaleLowerCase() ?? '';
+  const categoryMatches = categories.filter(({ name }) =>
+    name.toLocaleLowerCase().includes(categorySearch),
+  );
+
+  function selectCategory(name: string) {
+    const previousTerms = categoryTerms
+      .slice(0, -1)
+      .map((term) => term.trim())
+      .filter(Boolean);
+    onChange({ categories: [...new Set([...previousTerms, name])].join(', ') });
+  }
 
   function selectDifficulty(bound: (typeof difficultyBounds)[number], index: number) {
     if (bound === 'max') {
@@ -128,19 +154,32 @@ export function ProblemFilters({ filters, onChange, onReset }: ProblemFiltersPro
             ))}
           </S.Logic>
         </S.Heading>
-        <S.CategoryInput>
-          <input
-            aria-label="분류 검색"
-            value={filters.categories}
-            placeholder="DP, 그래프, 구현…"
-            onChange={(event) =>
-              onChange({
-                categories: event.target.value,
-              })
-            }
-          />
-          <ProblemAsset name="search-small" />
-        </S.CategoryInput>
+        <S.CategoryPicker>
+          <S.CategoryInput>
+            <input
+              aria-label="분류 검색"
+              value={filters.categories}
+              placeholder="DP, 그래프, 구현…"
+              onChange={(event) =>
+                onChange({
+                  categories: event.target.value,
+                })
+              }
+            />
+            <ProblemAsset name="search-small" />
+          </S.CategoryInput>
+          {categoryMatches.length > 0 && (
+            <S.CategoryOptions role="group" aria-label="분류 검색 후보">
+              {categoryMatches.map(({ categoryId, name, problemCount }) => (
+                <button key={categoryId} type="button" onClick={() => selectCategory(name)}>
+                  <span>{name}</span>
+                  <span>{problemCount}문제</span>
+                </button>
+              ))}
+            </S.CategoryOptions>
+          )}
+        </S.CategoryPicker>
+        {categoryFeedback}
       </S.Section>
       <S.Section>
         <h3>해결 상태</h3>

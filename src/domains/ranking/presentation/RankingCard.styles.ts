@@ -32,13 +32,12 @@ export const Card = styled.section`
   }
 `;
 
-export const Medal = styled(Asset)`
+export const Medal = styled(Asset)<{ $inactive: boolean }>`
   align-self: center;
   width: 100%;
   height: auto;
-  &[alt=''] {
-    opacity: 0.45;
-  }
+  opacity: ${({ $inactive }) => ($inactive ? 0.35 : 1)};
+  filter: ${({ $inactive }) => ($inactive ? 'grayscale(1)' : 'none')};
 `;
 
 export const Progress = styled.div`
@@ -82,6 +81,7 @@ export const Tier = styled.li<TierStyleProps>`
   img {
     width: min(100%, 4.625rem);
     height: auto;
+    filter: ${({ $locked }) => ($locked ? 'grayscale(1)' : 'none')};
   }
   @media (max-width: 600px) {
     font-size: 11px;

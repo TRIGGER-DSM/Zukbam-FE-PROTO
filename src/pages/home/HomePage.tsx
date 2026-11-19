@@ -61,9 +61,8 @@ export function HomePage() {
     );
   }
 
-  function openBannerProblem(title: string) {
-    const problemId = Number.parseInt(title, 10);
-    navigate(Number.isSafeInteger(problemId) ? problemDetailPath(problemId) : '/problems');
+  function openBannerProblem(problemId?: number) {
+    navigate(problemId === undefined ? '/problems' : problemDetailPath(problemId));
   }
 
   return (

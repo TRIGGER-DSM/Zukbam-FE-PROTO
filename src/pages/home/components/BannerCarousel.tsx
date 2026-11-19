@@ -9,6 +9,7 @@ const banners = [
     title: '나에게 딱 맞는',
     highlight: '오늘의 추천 문제',
     pill: '~ 26.11.30',
+    problem: { id: 4, title: '두 수의 합' },
   },
   {
     id: 'hot',
@@ -16,6 +17,7 @@ const banners = [
     title: '1287. 계단 오르기',
     highlight: '2,431명 도전 중!',
     pill: '매일 자정 갱신',
+    problem: { id: 3, title: '인사하기'},
   },
   {
     id: 'live',
@@ -23,6 +25,7 @@ const banners = [
     title: '오늘도',
     highlight: '1,284명 풀이 중',
     pill: '실시간 집계',
+    problem: null,
   },
 ] as const;
 
@@ -30,7 +33,7 @@ const dragStartThreshold = 6;
 const slideChangeThreshold = 50;
 
 interface BannerCarouselProps {
-  onProblem: (title: string) => void;
+  onProblem: (problemId?: number) => void;
 }
 
 interface DragStart {
@@ -136,7 +139,7 @@ export function BannerCarousel({ onProblem }: BannerCarouselProps) {
               setActiveIndex(index);
               return;
             }
-            onProblem(banner.id === 'recommend' ? '1912. 연속합' : banner.title);
+            onProblem(banner.problem?.id);
           };
           return (
             <HomeBanner
@@ -207,7 +210,11 @@ export function HomeBanner({ variant, position = 'active', onClick }: HomeBanner
       <Copy>
         <S.Eyebrow>{banner.eyebrow}</S.Eyebrow>
         <strong>
-          <span>{banner.title}</span>
+          <span>
+            {isHot && banner.problem
+              ? `${banner.problem.id}. ${banner.problem.title}`
+              : banner.title}
+          </span>
           {!isHot && <br />}
           <em>{banner.highlight}</em>
         </strong>
@@ -216,7 +223,9 @@ export function HomeBanner({ variant, position = 'active', onClick }: HomeBanner
       {banner.id === 'recommend' && (
         <S.Board>
           <span>오늘의 추천 문제</span>
-          <strong>1912. 연속합</strong>
+          <strong>
+            {banner.problem.id}. {banner.problem.title}
+          </strong>
         </S.Board>
       )}
     </S.Banner>

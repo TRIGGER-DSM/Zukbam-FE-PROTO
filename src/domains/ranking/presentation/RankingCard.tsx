@@ -21,6 +21,7 @@ export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
   return (
     <S.Card aria-labelledby="rank-title">
       <S.Medal
+        $inactive={!tier}
         name={tier ? `rank-${tier.id}.svg` : 'rank-current.svg'}
         alt={tier ? `${tier.label} 메달` : ''}
       />
@@ -40,7 +41,7 @@ export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
             <S.Tier
               key={tier.label}
               $current={i === currentTierIndex}
-              $locked={currentTierIndex >= 0 && i > currentTierIndex}
+              $locked={currentTierIndex < 0 || i > currentTierIndex}
               aria-current={i === currentTierIndex ? 'step' : undefined}
             >
               <Asset name={`rank-${tier.id}.svg`} />

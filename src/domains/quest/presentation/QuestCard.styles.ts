@@ -79,9 +79,11 @@ export const Meter = styled.div`
   }
 `;
 
-export const Reward = styled(Asset)`
+export const Reward = styled(Asset)<{ $inactive?: boolean }>`
   position: relative;
   width: 3.25rem;
   height: auto;
   margin-inline-start: -8px;
+  opacity: ${({ $inactive }) => ($inactive ? 0.35 : 1)};
+  filter: ${({ $inactive }) => ($inactive ? 'grayscale(1)' : 'none')};
 `;

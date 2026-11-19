@@ -8,13 +8,12 @@ import { questResetTime } from '../infrastructure/questApi';
 
 interface QuestArt {
   icon: string;
-  reward: string;
 }
 
 const questArt: Record<string, QuestArt> = {
-  solve: { icon: 'water-cup.svg', reward: 'quest-chest-gold.svg' },
-  xp: { icon: 'xp.svg', reward: 'quest-chest-silver.svg' },
-  difficulty: { icon: 'water-bottle.svg', reward: 'quest-chest-bronze.svg' },
+  solve: { icon: 'water-cup.svg' },
+  xp: { icon: 'xp.svg' },
+  difficulty: { icon: 'water-bottle.svg' },
 };
 
 interface QuestCardProps {
@@ -51,7 +50,7 @@ export function QuestCard({
                   <strong>-</strong>
                   <S.Meter>
                     <ProgressBar value={0} label="0%" name="퀘스트 진행도" />
-                    <S.Reward name={art.reward} />
+                    <S.Reward name="chest.svg" alt="닫힌 상자" $inactive />
                   </S.Meter>
                 </S.Details>
               </S.Item>
@@ -65,6 +64,8 @@ export function QuestCard({
                     ? questArt.xp
                     : questArt.solve);
               const complete = quest.completed ?? quest.current >= quest.target;
+              const rewardImage = complete ? 'chest-open.svg' : 'chest.svg';
+              const rewardAlt = complete ? '열린 상자' : '닫힌 상자';
               return (
                 <S.Item key={quest.id}>
                   <S.Icon name={art.icon} />
@@ -91,10 +92,10 @@ export function QuestCard({
                           aria-label={`${quest.title} 보상 받기`}
                           title={`${quest.rewardXp ?? 0} XP 받기`}
                         >
-                          <S.Reward name={art.reward} />
+                          <S.Reward name={rewardImage} alt={rewardAlt} />
                         </button>
                       ) : (
-                        <S.Reward name={quest.rewarded ? 'chest-open.svg' : art.reward} />
+                        <S.Reward name={rewardImage} alt={rewardAlt} />
                       )}
                     </S.Meter>
                   </S.Details>

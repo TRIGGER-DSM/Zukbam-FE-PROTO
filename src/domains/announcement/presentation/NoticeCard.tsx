@@ -12,7 +12,7 @@ interface NoticeCardProps {
   children?: ReactNode;
 }
 
-export function NoticeCard({ notices, onSelect, onShowAll, children }: NoticeCardProps) {
+export function NoticeCard({ notices, onSelect, children }: NoticeCardProps) {
   return (
     <S.Card aria-labelledby="notice-title">
       <UI.NoticeHeading>
@@ -22,7 +22,6 @@ export function NoticeCard({ notices, onSelect, onShowAll, children }: NoticeCar
           </S.Bell>
           <h2 id="notice-title">공지사항</h2>
         </div>
-        <button onClick={onShowAll}>전체</button>
       </UI.NoticeHeading>
       <ul>
         {notices.map((notice) => (

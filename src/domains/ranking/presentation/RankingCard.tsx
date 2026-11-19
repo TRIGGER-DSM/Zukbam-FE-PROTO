@@ -12,7 +12,7 @@ interface RankingCardProps {
   onShowAll: () => void;
 }
 
-export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
+export function RankingCard({ rank, children }: RankingCardProps) {
   const xp = rank?.xp;
   const tier =
     tierThresholds.find((item) => item.label === rank?.title) ??
@@ -34,7 +34,6 @@ export function RankingCard({ rank, onShowAll, children }: RankingCardProps) {
       <S.Ladder>
         <UI.Heading>
           <h2>랭크 단계</h2>
-          <button onClick={onShowAll}>전체</button>
         </UI.Heading>
         <S.Tiers>
           {rankTiers.map((tier, i) => (

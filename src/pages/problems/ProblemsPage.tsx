@@ -50,12 +50,10 @@ const sortOptions: SortOption[] = [
   {
     id: 'solvers',
     label: '푼 사람 수',
-    disabled: true,
   },
   {
     id: 'attempts',
     label: '평균 시도',
-    disabled: true,
   },
   {
     id: 'random',

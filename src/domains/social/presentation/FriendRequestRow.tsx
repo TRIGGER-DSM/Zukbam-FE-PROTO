@@ -2,6 +2,11 @@ import type { FriendRequest, FriendRequestStatus } from '../domain/friend';
 import * as Friend from './FriendRow.styles';
 import { Request } from './FriendSearchRow.styles';
 import * as S from './FriendRequestRow.styles';
+import { useQuery } from '@tanstack/react-query';
+import { studentNumber, userProfileOptions } from '../../member/infrastructure/profileApi';
+import { tierThresholds } from '../../ranking/domain/leaderboard';
+import { RankingAsset } from '../../ranking/presentation/RankingAsset';
+import { ApiFeedback } from '../../../shared/ui/ApiFeedback';
 
 interface FriendRequestRowProps {
   request: FriendRequest;
@@ -12,6 +17,9 @@ interface FriendRequestRowProps {
 export function FriendRequestRow({ request, onRespond, busy }: FriendRequestRowProps) {
   const isRejected = request.status === 'rejected';
   const statusLabel = isRejected ? '거절됨' : '수락함';
+  const profile = useQuery(userProfileOptions(Number(request.id)));
+  const rank = profile.data?.rank || request.tierLabel;
+  const tier = tierThresholds.find(({ label }) => label === rank)?.id ?? request.tier;
 
   return (
     <S.Row $rejected={isRejected} aria-label={`${request.name} ${request.id} 친구 요청`}>
@@ -19,20 +27,21 @@ export function FriendRequestRow({ request, onRespond, busy }: FriendRequestRowP
       <Friend.Info>
         <S.Name>
           <strong>{request.name}</strong>
-          <span>{request.id}</span>
+          <span>{profile.data ? studentNumber(profile.data) || request.id : request.id}</span>
         </S.Name>
         <Friend.Meta>
-          {request.tier && (
+          {rank && (
             <>
               <Friend.Tier>
-                <img src={`/images/friends/tier-${request.tier}.svg`} alt="" />
-                {request.tierLabel}
+                {tier && <RankingAsset name={`tier-${tier}`} />}
+                {rank}
               </Friend.Tier>
               <Friend.Dot aria-hidden="true">·</Friend.Dot>
             </>
           )}
           <S.Time>{request.requestedAt}</S.Time>
         </Friend.Meta>
+        <ApiFeedback error={profile.error} />
       </Friend.Info>
       <S.Actions>
         {request.status === 'pending' ? (

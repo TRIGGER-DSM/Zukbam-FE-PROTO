@@ -9,13 +9,15 @@ import {
 import type { FriendSearchResult } from '../../domains/social/domain/friend';
 import { FriendSearchRow } from '../../domains/social/presentation/FriendSearchRow';
 import * as S from './FriendsPage.styles';
+import { Button } from '../../shared/ui/Button';
 
 export function AddFriendPage() {
   const [searchInput, setSearchInput] = useState('');
-  const [userId, setUserId] = useState(0);
+  const [keyword, setKeyword] = useState('');
+  const [page, setPage] = useState(0);
   const [requestedIds, setRequestedIds] = useState<string[]>([]);
   const [announcement, setAnnouncement] = useState('');
-  const userSearch = useQuery(searchUserOptions(userId));
+  const userSearch = useQuery(searchUserOptions(keyword, page));
   const request = useMutation({
     mutationFn: (person: FriendSearchResult) => sendFriendRequest(Number(person.id)),
     onSuccess: (_, person) => {
@@ -23,29 +25,24 @@ export function AddFriendPage() {
       setAnnouncement(`${person.name}님에게 친구 요청을 보냈어요.`);
     },
   });
-  const foundUser = userSearch.data;
-  const person =
-    foundUser && requestedIds.includes(foundUser.id)
-      ? { ...foundUser, requestStatus: 'requested' as const }
-      : foundUser;
+  const people = (userSearch.data?.users ?? []).map((person) =>
+    requestedIds.includes(person.id) ? { ...person, requestStatus: 'requested' as const } : person,
+  );
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (request.isPending) return;
     const trimmedInput = searchInput.trim();
-    const searchedUserId = Number(trimmedInput);
-    if (
-      !/^\d+$/.test(trimmedInput) ||
-      !Number.isSafeInteger(searchedUserId) ||
-      searchedUserId <= 0
-    ) {
-      setUserId(0);
-      setAnnouncement('사용자 번호를 숫자로 입력해 주세요.');
+    if (!trimmedInput) {
+      setKeyword('');
+      setPage(0);
+      setAnnouncement('이름이나 네 자리 학번을 입력해 주세요.');
       return;
     }
     request.reset();
-    if (searchedUserId === userId) void userSearch.refetch();
-    setUserId(searchedUserId);
+    if (trimmedInput === keyword && page === 0) void userSearch.refetch();
+    setKeyword(trimmedInput);
+    setPage(0);
     setAnnouncement('');
   }
 
@@ -58,16 +55,15 @@ export function AddFriendPage() {
       <S.Panel aria-labelledby="add-friend-title">
         <S.Heading>
           <h1 id="add-friend-title">친구 추가</h1>
-          <p>사용자 번호로 친구를 찾아 친구 요청을 보내요.</p>
+          <p>이름이나 네 자리 학번으로 친구를 찾아 요청을 보내요.</p>
         </S.Heading>
         <S.Search role="search" onSubmit={handleSearch}>
           <S.Field>
             <img src="/images/friends/search.svg" alt="" />
             <input
               type="search"
-              inputMode="numeric"
-              aria-label="사용자 번호"
-              placeholder="사용자 번호로 검색"
+              aria-label="이름 또는 학번"
+              placeholder="이름 또는 학번으로 검색"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
             />
@@ -77,13 +73,42 @@ export function AddFriendPage() {
           </S.SearchButton>
         </S.Search>
         <S.Count>
-          검색 결과 <strong>{person ? 1 : 0}</strong>
+          검색 결과 <strong>{userSearch.data?.totalElements ?? 0}</strong>
         </S.Count>
         <ApiFeedback pending={userSearch.isLoading} error={userSearch.error ?? request.error} />
-        {person && (
+        {people.length > 0 && (
           <ul aria-label="친구 검색 결과">
-            <FriendSearchRow person={person} busy={request.isPending} onRequest={handleRequest} />
+            {people.map((person) => (
+              <FriendSearchRow
+                key={person.id}
+                person={person}
+                busy={request.isPending}
+                onRequest={handleRequest}
+              />
+            ))}
           </ul>
+        )}
+        {userSearch.isSuccess && !people.length && <S.Empty>검색 결과가 없어요.</S.Empty>}
+        {userSearch.data && userSearch.data.totalPages > 1 && (
+          <S.Pagination aria-label="친구 검색 결과 페이지">
+            <Button
+              variant="secondary"
+              disabled={page === 0 || request.isPending}
+              onClick={() => setPage(page - 1)}
+            >
+              이전
+            </Button>
+            <span>
+              {page + 1} / {userSearch.data.totalPages}
+            </span>
+            <Button
+              variant="secondary"
+              disabled={page + 1 >= userSearch.data.totalPages || request.isPending}
+              onClick={() => setPage(page + 1)}
+            >
+              다음
+            </Button>
+          </S.Pagination>
         )}
         {announcement && <S.Notice role="status">{announcement}</S.Notice>}
       </S.Panel>

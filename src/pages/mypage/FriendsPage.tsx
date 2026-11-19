@@ -53,7 +53,7 @@ export function FriendsPage() {
       <S.Panel aria-labelledby="friends-title">
         <S.Heading>
           <h1 id="friends-title">친구 목록</h1>
-          <p>친구들의 랭크와 스트릭, 최근에 푼 문제를 한눈에 확인해요.</p>
+          <p>친구들의 랭크와 스트릭, 최근 풀이 날짜를 한눈에 확인해요.</p>
         </S.Heading>
         <S.Search role="search" onSubmit={handleSearch}>
           <S.Field>

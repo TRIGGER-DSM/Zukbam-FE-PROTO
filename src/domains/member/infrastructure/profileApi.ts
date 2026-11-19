@@ -19,7 +19,7 @@ export interface UserProfile {
   student?: StudentInfo | null;
 }
 
-export function studentNumber(profile: UserProfile) {
+export function studentNumber(profile: Pick<UserProfile, 'student'>) {
   const student = profile.student;
   return student
     ? `${student.grade}${student.class}${String(student.number).padStart(2, '0')}`
@@ -35,4 +35,12 @@ export function myProfileOptions(authenticated: true | 'optional' = true) {
 
 export function getUser(userId: number, signal?: AbortSignal) {
   return apiJson<UserProfile>(`/users/${userId}`, { authenticated: true, signal });
+}
+
+export function userProfileOptions(userId: number) {
+  return queryOptions({
+    queryKey: ['user-profile', userId, Boolean(getAccessToken())],
+    enabled: Number.isSafeInteger(userId) && userId > 0 && Boolean(getAccessToken()),
+    queryFn: ({ signal }) => getUser(userId, signal),
+  });
 }

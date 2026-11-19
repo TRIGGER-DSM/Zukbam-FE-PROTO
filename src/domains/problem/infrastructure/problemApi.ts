@@ -23,6 +23,9 @@ export interface ProblemSummaryResponse {
   title: string;
   rank: ProblemRankResponse | LegacyRank;
   categories?: ProblemCategory[];
+  solverCount?: number;
+  averageAttempts?: number | null;
+  status?: 'SOLVED' | 'ATTEMPTED' | 'UNATTEMPTED' | null;
 }
 
 interface ProblemListResponse extends PageInfo {
@@ -136,12 +139,20 @@ async function problemPage(page: number, size: number, signal?: AbortSignal) {
 }
 
 export function toProblem(problem: ProblemSummaryResponse): Problem {
+  const statuses = {
+    SOLVED: 'solved',
+    ATTEMPTED: 'attempted',
+    UNATTEMPTED: 'unattempted',
+  } as const;
   return {
     id: problem.problemId,
     title: problem.title,
     difficulty: difficulty(problem.rank),
     xp: typeof problem.rank === 'object' ? problem.rank?.xp : undefined,
     categories: problem.categories?.map(({ name }) => name) ?? [],
+    solvers: problem.solverCount,
+    attempts: problem.averageAttempts ?? undefined,
+    status: problem.status ? statuses[problem.status] : undefined,
   };
 }
 

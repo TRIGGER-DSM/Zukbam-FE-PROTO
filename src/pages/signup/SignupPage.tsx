@@ -25,7 +25,7 @@ const classHelpId = 'signup-class-help';
 const classFields = [
   { name: 'grade', label: '학년', placeholder: '예) 2', max: 3 },
   { name: 'class', label: '반', placeholder: '3', max: 4 },
-  { name: 'number', label: '번호', placeholder: '예) 15', max: 2_147_483_647 },
+  { name: 'number', label: '번호', placeholder: '예) 15', max: 20 },
 ] as const;
 
 export function SignupPage({ role }: SignupPageProps) {
@@ -57,6 +57,12 @@ export function SignupPage({ role }: SignupPageProps) {
 
     void run('send', async (signal) => {
       if (!draft.name) throw new Error('이름을 입력해 주세요.');
+      if (
+        draft.role === 'student' &&
+        (!Number.isInteger(draft.number) || draft.number < 1 || draft.number > 20)
+      ) {
+        throw new Error('번호는 1~20 사이의 정수로 입력해 주세요.');
+      }
       const verification = await sendEmailVerification(email, signal);
       signal.throwIfAborted();
       setAttempt({ draft, verification, deadline: Date.now() + verification.expiresIn * 1000 });

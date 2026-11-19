@@ -173,6 +173,7 @@ function SubmissionWorkspace({ problem, draft }: SubmissionWorkspaceProps) {
       'today-quests',
       'rankings',
       'student-submissions',
+      'problems',
     ]) {
       void queryClient.invalidateQueries({ queryKey: [key] });
     }

@@ -2,7 +2,7 @@ import { formatDateTime } from '../../../shared/format';
 import { queryOptions } from '@tanstack/react-query';
 import { apiJson, apiResponse, getAccessToken } from '../../../shared/api/client';
 import { collectPages, type PageInfo } from '../../../shared/api/pagination';
-import { getUser, studentNumber } from '../../member/infrastructure/profileApi';
+import { studentNumber, type UserProfile } from '../../member/infrastructure/profileApi';
 import type {
   Friend,
   FriendRequest,
@@ -11,10 +11,6 @@ import type {
 } from '../domain/friend';
 
 interface FriendResponse {
-  tier?: Friend['tier'];
-  tierLabel?: string;
-  streakDays?: number;
-  recentActivity?: string;
   friendshipId: number;
   userId: number;
   name: string;
@@ -22,8 +18,6 @@ interface FriendResponse {
 }
 
 interface ReceivedRequestResponse {
-  tier?: FriendRequest['tier'];
-  tierLabel?: string;
   friendshipId: number;
   requesterId: number;
   requesterName: string;
@@ -48,10 +42,8 @@ export function friendsOptions() {
             id: String(friend.userId),
             friendshipId: friend.friendshipId,
             name: friend.name,
-            tier: friend.tier,
-            tierLabel: friend.tierLabel ?? '',
-            streakDays: friend.streakDays,
-            recentActivity: friend.recentActivity ?? '',
+            tierLabel: '',
+            recentActivity: '',
           })),
         };
       }, signal),
@@ -73,8 +65,7 @@ export function receivedRequestsOptions() {
             id: String(request.requesterId),
             friendshipId: request.friendshipId,
             name: request.requesterName,
-            tier: request.tier,
-            tierLabel: request.tierLabel ?? '',
+            tierLabel: '',
             requestedAt: `${formatDateTime(request.requestedAt)} 요청`,
             status: 'pending',
           })),
@@ -83,18 +74,29 @@ export function receivedRequestsOptions() {
   });
 }
 
-export function searchUserOptions(userId: number) {
+interface UserSearchResponse extends Pick<UserProfile, 'userId' | 'name' | 'student'> {
+  rankName: string;
+}
+
+export function searchUserOptions(keyword: string, page: number) {
   return queryOptions({
-    queryKey: ['user', userId, Boolean(getAccessToken())],
-    enabled: Number.isSafeInteger(userId) && userId > 0,
-    queryFn: async ({ signal }): Promise<FriendSearchResult> => {
-      const user = await getUser(userId, signal);
+    queryKey: ['user-search', keyword, page, Boolean(getAccessToken())],
+    enabled: keyword.length > 0,
+    queryFn: async ({ signal }) => {
+      const params = new URLSearchParams({ keyword, page: String(page), size: '20' });
+      const result = await apiJson<PageInfo & { users: UserSearchResponse[] }>(
+        `/users/search?${params}`,
+        { authenticated: true, signal },
+      );
       return {
-        id: String(user.userId),
-        studentNumber: studentNumber(user),
-        name: user.name,
-        tierLabel: user.rank,
-        requestStatus: 'available',
+        ...result,
+        users: result.users.map((user): FriendSearchResult => ({
+          id: String(user.userId),
+          studentNumber: studentNumber(user),
+          name: user.name,
+          tierLabel: user.rankName,
+          requestStatus: 'available',
+        })),
       };
     },
   });

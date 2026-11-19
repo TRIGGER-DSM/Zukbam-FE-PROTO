@@ -56,8 +56,8 @@ export function AccountProfile({ account }: AccountProfileProps) {
         <h2>{account.name}</h2>
         <dl>
           <div>
-            <dt>사용자 번호</dt>
-            <dd>{account.userId}</dd>
+            <dt>학번</dt>
+            <dd>{account.studentNumber || '—'}</dd>
           </div>
           <div>
             <dt>연락처</dt>

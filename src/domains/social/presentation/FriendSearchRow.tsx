@@ -1,6 +1,8 @@
 import type { FriendSearchResult } from '../domain/friend';
 import * as Row from './FriendRow.styles';
 import * as S from './FriendSearchRow.styles';
+import { tierThresholds } from '../../ranking/domain/leaderboard';
+import { RankingAsset } from '../../ranking/presentation/RankingAsset';
 
 interface FriendSearchRowProps {
   person: FriendSearchResult;
@@ -9,6 +11,7 @@ interface FriendSearchRowProps {
 }
 
 export function FriendSearchRow({ person, onRequest, busy }: FriendSearchRowProps) {
+  const tier = tierThresholds.find(({ label }) => label === person.tierLabel)?.id ?? person.tier;
   return (
     <Row.Row aria-label={`${person.name} ${person.id}`}>
       <Row.Profile name={person.name} size={56} />
@@ -19,7 +22,7 @@ export function FriendSearchRow({ person, onRequest, busy }: FriendSearchRowProp
         </Row.Name>
         <Row.Meta>
           <Row.Tier>
-            {person.tier && <img src={`/images/friends/tier-${person.tier}.svg`} alt="" />}
+            {tier && <RankingAsset name={`tier-${tier}`} />}
             {person.tierLabel}
           </Row.Tier>
         </Row.Meta>

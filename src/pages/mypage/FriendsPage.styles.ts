@@ -194,3 +194,11 @@ export const Notice = styled.div`
     white-space: nowrap;
   }
 `;
+
+export const Pagination = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+`;

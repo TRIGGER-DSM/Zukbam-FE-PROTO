@@ -28,6 +28,15 @@ export function streakOptions() {
   });
 }
 
+export function userStreakOptions(userId: number) {
+  return queryOptions({
+    queryKey: ['streak', userId, Boolean(getAccessToken())],
+    enabled: Number.isSafeInteger(userId) && userId > 0 && Boolean(getAccessToken()),
+    queryFn: ({ signal }) =>
+      apiJson<StreakResponse>(`/streaks/${userId}`, { authenticated: true, signal }),
+  });
+}
+
 export function growthOptions(userId?: number, viewerId?: number) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Seoul' }).format(new Date());
   const from = dateAfter(today, -364);

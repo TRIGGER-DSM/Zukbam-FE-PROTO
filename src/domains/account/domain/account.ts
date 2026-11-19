@@ -1,5 +1,6 @@
 export interface AccountProfile {
   userId: number;
+  studentNumber: string;
   name: string;
   phone: string;
   email: string;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { clearSession } from '../../shared/api/client';
 import { formatDateTime } from '../../shared/format';
 import { useAccessToken } from '../../shared/hooks/useAccessToken';
-import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
+import { myProfileOptions, studentNumber } from '../../domains/member/infrastructure/profileApi';
 import { friendsOptions } from '../../domains/social/infrastructure/friendApi';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { AccountProfile } from '../../domains/account/presentation/AccountProfile';
@@ -22,6 +22,7 @@ export function AccountPage() {
   const account = signedIn &&
     profile.data && {
       userId: profile.data.userId,
+      studentNumber: studentNumber(profile.data),
       name: profile.data.name,
       email: profile.data.email,
       phone: '',

@@ -84,16 +84,11 @@ export const Info = styled.div`
     line-height: 1.625rem;
   }
   dt {
-    color: ${colors.label.neutral};
+    color: ${colors.static.white};
   }
   dd {
     margin: 0.125rem 0 0;
-    color: ${colors.label.assistive};
-  }
-  dd > div {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 0.375rem;
+    color: ${colors.static.white};
     overflow-wrap: anywhere;
   }
   @media (max-width: 700px) {

@@ -34,20 +34,19 @@ export const Mascot = styled(Image, {
   & {
     display: block;
     width: 22.5rem;
-    height: 20rem;
+    height: auto;
+    aspect-ratio: 1;
     object-fit: contain;
     max-width: 100%;
   }
   @media (max-width: 700px) {
     & {
       width: 15.75rem;
-      height: 14rem;
     }
   }
   @media (min-width: 701px) {
     & {
       width: 18rem;
-      height: 16rem;
     }
   }
 `;

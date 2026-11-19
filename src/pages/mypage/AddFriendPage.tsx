@@ -5,6 +5,7 @@ import { MyPageLayout } from './MyPageLayout';
 import {
   searchUserOptions,
   sendFriendRequest,
+  friendsOptions,
 } from '../../domains/social/infrastructure/friendApi';
 import type { FriendSearchResult } from '../../domains/social/domain/friend';
 import { FriendSearchRow } from '../../domains/social/presentation/FriendSearchRow';
@@ -18,6 +19,8 @@ export function AddFriendPage() {
   const [requestedIds, setRequestedIds] = useState<string[]>([]);
   const [announcement, setAnnouncement] = useState('');
   const userSearch = useQuery(searchUserOptions(keyword, page));
+  const friends = useQuery({ ...friendsOptions(), refetchOnMount: 'always' });
+  const friendIds = new Set(friends.data?.map(({ id }) => id));
   const request = useMutation({
     mutationFn: (person: FriendSearchResult) => sendFriendRequest(Number(person.id)),
     onSuccess: (_, person) => {
@@ -25,9 +28,11 @@ export function AddFriendPage() {
       setAnnouncement(`${person.name}님에게 친구 요청을 보냈어요.`);
     },
   });
-  const people = (userSearch.data?.users ?? []).map((person) =>
-    requestedIds.includes(person.id) ? { ...person, requestStatus: 'requested' as const } : person,
-  );
+  const people = (userSearch.data?.users ?? []).map((person): FriendSearchResult => {
+    if (friendIds.has(person.id)) return { ...person, requestStatus: 'friend' };
+    if (requestedIds.includes(person.id)) return { ...person, requestStatus: 'requested' };
+    return person;
+  });
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,7 +52,9 @@ export function AddFriendPage() {
   }
 
   function handleRequest(person: FriendSearchResult) {
-    if (!request.isPending) request.mutate(person);
+    if (friends.isSuccess && !friendIds.has(person.id) && !request.isPending) {
+      request.mutate(person);
+    }
   }
 
   return (
@@ -75,8 +82,11 @@ export function AddFriendPage() {
         <S.Count>
           검색 결과 <strong>{userSearch.data?.totalElements ?? 0}</strong>
         </S.Count>
-        <ApiFeedback pending={userSearch.isLoading} error={userSearch.error ?? request.error} />
-        {people.length > 0 && (
+        <ApiFeedback
+          pending={userSearch.isLoading || friends.isPending}
+          error={userSearch.error ?? friends.error ?? request.error}
+        />
+        {friends.isSuccess && people.length > 0 && (
           <ul aria-label="친구 검색 결과">
             {people.map((person) => (
               <FriendSearchRow

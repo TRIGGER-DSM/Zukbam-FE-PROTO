@@ -32,13 +32,12 @@ export function AcceptedResultPage() {
       {isAccepted ? (
         <S.Page id="main" aria-labelledby="accepted-title">
           <S.Mascot
-            src="/images/result/celebrate.png"
-            sizes="(max-width: 700px) 252px, 288px"
+            src="/images/result/accepted-panda.webp"
             loading="eager"
             fetchPriority="high"
             alt="정답을 축하하는 판다"
-            width="360"
-            height="320"
+            width="400"
+            height="400"
           />
           <h1 id="accepted-title">정답이에요!</h1>
           <S.Description>

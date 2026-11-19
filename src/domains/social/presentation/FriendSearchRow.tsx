@@ -27,7 +27,9 @@ export function FriendSearchRow({ person, onRequest, busy }: FriendSearchRowProp
           </Row.Tier>
         </Row.Meta>
       </Row.Info>
-      {person.requestStatus === 'requested' ? (
+      {person.requestStatus === 'friend' ? (
+        <S.Sent>친구</S.Sent>
+      ) : person.requestStatus === 'requested' ? (
         <S.Sent aria-label={`${person.name} ${person.id} 요청 보냄`}>
           <img src="/images/friends/request-sent.svg" alt="" />
           요청 보냄

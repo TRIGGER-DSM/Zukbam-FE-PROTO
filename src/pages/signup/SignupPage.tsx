@@ -35,6 +35,10 @@ export function SignupPage({ role }: SignupPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isTeacher = role === 'teacher';
   const previousDraft = attempt?.draft.role === role ? attempt.draft : undefined;
+  const [password, setPassword] = useState(previousDraft?.password ?? '');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [confirmationTouched, setConfirmationTouched] = useState(false);
+  const passwordMismatch = confirmationTouched && passwordConfirmation !== password;
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -56,6 +60,10 @@ export function SignupPage({ role }: SignupPageProps) {
         };
 
     void run('send', async (signal) => {
+      if (credentials.password !== passwordConfirmation) {
+        setConfirmationTouched(true);
+        throw new Error('비밀번호가 일치하지 않아요.');
+      }
       if (!draft.name) throw new Error('이름을 입력해 주세요.');
       if (
         draft.role === 'student' &&
@@ -110,7 +118,8 @@ export function SignupPage({ role }: SignupPageProps) {
               label="비밀번호"
               type={showPassword ? 'text' : 'password'}
               autoComplete="new-password"
-              defaultValue={previousDraft?.password}
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
               icon="/images/login/lock.svg"
               helper={passwordHelp}
@@ -123,7 +132,7 @@ export function SignupPage({ role }: SignupPageProps) {
                 <Auth.Visibility
                   type="button"
                   aria-label="비밀번호 표시"
-                  aria-controls="signup-password"
+                  aria-controls="signup-password signup-password-confirmation"
                   aria-pressed={showPassword}
                   onClick={() => setShowPassword((visible) => !visible)}
                 >
@@ -135,6 +144,22 @@ export function SignupPage({ role }: SignupPageProps) {
                   />
                 </Auth.Visibility>
               }
+            />
+            <SignupField
+              id="signup-password-confirmation"
+              name="passwordConfirmation"
+              label="비밀번호 확인"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              value={passwordConfirmation}
+              onChange={(event) => setPasswordConfirmation(event.target.value)}
+              onBlur={() => setConfirmationTouched(true)}
+              aria-invalid={passwordMismatch || undefined}
+              placeholder="비밀번호를 한 번 더 입력해 주세요"
+              icon="/images/login/lock.svg"
+              helper={passwordMismatch ? '비밀번호가 일치하지 않아요.' : undefined}
+              maxLength={64}
+              required
             />
             <SignupField
               id="signup-name"

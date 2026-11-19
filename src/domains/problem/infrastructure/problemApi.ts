@@ -190,7 +190,7 @@ export function problemDetailOptions(id: number) {
         xp: typeof problem.rank === 'object' ? problem.rank?.xp : undefined,
         difficultyDescription: '',
         timeLimit: `${problem.timeLimit}초`,
-        memoryLimit: `${problem.memoryLimit} MB`,
+        memoryLimit: `${problem.memoryLimit} KB`,
         category: problem.categories?.map(({ name }) => name).join(', ') || '—',
         friends: [],
         additionalFriends: 0,

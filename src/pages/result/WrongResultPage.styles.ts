@@ -32,21 +32,20 @@ export const Mascot = styled(Image, {
   target: 'e-o-1',
 })`
   & {
-    width: 22.5rem;
-    height: 20rem;
+    width: 15.3rem;
+    height: auto;
+    aspect-ratio: 306 / 400;
     max-width: 100%;
     object-fit: contain;
   }
   @media (max-width: 700px) {
     & {
-      width: 15.75rem;
-      height: 14rem;
+      width: 10.71rem;
     }
   }
   @media (min-width: 701px) {
     & {
-      width: 18rem;
-      height: 16rem;
+      width: 12.24rem;
     }
   }
 `;

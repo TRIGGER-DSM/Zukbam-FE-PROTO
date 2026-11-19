@@ -18,7 +18,7 @@ export interface FriendSearchResult {
   name: string;
   tier?: FriendTier;
   tierLabel: string;
-  requestStatus: 'available' | 'requested';
+  requestStatus: 'available' | 'requested' | 'friend';
 }
 
 export interface Friend {

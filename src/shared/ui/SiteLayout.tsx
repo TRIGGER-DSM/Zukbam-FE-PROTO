@@ -10,18 +10,22 @@ const teamMembers = [
   {
     name: '남우현',
     role: 'PM · Backend',
+    github: 'github.com/cowtree28',
   },
   {
     name: '김태균',
     role: 'Backend',
+    github: 'github.com/xo-rxs',
   },
   {
     name: '조연재',
     role: 'Frontend',
+    github: 'github.com/yeonjaecho09',
   },
   {
     name: '정일웅',
     role: 'Design',
+    github: 'github.com/wjddlfdnd',
   },
 ];
 
@@ -131,7 +135,7 @@ export function AppFooter() {
                 </S.MemberName>
                 <S.Github>
                   <Asset name="github.svg" />
-                  <span>github.com/username</span>
+                  <span>{member.github}</span>
                 </S.Github>
               </div>
             </li>

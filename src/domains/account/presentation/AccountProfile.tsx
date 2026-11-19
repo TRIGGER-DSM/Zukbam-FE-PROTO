@@ -60,13 +60,8 @@ export function AccountProfile({ account }: AccountProfileProps) {
             <dd>{account.studentNumber || '—'}</dd>
           </div>
           <div>
-            <dt>연락처</dt>
-            <dd>
-              <div>
-                {account.phone && <span>{account.phone}</span>}
-                <span>{account.email}</span>
-              </div>
-            </dd>
+            <dt>이메일</dt>
+            <dd>{account.email}</dd>
           </div>
           <div>
             <dt>가입날짜</dt>

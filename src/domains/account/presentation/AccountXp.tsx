@@ -1,9 +1,9 @@
 import { formatNumber, formatDateTime } from '../../../shared/format';
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ApiFeedback } from '../../../shared/ui/ApiFeedback';
 import { Button } from '../../../shared/ui/Button';
-import { recalculateMyXp, xpHistoryKey, xpHistoryOptions } from '../infrastructure/xpApi';
+import { xpHistoryOptions } from '../infrastructure/xpApi';
 import * as S from './AccountXp.styles';
 
 interface AccountXpProps {
@@ -14,33 +14,12 @@ const dateOptions = { dateStyle: 'medium', timeStyle: 'short' } as const;
 
 export function AccountXp({ userId }: AccountXpProps) {
   const [page, setPage] = useState(0);
-  const queryClient = useQueryClient();
   const history = useQuery(xpHistoryOptions(userId, page));
-  const recalculate = useMutation({
-    mutationFn: recalculateMyXp,
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['me'] }),
-        queryClient.invalidateQueries({ queryKey: xpHistoryKey }),
-      ]);
-    },
-  });
   const result = history.data;
 
   return (
     <S.Section aria-labelledby="account-xp-title">
-      <S.Bar>
-        <h2 id="account-xp-title">XP 내역</h2>
-        <Button
-          variant="secondary"
-          disabled={recalculate.isPending}
-          onClick={() => recalculate.mutate()}
-        >
-          {recalculate.isPending ? '재계산 중…' : '내 XP 재계산'}
-        </Button>
-      </S.Bar>
-      <ApiFeedback error={recalculate.error} />
-      {recalculate.isSuccess && <p role="status">XP 재계산을 완료했어요.</p>}
+      <h2 id="account-xp-title">XP 내역</h2>
       <ApiFeedback pending={history.isPending} error={history.error} />
       {result &&
         (result.xpHistories.length > 0 ? (

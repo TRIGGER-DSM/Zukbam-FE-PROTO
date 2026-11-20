@@ -39,7 +39,6 @@ export function LoginPage() {
   return (
     <S.Page id="main">
       <AuthArt />
-
       <S.Panel aria-labelledby="login-title">
         <S.Form method="post" onSubmit={handleSubmit}>
           <S.Heading>

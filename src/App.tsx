@@ -19,6 +19,7 @@ import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 import { StudentAchievementPage } from './pages/admin/StudentAchievementPage';
 import { ProblemRegistrationPage } from './pages/admin/ProblemRegistrationPage';
 import { ProblemEditPage } from './pages/admin/ProblemEditPage';
+import { AdminGuard } from './pages/admin/AdminGuard';
 
 const ComponentsPage = lazy(() => import('./pages/components/ComponentsPage'));
 
@@ -74,34 +75,36 @@ export default function App() {
           }
         />
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<AdminDashboardPage />} />
-        <Route path="/admin/achievement" element={<StudentAchievementPage />} />
-        <Route
-          path="/admin/submissions/:userId?"
-          element={
-            <Suspense fallback={<p>불러오는 중…</p>}>
-              <SubmissionHistoryPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/admin/groups"
-          element={
-            <Suspense fallback={<p>불러오는 중…</p>}>
-              <GroupManagementPage />
-            </Suspense>
-          }
-        />
-        <Route path="/admin/problems/new" element={<ProblemRegistrationPage />} />
-        <Route path="/admin/problems/:problemId/edit" element={<ProblemEditPage />} />
-        <Route
-          path="/admin/problems/:problemId/test-cases"
-          element={
-            <Suspense fallback={<p>불러오는 중…</p>}>
-              <TestCasesPage />
-            </Suspense>
-          }
-        />
+        <Route element={<AdminGuard />}>
+          <Route path="/admin" element={<AdminDashboardPage />} />
+          <Route path="/admin/achievement" element={<StudentAchievementPage />} />
+          <Route
+            path="/admin/submissions/:userId?"
+            element={
+              <Suspense fallback={<p>불러오는 중…</p>}>
+                <SubmissionHistoryPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/admin/groups"
+            element={
+              <Suspense fallback={<p>불러오는 중…</p>}>
+                <GroupManagementPage />
+              </Suspense>
+            }
+          />
+          <Route path="/admin/problems/new" element={<ProblemRegistrationPage />} />
+          <Route path="/admin/problems/:problemId/edit" element={<ProblemEditPage />} />
+          <Route
+            path="/admin/problems/:problemId/test-cases"
+            element={
+              <Suspense fallback={<p>불러오는 중…</p>}>
+                <TestCasesPage />
+              </Suspense>
+            }
+          />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupFlow />}>
           <Route index element={<SignupPage key="student" role="student" />} />

@@ -183,11 +183,17 @@ export const LoginNotice = styled.div`
   }
 `;
 
-export const Pagination = styled.nav`
+export const LoadMore = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  padding-block: 1rem;
+  width: calc(100% - var(--ranking-aside-width) - 1.5rem);
+  @media (max-width: 1250px) {
+    width: 100%;
+  }
   button {
     padding: 0.5rem 0.875rem;
     border-radius: 0.5rem;

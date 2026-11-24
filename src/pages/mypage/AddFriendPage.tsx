@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { MyPageLayout } from './MyPageLayout';
 import {
@@ -11,26 +11,38 @@ import type { FriendSearchResult } from '../../domains/social/domain/friend';
 import { FriendSearchRow } from '../../domains/social/presentation/FriendSearchRow';
 import * as S from './FriendsPage.styles';
 import { Button } from '../../shared/ui/Button';
+import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
 
 export function AddFriendPage() {
   const [searchInput, setSearchInput] = useState('');
   const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(0);
-  const [requestedIds, setRequestedIds] = useState<string[]>([]);
   const [announcement, setAnnouncement] = useState('');
   const userSearch = useQuery(searchUserOptions(keyword, page));
+  const queryClient = useQueryClient();
+  const profile = useQuery(myProfileOptions());
+  const sentRequestsKey = ['sent-friend-requests', profile.data?.userId];
+  const sentRequests = useQuery<string[]>({
+    queryKey: sentRequestsKey,
+    queryFn: () => [],
+    enabled: false,
+    initialData: [],
+    gcTime: Infinity,
+  });
   const friends = useQuery({ ...friendsOptions(), refetchOnMount: 'always' });
   const friendIds = new Set(friends.data?.map(({ id }) => id));
   const request = useMutation({
     mutationFn: (person: FriendSearchResult) => sendFriendRequest(Number(person.id)),
     onSuccess: (_, person) => {
-      setRequestedIds((previous) => [...previous, person.id]);
+      queryClient.setQueryData<string[]>(sentRequestsKey, (previous = []) => [
+        ...new Set([...previous, person.id]),
+      ]);
       setAnnouncement(`${person.name}님에게 친구 요청을 보냈어요.`);
     },
   });
   const people = (userSearch.data?.users ?? []).map((person): FriendSearchResult => {
     if (friendIds.has(person.id)) return { ...person, requestStatus: 'friend' };
-    if (requestedIds.includes(person.id)) return { ...person, requestStatus: 'requested' };
+    if (sentRequests.data.includes(person.id)) return { ...person, requestStatus: 'requested' };
     return person;
   });
 
@@ -52,7 +64,14 @@ export function AddFriendPage() {
   }
 
   function handleRequest(person: FriendSearchResult) {
-    if (friends.isSuccess && !friendIds.has(person.id) && !request.isPending) {
+    if (
+      profile.isSuccess &&
+      friends.isSuccess &&
+      !friendIds.has(person.id) &&
+      !sentRequests.data.includes(person.id) &&
+      person.requestStatus === 'available' &&
+      !request.isPending
+    ) {
       request.mutate(person);
     }
   }
@@ -83,10 +102,10 @@ export function AddFriendPage() {
           검색 결과 <strong>{userSearch.data?.totalElements ?? 0}</strong>
         </S.Count>
         <ApiFeedback
-          pending={userSearch.isLoading || friends.isPending}
-          error={userSearch.error ?? friends.error ?? request.error}
+          pending={userSearch.isLoading || friends.isPending || profile.isPending}
+          error={userSearch.error ?? friends.error ?? profile.error ?? request.error}
         />
-        {friends.isSuccess && people.length > 0 && (
+        {profile.isSuccess && friends.isSuccess && people.length > 0 && (
           <ul aria-label="친구 검색 결과">
             {people.map((person) => (
               <FriendSearchRow

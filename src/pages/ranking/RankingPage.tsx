@@ -1,19 +1,19 @@
 import * as S from './RankingPage.styles';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import {
   getRankingCountdown,
   type CountdownPeriod,
 } from '../../domains/ranking/domain/rankingCountdown';
 import { SiteLayout } from '../../shared/ui/SiteLayout';
-import { rankingPageOptions } from '../../domains/ranking/infrastructure/rankingApi';
+import { rankingOptions } from '../../domains/ranking/infrastructure/rankingApi';
 import type { RankingMetric, RankingPeriod } from '../../domains/ranking/domain/leaderboard';
 import { RankingAsset } from '../../domains/ranking/presentation/RankingAsset';
 import { Podium } from '../../domains/ranking/presentation/Podium';
 import { RankingSidebar } from '../../domains/ranking/presentation/RankingSidebar';
 import { LeaderboardTable } from '../../domains/ranking/presentation/LeaderboardTable';
 import { useAccessToken } from '../../shared/hooks/useAccessToken';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { myProfileOptions } from '../../domains/member/infrastructure/profileApi';
 import { streakOptions } from '../../domains/activity/infrastructure/activityApi';
 import { getMyRank } from '../../domains/ranking/application/getMyRank';
@@ -66,21 +66,37 @@ const periods: RankingPeriodOption[] = [
 export function RankingPage() {
   const [metric, setMetric] = useState<RankingMetric>('xp');
   const [period, setPeriod] = useState<RankingPeriod>('weekly');
-  const [page, setPage] = useState(0);
   const signedIn = Boolean(useAccessToken());
-  const firstPage = useQuery({ ...rankingPageOptions(period, metric, 0), enabled: signedIn });
-  const leaderboard = useQuery({
-    ...rankingPageOptions(period, metric, page),
-    enabled: signedIn && page > 0,
-  });
-  const result = page === 0 ? firstPage : leaderboard;
-  const podium = signedIn ? (firstPage.data?.users.slice(0, 3) ?? []) : [];
-  const users = signedIn ? (result.data?.users ?? []) : [];
-  const rows = page === 0 && users.length > 3 ? users.slice(3) : users;
+  const result = useInfiniteQuery({ ...rankingOptions(period, metric), enabled: signedIn });
+  const users = signedIn
+    ? [
+        ...new Map(
+          result.data?.pages.flatMap(({ users }) => users).map((user) => [user.id, user]),
+        ).values(),
+      ]
+    : [];
+  const podium = users.slice(0, 3);
+  const rows = users.slice(3);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const { hasNextPage, isFetching, isFetchNextPageError, fetchNextPage } = result;
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target || !signedIn || !hasNextPage || isFetching || isFetchNextPageError) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) void fetchNextPage({ cancelRefetch: false });
+      },
+      { rootMargin: '240px' },
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [signedIn, hasNextPage, isFetching, isFetchNextPageError, fetchNextPage]);
   const profile = useQuery({ ...myProfileOptions(), enabled: signedIn });
   const streak = useQuery({ ...streakOptions(), enabled: signedIn });
   const myId = signedIn && profile.data ? String(profile.data.userId) : undefined;
-  const rankedMe = users.find(({ id }) => id === myId) ?? podium.find(({ id }) => id === myId);
+  const rankedMe = users.find(({ id }) => id === myId);
   const myRank =
     signedIn && profile.data
       ? getMyRank(profile.data, streak.data?.currentStreak, rankedMe?.position)
@@ -103,7 +119,6 @@ export function RankingPage() {
                     aria-pressed={metric === item.id}
                     onClick={() => {
                       setMetric(item.id);
-                      setPage(0);
                     }}
                   >
                     <RankingAsset name={item.icon} />
@@ -119,7 +134,6 @@ export function RankingPage() {
                     aria-pressed={(metric === 'streak' ? 'all' : period) === item.id}
                     onClick={() => {
                       setPeriod(item.id);
-                      setPage(0);
                     }}
                   >
                     {item.label}
@@ -131,7 +145,10 @@ export function RankingPage() {
           {signedIn ? (
             <S.Results aria-live="polite" aria-atomic="false">
               <Podium users={podium} metric={metric} />
-              <ApiFeedback pending={result.isPending} error={result.error} />
+              <ApiFeedback
+                pending={result.isPending}
+                error={isFetchNextPageError ? null : result.error}
+              />
               <ApiFeedback pending={profile.isPending} error={profile.error} />
               {metric === 'streak' && (
                 <ApiFeedback pending={streak.isPending} error={streak.error} />
@@ -144,23 +161,21 @@ export function RankingPage() {
                   result.isSuccess && !users.length ? '표시할 랭킹이 없어요.' : undefined
                 }
               />
-              {(firstPage.data?.totalPages ?? 0) > 1 && (
-                <S.Pagination aria-label="랭킹 페이지">
-                  <button type="button" disabled={page === 0} onClick={() => setPage(page - 1)}>
-                    이전
-                  </button>
-                  <span>
-                    {page + 1} / {firstPage.data?.totalPages}
-                  </span>
+              <S.LoadMore ref={loadMoreRef}>
+                <ApiFeedback
+                  pending={result.isFetchingNextPage}
+                  error={isFetchNextPageError ? result.error : null}
+                />
+                {hasNextPage && !result.isFetchingNextPage && (
                   <button
                     type="button"
-                    disabled={page + 1 >= (firstPage.data?.totalPages ?? 0)}
-                    onClick={() => setPage(page + 1)}
+                    disabled={isFetching}
+                    onClick={() => void fetchNextPage({ cancelRefetch: false })}
                   >
-                    다음
+                    {isFetchNextPageError ? '다시 시도' : '순위 더 보기'}
                   </button>
-                </S.Pagination>
-              )}
+                )}
+              </S.LoadMore>
             </S.Results>
           ) : (
             <GuestRanking metric={metric} />

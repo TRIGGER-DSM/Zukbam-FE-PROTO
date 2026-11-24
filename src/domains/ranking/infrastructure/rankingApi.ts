@@ -1,7 +1,12 @@
-import { queryOptions } from '@tanstack/react-query';
+import { infiniteQueryOptions } from '@tanstack/react-query';
 import { apiJson } from '../../../shared/api/client';
 import type { PageInfo } from '../../../shared/api/pagination';
-import { tierThresholds, type RankingMetric, type RankingPeriod } from '../domain/leaderboard';
+import {
+  tierThresholds,
+  type RankedUser,
+  type RankingMetric,
+  type RankingPeriod,
+} from '../domain/leaderboard';
 
 interface RankingResponse {
   position: number;
@@ -15,15 +20,24 @@ interface RankingResponse {
 
 const metrics = { xp: 'XP', solved: 'SOLVED_COUNT', streak: 'STREAK' } as const;
 
-export function rankingPageOptions(period: RankingPeriod, metric: RankingMetric, page: number) {
+interface RankingPage extends PageInfo {
+  users: RankedUser[];
+}
+
+export function rankingOptions(period: RankingPeriod, metric: RankingMetric) {
   const rankingPeriod = metric === 'streak' ? 'all' : period;
-  return queryOptions({
-    queryKey: ['rankings', rankingPeriod, metric, page],
-    queryFn: async ({ signal }) => {
+  return infiniteQueryOptions({
+    queryKey: ['rankings', 'infinite', rankingPeriod, metric],
+    initialPageParam: 0,
+    getNextPageParam: (lastPage: RankingPage) =>
+      lastPage.users.length > 0 && lastPage.page + 1 < lastPage.totalPages
+        ? lastPage.page + 1
+        : undefined,
+    queryFn: async ({ signal, pageParam }): Promise<RankingPage> => {
       const params = new URLSearchParams({
         metric: metrics[metric],
         period: rankingPeriod.toUpperCase(),
-        page: String(page),
+        page: String(pageParam),
         size: '20',
       });
       const data = await apiJson<PageInfo & { rankings: RankingResponse[] }>(

@@ -9,6 +9,8 @@ import { ApiFeedback } from '../../shared/ui/ApiFeedback';
 import { StreakDialog } from '../../domains/activity/presentation/StreakDialog';
 import { streakMilestoneFixture } from '../../domains/activity/infrastructure/streakMilestoneFixture';
 import { QuestCard } from '../../domains/quest/presentation/QuestCard';
+import { QuestRewardDialog } from '../../domains/quest/presentation/QuestRewardDialog';
+import type { Quest } from '../../domains/quest/domain/quest';
 import { claimQuestReward, todayQuestsOptions } from '../../domains/quest/infrastructure/questApi';
 import { RankingCard } from '../../domains/ranking/presentation/RankingCard';
 import { RankUpDialog } from '../../domains/ranking/presentation/RankUpDialog';
@@ -36,9 +38,23 @@ export function HomePage() {
   const userId = signedIn ? profile.data?.userId : undefined;
   const quests = useQuery(todayQuestsOptions(userId));
   const queryClient = useQueryClient();
+  const [claimedQuest, setClaimedQuest] = useState<Quest | null>(null);
   const reward = useMutation({
-    mutationFn: claimQuestReward,
-    onSuccess: async () => {
+    mutationFn: (quest: Quest) => claimQuestReward(quest.id),
+    onSuccess: async (_, quest) => {
+      setClaimedQuest(quest);
+      const options = todayQuestsOptions(userId);
+      await queryClient.cancelQueries({ queryKey: options.queryKey });
+      queryClient.setQueryData(
+        options.queryKey,
+        (previous) =>
+          previous && {
+            ...previous,
+            quests: previous.quests.map((item) =>
+              item.id === quest.id ? { ...item, rewarded: true } : item,
+            ),
+          },
+      );
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['today-quests', userId] }),
         queryClient.invalidateQueries({ queryKey: ['me'] }),
@@ -75,8 +91,10 @@ export function HomePage() {
             showPlaceholder={!signedIn}
             quests={signedIn ? (quests.data?.quests ?? []) : []}
             resetAt={signedIn ? quests.data?.resetAt : undefined}
-            pendingId={reward.isPending ? reward.variables : undefined}
-            onClaim={(quest) => reward.mutate(quest.id)}
+            pendingId={reward.isPending ? reward.variables.id : undefined}
+            onClaim={(quest) => {
+              if (!reward.isPending) reward.mutate(quest);
+            }}
           >
             {signedIn && (
               <ApiFeedback
@@ -98,6 +116,13 @@ export function HomePage() {
           )}
         </RankingCard>
       </S.Page>
+      {signedIn && claimedQuest && (
+        <QuestRewardDialog
+          title={claimedQuest.title}
+          xp={claimedQuest.rewardXp}
+          onClose={() => setClaimedQuest(null)}
+        />
+      )}
       {modal === 'rank-up' && (
         <RankUpDialog promotion={rankPromotionFixture} onClose={closeCelebration} />
       )}

@@ -64,8 +64,8 @@ export function QuestCard({
                     ? questArt.xp
                     : questArt.solve);
               const complete = quest.completed ?? quest.current >= quest.target;
-              const rewardImage = complete ? 'chest-open.svg' : 'chest.svg';
-              const rewardAlt = complete ? '열린 상자' : '닫힌 상자';
+              const rewardImage = quest.rewarded ? 'chest-open.svg' : 'chest.svg';
+              const rewardAlt = quest.rewarded ? '열린 상자' : '닫힌 상자';
               return (
                 <S.Item key={quest.id}>
                   <S.Icon name={art.icon} />
@@ -77,11 +77,13 @@ export function QuestCard({
                         max={quest.target}
                         name={quest.title}
                         label={
-                          quest.rewarded
-                            ? '수령 완료'
-                            : complete
-                              ? '완료!'
-                              : `${quest.current} / ${quest.target}`
+                          pendingId === quest.id
+                            ? '수령 중…'
+                            : quest.rewarded
+                              ? '수령 완료'
+                              : complete
+                                ? '보상 받기'
+                                : `${quest.current} / ${quest.target}`
                         }
                       />
                       {onClaim && complete && !quest.rewarded ? (
@@ -92,7 +94,12 @@ export function QuestCard({
                           aria-label={`${quest.title} 보상 받기`}
                           title={`${quest.rewardXp ?? 0} XP 받기`}
                         >
-                          <S.Reward name={rewardImage} alt={rewardAlt} />
+                          <S.Reward name={rewardImage} alt={rewardAlt} $claimable={!pendingId} />
+                          <UI.HiddenText>
+                            {pendingId === quest.id
+                              ? '보상 수령 중'
+                              : '상자를 눌러 보상을 받으세요'}
+                          </UI.HiddenText>
                         </button>
                       ) : (
                         <S.Reward name={rewardImage} alt={rewardAlt} />

@@ -18,11 +18,14 @@ interface ProblemRankResponse {
 
 type LegacyRank = 'LEVEL_1' | 'LEVEL_2' | 'LEVEL_3' | 'LEVEL_4' | 'LEVEL_5';
 
-export interface ProblemSummaryResponse {
+interface ProblemFields {
   problemId: number;
   title: string;
   rank: ProblemRankResponse | LegacyRank;
   categories?: ProblemCategory[];
+}
+
+export interface ProblemSummaryResponse extends ProblemFields {
   solverCount?: number;
   averageAttempts?: number | null;
   status?: 'SOLVED' | 'ATTEMPTED' | 'UNATTEMPTED' | null;
@@ -38,7 +41,7 @@ export interface ProblemTestCase {
   isSample: boolean;
 }
 
-interface ProblemDetailResponse extends ProblemSummaryResponse {
+interface ProblemDetailResponse extends ProblemFields {
   content: string;
   memoryLimit: number;
   timeLimit: number;
@@ -173,10 +176,13 @@ export function problemCatalogueOptions() {
 
 export function problemDetailOptions(id: number) {
   return queryOptions({
-    queryKey: ['problem', id],
+    queryKey: ['problem', id, Boolean(getAccessToken())],
     enabled: Number.isSafeInteger(id) && id > 0,
     queryFn: async ({ signal }): Promise<ProblemDetail> => {
-      const problem = await apiJson<ProblemDetailResponse>(`/problems/${id}`, { signal });
+      const problem = await apiJson<ProblemDetailResponse>(`/problems/${id}`, {
+        authenticated: 'optional',
+        signal,
+      });
       return {
         id: problem.problemId,
         title: problem.title,

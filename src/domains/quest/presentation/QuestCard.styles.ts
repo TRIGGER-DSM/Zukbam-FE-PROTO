@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { colors } from '../../../shared/styles/colors';
 import { Asset } from '../../../shared/ui/Asset';
+import { css, keyframes } from '@emotion/react';
 
 export const Card = styled.section`
   min-width: 0;
@@ -79,11 +80,41 @@ export const Meter = styled.div`
   }
 `;
 
-export const Reward = styled(Asset)<{ $inactive?: boolean }>`
+const shake = keyframes`
+  0%, 48%, 100% { transform: translateY(0) rotate(0); }
+  52%, 64%, 76% { transform: translateY(-4px) rotate(-12deg); }
+  58%, 70%, 82% { transform: translateY(-2px) rotate(12deg); }
+  88% { transform: translateY(-7px) rotate(-4deg); }
+  94% { transform: translateY(0) rotate(3deg); }
+`;
+
+const glow = keyframes`
+  from { filter: drop-shadow(0 0 3px ${colors.status.cautionary}); }
+  to { filter: drop-shadow(0 0 7px ${colors.status.cautionary}) drop-shadow(0 0 14px ${colors.status.cautionary}); }
+`;
+
+export const Reward = styled(Asset)<{ $inactive?: boolean; $claimable?: boolean }>`
   position: relative;
   width: 3.25rem;
   height: auto;
   margin-inline-start: -8px;
   opacity: ${({ $inactive }) => ($inactive ? 0.35 : 1)};
   filter: ${({ $inactive }) => ($inactive ? 'grayscale(1)' : 'none')};
+  ${({ $claimable }) =>
+    $claimable &&
+    css`
+      transform-origin: center bottom;
+      animation:
+        ${shake} 2s ease-in-out infinite,
+        ${glow} 0.8s ease-in-out infinite alternate;
+    `}
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    ${({ $claimable }) =>
+      $claimable &&
+      css`
+        filter: drop-shadow(0 0 8px ${colors.status.cautionary});
+      `}
+  }
 `;
